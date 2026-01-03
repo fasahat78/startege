@@ -154,28 +154,6 @@ export async function batchIndexDocumentsViaGCS(
     console.log(`[VECTOR_DB] Note: Batch index updates are asynchronous and may take time to process`);
     
     return docs.map(doc => doc.id);
-
-    const importResponse = await fetch(importApiUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(importRequestBody),
-    });
-
-    if (!importResponse.ok) {
-      const errorText = await importResponse.text();
-      throw new Error(`Import API error: ${importResponse.status} - ${errorText}`);
-    }
-
-    const importResult = await importResponse.json();
-    console.log(`[VECTOR_DB] Import operation started: ${importResult.name}`);
-
-    // Note: Import is asynchronous, returns operation name
-    // You may need to poll the operation status
-    
-    return docs.map(doc => doc.id);
   } catch (error: any) {
     console.error("[VECTOR_DB] Error batch indexing via GCS:", error.message);
     throw new Error(`Failed to batch index documents via GCS: ${error.message}`);

@@ -86,7 +86,7 @@ export async function POST(
   }
   
   // Build context for Startegizer
-  const optionsText = question.options && Array.isArray(question.options)
+  const optionsText = Array.isArray(question.options) && question.options.length > 0
     ? question.options.map((opt: any) => `  ${opt.key}. ${opt.text}`).join('\n')
     : 'No options available';
 

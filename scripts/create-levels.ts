@@ -6,7 +6,7 @@ async function createLevels() {
 
   for (const config of LEVEL_CONFIGS) {
     await prisma.challenge.upsert({
-      where: { level: config.level },
+      where: { levelNumber: config.level },
       update: {
         title: config.title,
         description: config.description,
@@ -16,7 +16,8 @@ async function createLevels() {
         concepts: [], // Will be populated later with concept assignment
       },
       create: {
-        level: config.level,
+        levelNumber: config.level,
+        level: config.level, // Legacy field
         title: config.title,
         description: config.description,
         questionCount: config.questionCount,

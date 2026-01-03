@@ -81,7 +81,7 @@ async function preGenerateLevelExam(levelNumber: number): Promise<GenerationResu
           systemPromptSnapshot: challenge.examSystemPrompt || "Generate exam questions for this level.",
           generationConfig: {
             questionCount: levelConfig?.questionCount || challenge.questionCount || 10,
-            difficulty: levelConfig?.difficulty || "beginner",
+            difficulty: "beginner", // Default difficulty
             passMark: levelConfig?.passingScore || challenge.passingScore || 70,
             timeLimitSec: (levelConfig?.timeLimit || challenge.timeLimit || 20) * 60,
             isBoss: false,
@@ -186,12 +186,12 @@ async function preGenerateLevelExam(levelNumber: number): Promise<GenerationResu
     } else {
       // Levels 10-39 (non-boss): Use standard approach with category information
       const concepts = conceptCards.map((c: any) => c.name || c.concept);
-      const conceptsList = concepts.map((c, i) => `${i + 1}. ${c}`).join("\n");
+      const conceptsList = concepts.map((c: string, i: number) => `${i + 1}. ${c}`).join("\n");
       const levelPrompt = challenge.examSystemPrompt || "";
 
       // Build concept ID mapping for validation
       const conceptIdMapping = conceptCards
-        .map((c) => {
+        .map((c: any) => {
           const name = c.name || c.concept || "Unknown";
           return `  "${c.id}": "${name}"`;
         })
@@ -270,7 +270,7 @@ Generate exactly ${questionCount} exam questions for Level ${levelNumber}: ${cha
     const generatedExam = await generateExamQuestions({
       systemPrompt,
       questionCount,
-      difficulty: levelConfig?.difficulty || "beginner",
+      difficulty: "beginner",
       isBoss: false,
       allowedConceptIds: conceptCards.map((c: any) => c.id),
       categoryIdMap: Object.keys(levelCategoryIdMap).length > 0 ? levelCategoryIdMap : undefined,
@@ -287,7 +287,7 @@ Generate exactly ${questionCount} exam questions for Level ${levelNumber}: ${cha
         generationConfig: {
           ...exam.generationConfig,
           questionCount,
-          difficulty: levelConfig?.difficulty || "beginner",
+          difficulty: "beginner",
           passMark: levelConfig?.passingScore || challenge.passingScore || 70,
           generatedAt: new Date().toISOString(),
           preGenerated: true,

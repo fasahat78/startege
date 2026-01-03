@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/firebase-auth-helpers';
 import { prisma } from '@/lib/db';
 import { stripe } from '@/lib/stripe';
+import Stripe from 'stripe';
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,7 +40,8 @@ export async function GET(request: NextRequest) {
 
     // Get customer to find default payment method
     const customer = await stripe.customers.retrieve(subscription.stripeCustomerId);
-    const defaultPaymentMethodId = typeof customer !== 'deleted' && customer.invoice_settings?.default_payment_method
+    // Check if customer is deleted (Stripe returns DeletedCustomer type)
+    const defaultPaymentMethodId = !customer.deleted && 'invoice_settings' in customer && customer.invoice_settings?.default_payment_method
       ? customer.invoice_settings.default_payment_method
       : null;
 

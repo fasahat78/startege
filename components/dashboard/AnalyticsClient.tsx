@@ -285,8 +285,8 @@ export default function AnalyticsClient() {
                   cx="50%"
                   cy="50%"
                   outerRadius={100}
-                  label={({ difficulty, count }) =>
-                    `${difficulty}: ${count}`
+                  label={(entry: any) =>
+                    `${entry.difficulty}: ${entry.count}`
                   }
                 >
                   {data.difficultyProgression.map((entry, index) => (
@@ -331,7 +331,7 @@ export default function AnalyticsClient() {
                     const date = new Date(value);
                     return date.toLocaleDateString();
                   }}
-                  formatter={(value: number) => [`${value.toFixed(1)}%`, "Score"]}
+                  formatter={(value: number | undefined) => value !== undefined ? [`${value.toFixed(1)}%`, "Score"] : ["", "Score"]}
                 />
                 <Legend />
                 <Line

@@ -49,7 +49,7 @@ export async function updatePlanType(
   userId: string,
   subscriptionId: string,
   preserveCredits: boolean = true
-): Promise<typeof prisma.aICredit.$inferSelect> {
+): Promise<any> {
   const newMonthlyAllowance = await getMonthlyAllowance(userId, subscriptionId);
   
   const existing = await prisma.aICredit.findUnique({
@@ -103,7 +103,7 @@ export async function updatePlanType(
 export async function allocateMonthlyCredits(
   userId: string,
   subscriptionId?: string
-): Promise<typeof prisma.aICredit.$inferSelect> {
+): Promise<any> {
   const now = new Date();
   const nextMonth = new Date(now);
   nextMonth.setMonth(nextMonth.getMonth() + 1);
@@ -309,6 +309,10 @@ export async function addPurchasedCreditsWithAmount(
     credit = await allocateMonthlyCredits(userId);
   }
 
+  if (!credit) {
+    throw new Error(`Failed to allocate credits for user ${userId}`);
+  }
+
   const balanceBefore = credit.currentBalance;
   const balanceAfter = balanceBefore + apiUsageCredits;
   const purchasedCreditsBefore = credit.purchasedCredits || 0;
@@ -365,6 +369,10 @@ export async function addPurchasedCredits(
   if (!credit) {
     // Create credit account if it doesn't exist
     credit = await allocateMonthlyCredits(userId);
+  }
+
+  if (!credit) {
+    throw new Error(`Failed to allocate credits for user ${userId}`);
   }
 
   const balanceBefore = credit.currentBalance;

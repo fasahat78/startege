@@ -149,13 +149,13 @@ async function preGenerateBossExam(levelNumber: number) {
     difficultyMix = LEVEL_40_BOSS_BLUEPRINT.difficultyMix;
     maxConceptFrequency = LEVEL_40_BOSS_BLUEPRINT.coverageRequirements.conceptScope.maxFrequencyPerConcept;
   } else {
-    levelClusters = bossBlueprint.levelClusters.map((cluster: any) => ({
+    levelClusters = (bossBlueprint as any).levelClusters?.map((cluster: any) => ({
       levels: [...cluster.levels],
       theme: cluster.theme,
-    }));
-    levelRange = bossBlueprint.scope.levelRange as [number, number];
-    difficultyMix = bossBlueprint.questionComposition.difficultyMix;
-    maxConceptFrequency = bossBlueprint.questionComposition.maxQuestionsPerConcept;
+    })) || [];
+    levelRange = (bossBlueprint as any).scope?.levelRange as [number, number] || [1, levelNumber - 1];
+    difficultyMix = (bossBlueprint as any).questionComposition?.difficultyMix || { apply: 40, analyse: 40, judgement: 20 };
+    maxConceptFrequency = (bossBlueprint as any).questionComposition?.maxQuestionsPerConcept || 2;
   }
 
   const systemPrompt = generateBossExamPrompt({
@@ -191,10 +191,10 @@ async function preGenerateBossExam(levelNumber: number) {
         questionCount: bossBlueprint.examStructure.questionCount,
         difficulty: levelNumber === 10 ? "intermediate-advanced" : levelNumber === 30 || levelNumber === 40 ? "expert" : "advanced",
         isBoss: true,
-        minMultiConceptRatio: levelNumber === 40 ? undefined : bossBlueprint.questionComposition?.minMultiConceptRatio,
-        minMultiConceptCount: levelNumber === 40 ? LEVEL_40_BOSS_BLUEPRINT.questionRequirements.minConceptsPerQuestion : bossBlueprint.questionComposition?.minMultiConceptCount,
-        minCrossCategoryRatio: levelNumber === 40 ? undefined : bossBlueprint.questionComposition?.minCrossCategoryRatio,
-        minCrossCategoryCount: levelNumber === 40 ? LEVEL_40_BOSS_BLUEPRINT.questionRequirements.minDomainsPerQuestion : bossBlueprint.questionComposition?.minCrossCategoryCount,
+        minMultiConceptRatio: levelNumber === 40 ? undefined : (bossBlueprint as any).questionComposition?.minMultiConceptRatio,
+        minMultiConceptCount: levelNumber === 40 ? LEVEL_40_BOSS_BLUEPRINT.questionRequirements.minConceptsPerQuestion : (bossBlueprint as any).questionComposition?.minMultiConceptCount,
+        minCrossCategoryRatio: levelNumber === 40 ? undefined : (bossBlueprint as any).questionComposition?.minCrossCategoryRatio,
+        minCrossCategoryCount: levelNumber === 40 ? LEVEL_40_BOSS_BLUEPRINT.questionRequirements.minDomainsPerQuestion : (bossBlueprint as any).questionComposition?.minCrossCategoryCount,
         allowedConceptIds: Array.from(allowedConceptIds),
         categoryIdMap,
         requiredCategoryIds,
@@ -269,7 +269,7 @@ async function preGenerateBossExam(levelNumber: number) {
         ...exam.generationConfig,
         questionCount: bossBlueprint.examStructure.questionCount,
         difficulty: levelNumber === 10 ? "intermediate-advanced" : levelNumber === 30 || levelNumber === 40 ? "expert" : "advanced",
-        passMark: levelNumber === 40 ? LEVEL_40_BOSS_BLUEPRINT.scoring.passingScore : bossBlueprint.scoring.passMark,
+        passMark: levelNumber === 40 ? LEVEL_40_BOSS_BLUEPRINT.scoring.passingScore : (bossBlueprint.scoring as any).passMark || (bossBlueprint.scoring as any).passingScore || 75,
         isBoss: true,
         bossWeighting: levelNumber === 20
           ? { multiConcept: LEVEL_20_BOSS_BLUEPRINT.scoring.weighting.multiConcept, judgement: LEVEL_20_BOSS_BLUEPRINT.scoring.weighting.judgement }
@@ -284,6 +284,9 @@ async function preGenerateBossExam(levelNumber: number) {
     },
   });
 
+  if (!generatedExam) {
+    throw new Error(`Failed to generate exam for level ${levelNumber}`);
+  }
   console.log(`✅ Level ${levelNumber} Boss Exam pre-generated successfully! (${generatedExam.questions.length} questions)`);
 }
 

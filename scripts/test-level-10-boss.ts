@@ -13,7 +13,6 @@ import { prisma } from "../lib/db";
 import { checkBossEligibility, getBossConceptScope, getBossCategoryMap } from "../lib/boss-exam-gating";
 import { LEVEL_10_BOSS_BLUEPRINT, validateBossExamComposition } from "../lib/boss-exam-blueprint";
 import { generateExamQuestions } from "../lib/chatgpt";
-import { generateExamQuestions } from "../lib/chatgpt";
 import { EXAM_BASE_PROMPT } from "../lib/exam-prompts";
 import { assessExam } from "../lib/exam-assessment";
 
@@ -336,7 +335,7 @@ Generate exactly ` + LEVEL_10_BOSS_BLUEPRINT.examStructure.questionCount + ` que
         minMultiConceptCount: LEVEL_10_BOSS_BLUEPRINT.questionComposition.minMultiConceptCount,
         minCrossCategoryRatio: LEVEL_10_BOSS_BLUEPRINT.questionComposition.minCrossCategoryRatio,
         minCrossCategoryCount: LEVEL_10_BOSS_BLUEPRINT.questionComposition.minCrossCategoryCount,
-        allowedConceptIds: Array.from(allowedConceptIds),
+        allowedConceptIds: Array.from(allowedConceptIds) as string[],
         categoryIdMap,
         requiredCategoryIds,
       });
@@ -346,7 +345,7 @@ Generate exactly ` + LEVEL_10_BOSS_BLUEPRINT.examStructure.questionCount + ` que
         generatedExam.questions as any,
         LEVEL_10_BOSS_BLUEPRINT.questionComposition,
         {
-          allowedConceptIds,
+          allowedConceptIds: allowedConceptIds as Set<string>,
           canonicalCategoryIds: new Set(requiredCategoryIds),
           requiredCategoryIds,
         }
@@ -367,6 +366,14 @@ Generate exactly ` + LEVEL_10_BOSS_BLUEPRINT.examStructure.questionCount + ` que
           return;
         }
       }
+    }
+
+    if (!generatedExam) {
+      throw new Error("Failed to generate exam");
+    }
+
+    if (!validation) {
+      throw new Error("Validation failed");
     }
 
     console.log(`✅ Generated ${generatedExam.questions.length} questions`);

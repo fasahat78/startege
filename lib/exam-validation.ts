@@ -150,9 +150,9 @@ export function validateCategoryExam(
           `Question ${q.id}: categoryIds must be only "${requiredCategoryId}", found: ${q.categoryIds.join(", ")}`
         );
       }
-    } else if (q.categoryId) {
-      if (q.categoryId !== requiredCategoryId) {
-        errors.push(`Question ${q.id}: categoryId must be "${requiredCategoryId}", found: ${q.categoryId}`);
+    } else if ((q as any).categoryId) {
+      if ((q as any).categoryId !== requiredCategoryId) {
+        errors.push(`Question ${q.id}: categoryId must be "${requiredCategoryId}", found: ${(q as any).categoryId}`);
       }
     } else {
       warnings.push(`Question ${q.id}: Missing categoryIds`);

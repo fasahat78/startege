@@ -44,7 +44,7 @@ interface GenerationResult {
   success: boolean;
   error?: string;
   questionCount?: number;
-  distribution?: { A: number; B: number; C: number; D: number };
+  distribution?: { A: number; B: number; C: number; D: number; total: number };
   bPercentage?: number;
 }
 
@@ -138,7 +138,7 @@ async function regenerateRegularLevelExam(levelNumber: number): Promise<Generati
 
     const levelConfig = getLevelConfig(levelNumber);
     const questionCount = levelConfig?.questionCount || challenge.questionCount || 10;
-    const difficulty = levelConfig?.difficulty || "beginner";
+    const difficulty = "beginner";
 
     // For Levels 1-9, use coverage-first approach
     let systemPrompt: string;
@@ -152,6 +152,7 @@ async function regenerateRegularLevelExam(levelNumber: number): Promise<Generati
       systemPrompt = generateCoverageFirstLevelExamPrompt({
         levelNumber,
         levelTitle: challenge.title,
+        superLevelGroup: challenge.superLevelGroup || (levelNumber <= 10 ? "FOUNDATION" : levelNumber <= 20 ? "BUILDING" : levelNumber <= 30 ? "ADVANCED" : "MASTERY"),
         concepts: conceptCards.map((c: any) => ({
           id: c.id,
           name: c.name || c.concept,
@@ -201,7 +202,7 @@ Generate exactly ${questionCount} questions that test understanding of the conce
       systemPrompt,
       questionCount,
       difficulty: difficulty as "beginner" | "intermediate" | "advanced" | "expert",
-      allowedConceptIds,
+      allowedConceptIds: Array.from(allowedConceptIds),
       categoryIdMap,
     });
 
@@ -209,11 +210,7 @@ Generate exactly ${questionCount} questions that test understanding of the conce
     if (levelNumber <= 9) {
       const validation = validateLevelExam(
         generatedExam.questions,
-        {
-          expectedQuestionCount: questionCount,
-          expectedConceptIds: new Set(conceptCards.map((c: any) => c.id)),
-          canonicalCategoryIds: new Set(Object.keys(categoryIdMap)),
-        }
+        conceptCards
       );
 
       if (!validation.isValid) {
@@ -275,7 +272,7 @@ Generate exactly ${questionCount} questions that test understanding of the conce
       levelNumber,
       success: true,
       questionCount: generatedExam.questions.length,
-      distribution: distribution.distribution,
+      distribution: distribution.distribution as { A: number; B: number; C: number; D: number; total: number },
       bPercentage: (distribution.distribution.B / distribution.distribution.total) * 100,
     };
   } catch (error: any) {
@@ -319,19 +316,25 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
       bossBlueprint = LEVEL_10_BOSS_BLUEPRINT;
       bossConcepts = await getBossConceptScope();
       const bossCategoryMap = await getBossCategoryMap();
-      categoryIdMap = bossCategoryMap;
+      categoryIdMap = Object.fromEntries(
+        Object.entries(bossCategoryMap).map(([key, values]) => [key, Array.isArray(values) ? values[0] : values])
+      ) as Record<string, string>;
       requiredCategoryIds = Object.keys(bossCategoryMap);
     } else if (levelNumber === 20) {
       bossBlueprint = LEVEL_20_BOSS_BLUEPRINT;
       bossConcepts = await getLevel20BossConceptScope();
       const bossCategoryMap = await getLevel20BossCategoryMap();
-      categoryIdMap = bossCategoryMap;
+      categoryIdMap = Object.fromEntries(
+        Object.entries(bossCategoryMap).map(([key, values]) => [key, Array.isArray(values) ? values[0] : values])
+      ) as Record<string, string>;
       requiredCategoryIds = Object.keys(bossCategoryMap);
     } else if (levelNumber === 30) {
       bossBlueprint = LEVEL_30_BOSS_BLUEPRINT;
       bossConcepts = await getLevel30BossConceptScope();
       const bossCategoryMap = await getLevel30BossCategoryMap();
-      categoryIdMap = bossCategoryMap;
+      categoryIdMap = Object.fromEntries(
+        Object.entries(bossCategoryMap).map(([key, values]) => [key, Array.isArray(values) ? values[0] : values])
+      ) as Record<string, string>;
       requiredCategoryIds = Object.keys(bossCategoryMap);
     } else if (levelNumber === 40) {
       bossBlueprint = LEVEL_40_BOSS_BLUEPRINT;
@@ -377,8 +380,8 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
       categoryIdMap,
       requiredCategoryIds,
       levelClusters,
-      difficultyMix: bossBlueprint.questionComposition.difficultyMix,
-      maxConceptFrequency: bossBlueprint.questionComposition.maxQuestionsPerConcept,
+      difficultyMix: (bossBlueprint as any).questionComposition?.difficultyMix || { apply: 40, analyse: 40, judgement: 20 },
+      maxConceptFrequency: (bossBlueprint as any).questionComposition?.maxQuestionsPerConcept || 2,
     });
 
     // Generate exam with retries
@@ -393,9 +396,9 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
         generatedExam = await generateExamQuestions({
           systemPrompt,
           questionCount: bossBlueprint.examStructure.questionCount,
-          difficulty: bossBlueprint.examStructure.difficultyBand as any,
+          difficulty: (bossBlueprint.examStructure as any).difficultyBand || (levelNumber === 10 ? "intermediate-advanced" : levelNumber === 30 || levelNumber === 40 ? "expert" : "advanced"),
           isBoss: true,
-          allowedConceptIds,
+          allowedConceptIds: Array.from(allowedConceptIds),
           categoryIdMap,
           requiredCategoryIds,
         });
@@ -404,7 +407,7 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
         if (levelNumber === 10) {
           validation = validateBossExamComposition(
             generatedExam.questions,
-            bossBlueprint.questionComposition,
+            (bossBlueprint as any).questionComposition,
             {
               allowedConceptIds,
               canonicalCategoryIds: new Set(requiredCategoryIds),
@@ -414,7 +417,7 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
         } else if (levelNumber === 20) {
           validation = validateLevel20BossExamComposition(
             generatedExam.questions,
-            bossBlueprint.questionComposition,
+            (bossBlueprint as any).questionComposition,
             {
               allowedConceptIds,
               canonicalCategoryIds: new Set(requiredCategoryIds),
@@ -424,7 +427,7 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
         } else if (levelNumber === 30) {
           validation = validateLevel30BossExamComposition(
             generatedExam.questions,
-            bossBlueprint.questionComposition,
+            (bossBlueprint as any).questionComposition,
             {
               allowedConceptIds,
               canonicalCategoryIds: new Set(requiredCategoryIds),
@@ -471,7 +474,7 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
       },
     });
 
-    const passMark = bossBlueprint.scoring.passMark || (levelNumber === 40 ? 85 : levelNumber === 30 ? 80 : 75);
+    const passMark = (bossBlueprint.scoring as any).passMark || (bossBlueprint.scoring as any).passingScore || (levelNumber === 40 ? 85 : levelNumber === 30 ? 80 : 75);
     const timeLimit = bossBlueprint.examStructure.timeLimitMinutes || (levelNumber === 40 ? 60 : levelNumber === 30 ? 50 : levelNumber === 20 ? 45 : 40);
 
     if (exam) {
@@ -483,11 +486,17 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
           status: "PUBLISHED",
           generationConfig: {
             questionCount: bossBlueprint.examStructure.questionCount,
-            difficulty: bossBlueprint.examStructure.difficultyBand,
+            difficulty: (bossBlueprint.examStructure as any).difficultyBand || (levelNumber === 10 ? "intermediate-advanced" : levelNumber === 30 || levelNumber === 40 ? "expert" : "advanced"),
             passMark,
             timeLimitSec: timeLimit * 60,
             isBoss: true,
-            bossWeighting: bossBlueprint.scoring.weighting,
+            bossWeighting: levelNumber === 40 
+              ? { judgement: LEVEL_40_BOSS_BLUEPRINT.scoring.multipliers.judgementTag, fourPlusDomains: LEVEL_40_BOSS_BLUEPRINT.scoring.multipliers.fourPlusDomains, longHorizonConsequence: LEVEL_40_BOSS_BLUEPRINT.scoring.multipliers.longHorizonConsequence }
+              : levelNumber === 30
+              ? { multiConcept: LEVEL_30_BOSS_BLUEPRINT.scoring.weighting.multiConcept, judgement: LEVEL_30_BOSS_BLUEPRINT.scoring.weighting.judgement, multiDomain: LEVEL_30_BOSS_BLUEPRINT.scoring.weighting.multiDomain }
+              : levelNumber === 20
+              ? { multiConcept: LEVEL_20_BOSS_BLUEPRINT.scoring.weighting.multiConcept, judgement: LEVEL_20_BOSS_BLUEPRINT.scoring.weighting.judgement }
+              : (bossBlueprint.scoring as any).weighting || { multiConcept: 1.2 },
             generatedAt: new Date().toISOString(),
           },
         },
@@ -501,11 +510,17 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
           systemPromptSnapshot: systemPrompt,
           generationConfig: {
             questionCount: bossBlueprint.examStructure.questionCount,
-            difficulty: bossBlueprint.examStructure.difficultyBand,
+            difficulty: (bossBlueprint.examStructure as any).difficultyBand || (levelNumber === 10 ? "intermediate-advanced" : levelNumber === 30 || levelNumber === 40 ? "expert" : "advanced"),
             passMark,
             timeLimitSec: timeLimit * 60,
             isBoss: true,
-            bossWeighting: bossBlueprint.scoring.weighting,
+            bossWeighting: levelNumber === 40 
+              ? { judgement: LEVEL_40_BOSS_BLUEPRINT.scoring.multipliers.judgementTag, fourPlusDomains: LEVEL_40_BOSS_BLUEPRINT.scoring.multipliers.fourPlusDomains, longHorizonConsequence: LEVEL_40_BOSS_BLUEPRINT.scoring.multipliers.longHorizonConsequence }
+              : levelNumber === 30
+              ? { multiConcept: LEVEL_30_BOSS_BLUEPRINT.scoring.weighting.multiConcept, judgement: LEVEL_30_BOSS_BLUEPRINT.scoring.weighting.judgement, multiDomain: LEVEL_30_BOSS_BLUEPRINT.scoring.weighting.multiDomain }
+              : levelNumber === 20
+              ? { multiConcept: LEVEL_20_BOSS_BLUEPRINT.scoring.weighting.multiConcept, judgement: LEVEL_20_BOSS_BLUEPRINT.scoring.weighting.judgement }
+              : (bossBlueprint.scoring as any).weighting || { multiConcept: 1.2 },
             generatedAt: new Date().toISOString(),
           },
           questions: generatedExam,
@@ -517,7 +532,7 @@ async function regenerateBossExam(levelNumber: number): Promise<GenerationResult
       levelNumber,
       success: true,
       questionCount: generatedExam.questions.length,
-      distribution: distribution.distribution,
+      distribution: distribution.distribution as { A: number; B: number; C: number; D: number; total: number },
       bPercentage: (distribution.distribution.B / distribution.distribution.total) * 100,
     };
   } catch (error: any) {
@@ -647,7 +662,7 @@ async function regenerateAllExams() {
         B: acc.B + dist.B,
         C: acc.C + dist.C,
         D: acc.D + dist.D,
-        total: acc.total + dist.total,
+        total: acc.total + (dist.total || dist.A + dist.B + dist.C + dist.D),
       }),
       { A: 0, B: 0, C: 0, D: 0, total: 0 }
     );

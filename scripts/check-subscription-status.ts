@@ -59,7 +59,7 @@ async function checkAndFixSubscription(email: string) {
           const stripeSub = subscriptions.data[0];
           console.log(`  Stripe Subscription Status: ${stripeSub.status}`);
           console.log(`  Stripe Subscription ID: ${stripeSub.id}`);
-          console.log(`  Current Period End: ${new Date(stripeSub.current_period_end * 1000).toISOString()}\n`);
+          console.log(`  Current Period End: ${new Date((stripeSub as any).current_period_end * 1000).toISOString()}\n`);
 
           const isActive = stripeSub.status === "active" || stripeSub.status === "trialing";
 
@@ -72,8 +72,8 @@ async function checkAndFixSubscription(email: string) {
               data: {
                 status: stripeSub.status,
                 stripeSubscriptionId: stripeSub.id,
-                currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
-                currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
+                currentPeriodStart: new Date((stripeSub as any).current_period_start * 1000),
+                currentPeriodEnd: new Date((stripeSub as any).current_period_end * 1000),
                 planType: stripeSub.items.data[0]?.price.recurring?.interval || "monthly",
               },
             });

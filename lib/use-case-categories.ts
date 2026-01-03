@@ -23,6 +23,8 @@ export interface UseCaseScenario {
     frameworks?: string[];
     stakeholders?: string[];
     impact?: string;
+    riskAreas?: string[];
+    jurisdiction?: string;
   };
   templateDescription: string;
 }

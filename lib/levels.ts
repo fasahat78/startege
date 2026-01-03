@@ -9,6 +9,7 @@ export interface LevelConfig {
   timeLimit: number; // in minutes
   passingScore: number; // percentage
   basePoints: number;
+  isBoss?: boolean; // Optional flag for boss levels
 }
 
 export const LEVEL_CONFIGS: LevelConfig[] = [

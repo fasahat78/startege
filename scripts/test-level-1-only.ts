@@ -76,7 +76,7 @@ async function testLevel1() {
     
     console.log(`\n📋 Question Plan (${questionPlan.length} questions):`);
     questionPlan.forEach((p, i) => {
-      const concept = concepts.find((c) => c.id === p.primaryConceptId);
+      const concept = concepts.find((c: any) => c.id === p.primaryConceptId);
       const name = concept?.name || concept?.concept || p.primaryConceptId;
       console.log(`   Q${i + 1}: ${name} (${p.primaryConceptId})`);
     });

@@ -12,6 +12,9 @@
  * Output: Pass/fail report with common failure reasons and sample payloads
  */
 
+import * as path from 'path';
+import * as fs from 'fs';
+
 import { prisma } from "../lib/db";
 import { generateExamQuestions } from "../lib/chatgpt";
 import { EXAM_BASE_PROMPT, composeCategoryExamPrompt } from "../lib/exam-prompts";

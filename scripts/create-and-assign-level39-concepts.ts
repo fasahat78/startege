@@ -264,9 +264,14 @@ async function main() {
       continue;
     }
 
-    const domainName = category.domain.name;
-
-    const categoryRecord = await findOrCreateCategory(domainName, categoryName);
+    const categoryDomainName = category.domain.name;
+    const categoryDomainId = domainMap.get(categoryDomainName);
+    
+    const domainName = categoryDomainId ? categoryDomainName : "Domain 1";
+    const categoryRecord = await findOrCreateCategory(
+      domainName,
+      categoryName
+    );
 
     // Check if coverage already exists
     const existing = await (prisma as any).levelCategoryCoverage.findFirst({

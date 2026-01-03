@@ -14,11 +14,8 @@ async function backfillAllEmbeddings() {
   console.log('📰 Phase 1: Backfilling Article Embeddings');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
   try {
-    const { default: backfillArticles } = await import('./backfill-article-embeddings');
-    // Note: The script runs itself, so we just import it
-    // Actually, we need to call the function differently
-    const articleModule = await import('./backfill-article-embeddings');
-    // Since the script runs on import, we'll just import sequentially
+    // Note: The script runs itself on import, so we just import it
+    await import('./backfill-article-embeddings');
   } catch (error: any) {
     console.error('❌ Article backfill failed:', error.message);
   }

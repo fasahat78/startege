@@ -141,9 +141,9 @@ export default function SettingsClient() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <SkeletonCard />
-        <SkeletonCard />
-        <SkeletonCard />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-32 w-full" />
       </div>
     );
   }

@@ -119,15 +119,15 @@ function main() {
   console.log("-".repeat(80));
 
   const monthlySub = products.find((p: ProductRow) => 
-    p.Name?.includes("Monthly") || p["planType (metadata)"] === "monthly"
+    p.name?.includes("Monthly") || (p as any)["planType (metadata)"] === "monthly"
   );
   const annualSub = products.find((p: ProductRow) => 
-    p.Name?.includes("Annual") || p["planType (metadata)"] === "annual"
+    p.name?.includes("Annual") || (p as any)["planType (metadata)"] === "annual"
   );
 
   if (monthlySub) {
     const monthlyPrice = prices.find((p: PriceRow) => p.productId === monthlySub.id);
-    console.log(`\n✅ Monthly Subscription: ${monthlySub.Name}`);
+    console.log(`\n✅ Monthly Subscription: ${monthlySub.name}`);
     
     if (monthlyPrice) {
       const price = parseFloat(monthlyPrice.amount);
@@ -146,7 +146,7 @@ function main() {
       }
     }
 
-    const creditsMeta = monthlySub["credits (metadata)"] || monthlySub.credits;
+    const creditsMeta = (monthlySub as any)["credits (metadata)"] || monthlySub.credits;
     if (creditsMeta === "1000" || creditsMeta === "1000") {
       console.log(`   ✅ Credits metadata: ${creditsMeta} (correct)`);
     } else {
@@ -160,7 +160,7 @@ function main() {
 
   if (annualSub) {
     const annualPrice = prices.find((p: PriceRow) => p.productId === annualSub.id);
-    console.log(`\n✅ Annual Subscription: ${annualSub.Name}`);
+    console.log(`\n✅ Annual Subscription: ${annualSub.name}`);
     
     if (annualPrice) {
       const price = parseFloat(annualPrice.amount);
@@ -209,13 +209,13 @@ function main() {
 
   const creditBundles = {
     small: products.find((p: ProductRow) => 
-      p.Name?.includes("Small") || p["bundle (metadata)"] === "small"
+      p.name?.includes("Small") || (p as any)["bundle (metadata)"] === "small"
     ),
     standard: products.find((p: ProductRow) => 
-      p.Name?.includes("Standard") || p["bundle (metadata)"] === "standard"
+      p.name?.includes("Standard") || (p as any)["bundle (metadata)"] === "standard"
     ),
     large: products.find((p: ProductRow) => 
-      p.Name?.includes("Large") || p["bundle (metadata)"] === "large"
+      p.name?.includes("Large") || (p as any)["bundle (metadata)"] === "large"
     ),
   };
 
@@ -229,7 +229,7 @@ function main() {
     const expected = EXPECTED.creditBundles[bundleType as keyof typeof EXPECTED.creditBundles];
     const price = prices.find((p: PriceRow) => p.productId === product.id);
     
-    console.log(`\n✅ ${bundleType.charAt(0).toUpperCase() + bundleType.slice(1)} Credits: ${product.Name}`);
+    console.log(`\n✅ ${bundleType.charAt(0).toUpperCase() + bundleType.slice(1)} Credits: ${product.name}`);
     
     if (price) {
       const priceAmount = parseFloat(price.amount);

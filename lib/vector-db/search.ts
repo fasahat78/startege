@@ -94,7 +94,7 @@ export async function semanticSearch(
       
       // Extract datapoint IDs
       const datapointIds = neighbors
-        .map(n => n.datapoint?.datapointId)
+        .map((n: any) => n.datapoint?.datapointId)
         .filter(Boolean) as string[];
       
       if (datapointIds.length === 0) {

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+export const dynamic = 'force-dynamic';
+
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn, getIdToken, signInWithGoogle, signInWithApple } from "@/lib/firebase-auth";
@@ -13,7 +15,7 @@ if (typeof window !== "undefined") {
   PersistentLogger.init();
 }
 
-export default function SignInFirebasePage() {
+function SignInFirebaseContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/dashboard";
@@ -376,6 +378,22 @@ export default function SignInFirebasePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignInFirebasePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-muted px-4">
+        <div className="max-w-md w-full bg-card rounded-lg shadow-card p-8 border-2 border-border">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-card-foreground mb-2">Loading...</h1>
+          </div>
+        </div>
+      </div>
+    }>
+      <SignInFirebaseContent />
+    </Suspense>
   );
 }
 

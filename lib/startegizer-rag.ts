@@ -7,6 +7,7 @@
  */
 
 import { prisma } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 
 export interface RAGDocument {
   id: string;
@@ -52,11 +53,11 @@ async function searchMarketScanKeyword(
       where: {
         sourceType: { not: 'STANDARD' },
         OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-          { summary: { contains: query, mode: 'insensitive' } },
-          { content: { contains: query, mode: 'insensitive' } },
-          ...searchTerms.map(term => ({ title: { contains: term, mode: 'insensitive' } })),
-          ...searchTerms.map(term => ({ summary: { contains: term, mode: 'insensitive' } })),
+          { title: { contains: query, mode: Prisma.QueryMode.insensitive } },
+          { summary: { contains: query, mode: Prisma.QueryMode.insensitive } },
+          { content: { contains: query, mode: Prisma.QueryMode.insensitive } },
+          ...searchTerms.map(term => ({ title: { contains: term, mode: Prisma.QueryMode.insensitive } })),
+          ...searchTerms.map(term => ({ summary: { contains: term, mode: Prisma.QueryMode.insensitive } })),
           { keyTopics: { hasSome: searchTerms } },
           { affectedFrameworks: { hasSome: searchTerms } },
         ],
@@ -122,11 +123,11 @@ async function searchStandardsKeyword(
       where: {
         sourceType: 'STANDARD',
         OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-          { summary: { contains: query, mode: 'insensitive' } },
-          { content: { contains: query, mode: 'insensitive' } },
-          ...searchTerms.map(term => ({ title: { contains: term, mode: 'insensitive' } })),
-          ...searchTerms.map(term => ({ summary: { contains: term, mode: 'insensitive' } })),
+          { title: { contains: query, mode: Prisma.QueryMode.insensitive } },
+          { summary: { contains: query, mode: Prisma.QueryMode.insensitive } },
+          { content: { contains: query, mode: Prisma.QueryMode.insensitive } },
+          ...searchTerms.map(term => ({ title: { contains: term, mode: Prisma.QueryMode.insensitive } })),
+          ...searchTerms.map(term => ({ summary: { contains: term, mode: Prisma.QueryMode.insensitive } })),
           { keyTopics: { hasSome: searchTerms } },
           { affectedFrameworks: { hasSome: searchTerms } },
         ],

@@ -267,7 +267,7 @@ async function main() {
       domainId = category.domainId;
     } else {
       // Default to Domain 1 for Mastery Integration & Governance Coherence
-      domainId = domainMap.get("Domain 1");
+      domainId = domainMap.get("Domain 1") as string | undefined;
     }
 
     if (!domainId) {
@@ -275,8 +275,9 @@ async function main() {
       continue;
     }
 
+    const domainName = (Array.from(domainMap.entries()).find(([_, id]) => id === domainId)?.[0] as string) || "Domain 1";
     const categoryRecord = await findOrCreateCategory(
-      Array.from(domainMap.entries()).find(([_, id]) => id === domainId)?.[0] || "Domain 1",
+      domainName,
       categoryName
     );
 
@@ -316,9 +317,13 @@ async function main() {
       continue;
     }
 
-    const domainName = category.domain.name;
-
-    const categoryRecord = await findOrCreateCategory(domainName, categoryName);
+    const categoryDomainName = category.domain.name;
+    const categoryDomainId = domainMap.get(categoryDomainName);
+    
+    const domainName = categoryDomainId ? categoryDomainName : "Domain 1";
+    const categoryRecord = await findOrCreateCategory(
+      domainName,
+      categoryName);
 
     // Check if coverage already exists
     const existing = await (prisma as any).levelCategoryCoverage.findFirst({

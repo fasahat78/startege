@@ -1,4 +1,6 @@
 // Check if route file imports work
+export {}; // Make this file a module
+
 console.log("Testing route file imports...");
 
 try {

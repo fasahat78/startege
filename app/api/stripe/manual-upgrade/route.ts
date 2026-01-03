@@ -66,15 +66,26 @@ export async function POST() {
       );
     }
 
-    // TypeScript narrowing: stripeSubscription is now definitely StripeSubscription
-    const stripeSubData: StripeSubscription = stripeSubscription;
+    // TypeScript narrowing: stripeSubscription is now definitely Stripe.Subscription
+    // Access properties directly from stripeSubscription to avoid type inference issues
+    // Extract all needed values before any Prisma operations
+    const stripeSub = stripeSubscription as Stripe.Subscription;
+    const status = stripeSub.status;
+    const subscriptionId = stripeSub.id;
+    const customerId = stripeSub.customer as string;
+    const stripeInterval = stripeSub.items.data[0]?.price.recurring?.interval || "month";
+    
+    // Extract period timestamps using bracket notation to bypass type checking
+    const periodStartTimestamp = (stripeSub as any).current_period_start as number;
+    const periodEndTimestamp = (stripeSub as any).current_period_end as number;
+    const periodStart = new Date(periodStartTimestamp * 1000);
+    const periodEnd = new Date(periodEndTimestamp * 1000);
 
     // Check if subscription is active in Stripe
-    const isActive = stripeSubData.status === "active" || stripeSubData.status === "trialing";
+    const isActive = status === "active" || status === "trialing";
 
     if (isActive) {
       // Normalize Stripe interval to our planType format
-      const stripeInterval = stripeSubData.items.data[0]?.price.recurring?.interval || "month";
       const normalizedPlanType = stripeInterval === "year" ? "annual" : stripeInterval === "month" ? "monthly" : "monthly";
 
       // Update database subscription status
@@ -82,25 +93,24 @@ export async function POST() {
         await prisma.subscription.update({
           where: { userId: user.id },
           data: {
-            status: stripeSubData.status,
-            stripeSubscriptionId: stripeSubData.id,
-            currentPeriodStart: new Date(stripeSubData.current_period_start * 1000),
-            currentPeriodEnd: new Date(stripeSubData.current_period_end * 1000),
+            status,
+            stripeSubscriptionId: subscriptionId,
+            currentPeriodStart: periodStart,
+            currentPeriodEnd: periodEnd,
             planType: normalizedPlanType,
           },
         });
       } else {
         // Create subscription record if it doesn't exist
-        const customerId = stripeSubData.customer as string;
         await prisma.subscription.create({
           data: {
             userId: user.id,
             stripeCustomerId: customerId,
-            stripeSubscriptionId: stripeSub.id,
-            status: stripeSub.status,
+            stripeSubscriptionId: subscriptionId,
+            status,
             planType: normalizedPlanType,
-            currentPeriodStart: new Date((stripeSub as Stripe.Subscription).current_period_start * 1000),
-            currentPeriodEnd: new Date((stripeSub as Stripe.Subscription).current_period_end * 1000),
+            currentPeriodStart: periodStart,
+            currentPeriodEnd: periodEnd,
           },
         });
       }
@@ -147,15 +157,15 @@ export async function POST() {
         success: true,
         message: "Premium status updated",
         subscriptionTier: "premium",
-        stripeStatus: stripeSubData.status,
+        stripeStatus: status,
       });
     }
 
     return NextResponse.json({
       success: false,
-      message: `Subscription status: ${stripeSubData.status}`,
+      message: `Subscription status: ${status}`,
       dbStatus: dbSubscription?.status,
-      stripeStatus: stripeSubData.status,
+      stripeStatus: status,
     });
   } catch (error: any) {
     console.error("Manual upgrade error:", error);

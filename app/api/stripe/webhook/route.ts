@@ -185,13 +185,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   if (session.mode === "subscription" && session.subscription) {
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
-    );
-    subscriptionData.currentPeriodStart = new Date(
-      subscription.current_period_start * 1000
-    );
-    subscriptionData.currentPeriodEnd = new Date(
-      subscription.current_period_end * 1000
-    );
+    ) as Stripe.Subscription;
+    // Extract period timestamps using type assertion to avoid Prisma Subscription type conflict
+    const periodStartTimestamp = (subscription as any).current_period_start as number;
+    const periodEndTimestamp = (subscription as any).current_period_end as number;
+    subscriptionData.currentPeriodStart = new Date(periodStartTimestamp * 1000);
+    subscriptionData.currentPeriodEnd = new Date(periodEndTimestamp * 1000);
   }
 
   // Normalize planType: "year" → "annual" for consistency
@@ -286,9 +285,9 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       stripeSubscriptionId: subscription.id,
       stripePriceId: subscription.items.data[0]?.price.id,
       status,
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-      cancelAtPeriodEnd: subscription.cancel_at_period_end || false,
+      currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+      currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+      cancelAtPeriodEnd: (subscription as any).cancel_at_period_end || false,
       planType: newPlanType,
     },
   });
@@ -421,17 +420,18 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   }
 
   // Record payment
-  if (invoice.payment_intent) {
+  const invoiceData = invoice as any;
+  if (invoiceData.payment_intent) {
     await (prisma as any).payment.create({
       data: {
         userId: dbSubscription.userId,
-        stripePaymentId: invoice.payment_intent as string,
-        amount: invoice.amount_paid,
-        currency: invoice.currency,
+        stripePaymentId: invoiceData.payment_intent as string,
+        amount: invoiceData.amount_paid,
+        currency: invoiceData.currency,
         status: "succeeded",
-        planType: invoice.subscription
+        planType: invoiceData.subscription
           ? "subscription"
-          : invoice.lines.data[0]?.price?.metadata?.planType || null,
+          : invoiceData.lines.data[0]?.price?.metadata?.planType || null,
       },
     });
   }
@@ -453,17 +453,18 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
   }
 
   // Record failed payment
-  if (invoice.payment_intent) {
+  const invoiceDataFailed = invoice as any;
+  if (invoiceDataFailed.payment_intent) {
     await (prisma as any).payment.create({
       data: {
         userId: dbSubscription.userId,
-        stripePaymentId: invoice.payment_intent as string,
-        amount: invoice.amount_due,
-        currency: invoice.currency,
+        stripePaymentId: invoiceDataFailed.payment_intent as string,
+        amount: invoiceDataFailed.amount_due,
+        currency: invoiceDataFailed.currency,
         status: "failed",
-        planType: invoice.subscription
+        planType: invoiceDataFailed.subscription
           ? "subscription"
-          : invoice.lines.data[0]?.price?.metadata?.planType || null,
+          : invoiceDataFailed.lines.data[0]?.price?.metadata?.planType || null,
       },
     });
   }
