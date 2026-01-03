@@ -110,6 +110,7 @@ Enable these APIs one by one:
      - **Cloud Run Admin** (`roles/run.admin`)
      - **Service Account User** (`roles/iam.serviceAccountUser`)
      - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
+     - **Artifact Registry Writer** (`roles/artifactregistry.writer`) - **REQUIRED** for deploying from source
      - **Storage Admin** (`roles/storage.admin`) - if using Cloud Storage
    - Click **"CONTINUE"**
 
