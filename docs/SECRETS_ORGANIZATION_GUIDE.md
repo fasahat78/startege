@@ -77,8 +77,8 @@ Create one secret with all Firebase config:
 ### Use Secrets Manager For (Actual Secrets):
 ✅ `startege-database-url` → `DATABASE_URL`  
 ✅ `startege-firebase-service-account` → `FIREBASE_SERVICE_ACCOUNT_KEY`  
-✅ `startege-stripe-secret-key` → `STRIPE_SECRET_KEY`  
-✅ `startege-stripe-webhook-secret` → `STRIPE_WEBHOOK_SECRET`  
+✅ `startege-stripe-secret-key` → `STRIPE_SECRET_KEY` (private key, must be secret)  
+✅ `startege-stripe-webhook-secret` → `STRIPE_WEBHOOK_SECRET` (webhook signing secret, must be secret)  
 ✅ `startege-openai-api-key` → `OPENAI_API_KEY`  
 ✅ Any other **private** API keys or credentials  
 
@@ -90,12 +90,18 @@ Create one secret with all Firebase config:
 ✅ `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`  
 ✅ `NEXT_PUBLIC_FIREBASE_APP_ID`  
 ✅ `NEXT_PUBLIC_APP_URL`  
-✅ `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`  
+✅ `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (public key, safe to expose)  
 ✅ `NEXT_PUBLIC_GCP_PROJECT_ID`  
 ✅ `NEXT_PUBLIC_GCP_LOCATION`  
 ✅ `NEXT_PUBLIC_GA_MEASUREMENT_ID`  
 ✅ `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`  
 ✅ `NEXT_PUBLIC_SENTRY_DSN`  
+✅ `STRIPE_PRICE_MONTHLY` (price ID, not secret)  
+✅ `STRIPE_PRICE_ANNUAL` (price ID, not secret)  
+✅ `STRIPE_PRICE_LIFETIME` (price ID, not secret)  
+✅ `STRIPE_PRICE_CREDITS_SMALL` (price ID, not secret)  
+✅ `STRIPE_PRICE_CREDITS_STANDARD` (price ID, not secret)  
+✅ `STRIPE_PRICE_CREDITS_LARGE` (price ID, not secret)  
 
 ## Summary
 
