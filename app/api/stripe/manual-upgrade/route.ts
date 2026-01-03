@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/db";
+import Stripe from "stripe";
+
+// Type alias to avoid conflict with Prisma Subscription model
+type StripeSubscription = Stripe.Subscription;
 
 /**
  * Manual upgrade endpoint (for testing/debugging)
@@ -26,7 +30,7 @@ export async function POST() {
     });
 
     // If no subscription record, check Stripe directly by customer ID
-    let stripeSubscription = null;
+    let stripeSubscription: StripeSubscription | null = null;
     if (dbSubscription?.stripeCustomerId) {
       try {
         // Get all subscriptions for this customer
@@ -54,12 +58,23 @@ export async function POST() {
       }
     }
 
+    // Check if subscription exists
+    if (!stripeSubscription) {
+      return NextResponse.json(
+        { error: "No active subscription found in Stripe" },
+        { status: 404 }
+      );
+    }
+
+    // TypeScript narrowing: stripeSubscription is now definitely StripeSubscription
+    const stripeSubData: StripeSubscription = stripeSubscription;
+
     // Check if subscription is active in Stripe
-    const isActive = stripeSubscription?.status === "active" || stripeSubscription?.status === "trialing";
+    const isActive = stripeSubData.status === "active" || stripeSubData.status === "trialing";
 
     if (isActive) {
       // Normalize Stripe interval to our planType format
-      const stripeInterval = stripeSubscription.items.data[0]?.price.recurring?.interval || "month";
+      const stripeInterval = stripeSubData.items.data[0]?.price.recurring?.interval || "month";
       const normalizedPlanType = stripeInterval === "year" ? "annual" : stripeInterval === "month" ? "monthly" : "monthly";
 
       // Update database subscription status
@@ -67,25 +82,25 @@ export async function POST() {
         await prisma.subscription.update({
           where: { userId: user.id },
           data: {
-            status: stripeSubscription.status,
-            stripeSubscriptionId: stripeSubscription.id,
-            currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-            currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+            status: stripeSubData.status,
+            stripeSubscriptionId: stripeSubData.id,
+            currentPeriodStart: new Date(stripeSubData.current_period_start * 1000),
+            currentPeriodEnd: new Date(stripeSubData.current_period_end * 1000),
             planType: normalizedPlanType,
           },
         });
       } else {
         // Create subscription record if it doesn't exist
-        const customerId = stripeSubscription.customer as string;
+        const customerId = stripeSubData.customer as string;
         await prisma.subscription.create({
           data: {
             userId: user.id,
             stripeCustomerId: customerId,
-            stripeSubscriptionId: stripeSubscription.id,
-            status: stripeSubscription.status,
+            stripeSubscriptionId: stripeSub.id,
+            status: stripeSub.status,
             planType: normalizedPlanType,
-            currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-            currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+            currentPeriodStart: new Date((stripeSub as Stripe.Subscription).current_period_start * 1000),
+            currentPeriodEnd: new Date((stripeSub as Stripe.Subscription).current_period_end * 1000),
           },
         });
       }
@@ -132,17 +147,15 @@ export async function POST() {
         success: true,
         message: "Premium status updated",
         subscriptionTier: "premium",
-        stripeStatus: stripeSubscription.status,
+        stripeStatus: stripeSubData.status,
       });
     }
 
     return NextResponse.json({
       success: false,
-      message: stripeSubscription 
-        ? `Subscription status: ${stripeSubscription.status}` 
-        : "No active subscription found in Stripe",
+      message: `Subscription status: ${stripeSubData.status}`,
       dbStatus: dbSubscription?.status,
-      stripeStatus: stripeSubscription?.status,
+      stripeStatus: stripeSubData.status,
     });
   } catch (error: any) {
     console.error("Manual upgrade error:", error);

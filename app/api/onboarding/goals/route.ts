@@ -66,10 +66,20 @@ export async function POST(request: Request) {
       });
     }
 
+    // Ensure profile exists (TypeScript narrowing)
+    if (!profile) {
+      return NextResponse.json(
+        { error: "Failed to create user profile" },
+        { status: 500 }
+      );
+    }
+
+    const profileId = profile.id; // Store id to avoid null check issues
+
     // Delete existing goals (using profile.id)
     // @ts-ignore - Prisma types not fully recognized by TypeScript yet
     await prisma.userGoal.deleteMany({
-      where: { userId: profile.id },
+      where: { userId: profileId },
     });
 
     // Create new goals (using profile.id)
@@ -77,7 +87,7 @@ export async function POST(request: Request) {
       // @ts-ignore - Prisma types not fully recognized by TypeScript yet
       await prisma.userGoal.createMany({
         data: goals.map((goal) => ({
-          userId: profile.id,
+          userId: profileId,
           goal,
         })),
       });

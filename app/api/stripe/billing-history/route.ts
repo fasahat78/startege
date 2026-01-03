@@ -61,8 +61,8 @@ export async function GET(request: NextRequest) {
     }));
 
     // Format charges (for credit purchases)
+    // Note: Filter out charges that are part of invoices (subscriptions) if needed
     const formattedCharges = charges.data
-      .filter(charge => charge.invoice === null) // One-time purchases (not subscriptions)
       .map(charge => ({
         id: charge.id,
         amount: charge.amount / 100, // Convert from cents

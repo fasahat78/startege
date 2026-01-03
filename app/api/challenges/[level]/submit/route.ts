@@ -133,7 +133,7 @@ export async function POST(
         passedAt: passed ? new Date() : undefined,
         bestScore: percentage,
         attemptsCount: 1,
-        status: passed ? "PASSED" : "IN_PROGRESS",
+        status: passed ? "PASSED" : "AVAILABLE",
       },
       update: {
         attemptsCount: {
@@ -153,7 +153,7 @@ export async function POST(
             )
           : undefined,
         passedAt: passed ? new Date() : undefined,
-        status: passed ? "PASSED" : "IN_PROGRESS",
+        status: passed ? "PASSED" : "AVAILABLE",
       },
     });
 
@@ -202,24 +202,10 @@ export async function POST(
         create: {
           userId: user.id,
           totalPoints,
-          pointsHistory: [
-            {
-              points: totalPoints,
-              reason: `Level ${attempt.challenge.levelNumber || attempt.challenge.level} completion`,
-              timestamp: new Date().toISOString(),
-            },
-          ],
         },
         update: {
           totalPoints: {
             increment: totalPoints,
-          },
-          pointsHistory: {
-            push: {
-              points: totalPoints,
-              reason: `Level ${attempt.challenge.levelNumber || attempt.challenge.level} completion`,
-              timestamp: new Date().toISOString(),
-            },
           },
         },
       });

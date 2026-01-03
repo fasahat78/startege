@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 import { prisma } from "@/lib/db";
-import { generateResponse, isGeminiConfigured } from "@/lib/gemini";
+import { generateResponse, isGeminiConfigured, ChatMessage } from "@/lib/gemini";
 import { buildFullPrompt } from "@/lib/startegizer-prompts";
 import { deductCredits, checkCreditBalance } from "@/lib/ai-credits";
 import { retrieveRAGContext, generateCitations } from "@/lib/startegizer-rag";
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     }
 
     // Get conversation history if conversationId exists
-    let conversationHistory: Array<{ role: string; content: string }> = [];
+    let conversationHistory: ChatMessage[] = [];
     if (conversationId) {
       const conversation = await prisma.agentConversation.findUnique({
         where: { id: conversationId, userId: user.id },
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
         conversationHistory = (conversation.messages as any[])
           .filter((msg) => msg.role === "user" || msg.role === "assistant")
           .map((msg) => ({
-            role: msg.role,
+            role: msg.role as "user" | "assistant",
             content: msg.content,
           }));
       }

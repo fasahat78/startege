@@ -41,7 +41,7 @@ export async function GET(
     }
 
     // Verify attempt belongs to user
-    if (attempt.userId !== user.id) {
+    if (attempt.userId !== session.user.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 403 }

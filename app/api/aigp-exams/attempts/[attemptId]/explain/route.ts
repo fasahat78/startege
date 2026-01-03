@@ -86,11 +86,15 @@ export async function POST(
   }
   
   // Build context for Startegizer
+  const optionsText = question.options && Array.isArray(question.options)
+    ? question.options.map((opt: any) => `  ${opt.key}. ${opt.text}`).join('\n')
+    : 'No options available';
+
   const questionContext = `
 Question: ${question.question}
 
 Options:
-${question.options.map((opt: any) => `  ${opt.key}. ${opt.text}`).join('\n')}
+${optionsText}
 
 Correct Answer: ${question.correctAnswer}
 Your Answer: ${answer?.selectedAnswer || 'Not answered'}

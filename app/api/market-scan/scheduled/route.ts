@@ -64,8 +64,9 @@ export async function POST(request: NextRequest) {
     const result = await runDailyScan();
 
     console.log('[SCHEDULED_SCAN] Scan completed:', {
-      found: result.found,
-      added: result.added,
+      articlesFound: result.articlesFound,
+      articlesAdded: result.articlesAdded,
+      articlesProcessed: result.articlesProcessed,
       errors: result.errors,
       scanJobId: result.scanJobId,
     });
@@ -75,8 +76,9 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Market scan completed',
       result: {
-        found: result.found,
-        added: result.added,
+        articlesFound: result.articlesFound,
+        articlesAdded: result.articlesAdded,
+        articlesProcessed: result.articlesProcessed,
         errors: result.errors,
         scanJobId: result.scanJobId,
         timestamp: new Date().toISOString(),

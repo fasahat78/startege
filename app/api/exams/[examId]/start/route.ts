@@ -983,7 +983,7 @@ Generate exactly ` + questionCount + ` questions that test understanding of all 
 
       // Determine pass mark (higher for boss exams)
       const passMark = isBossExam && bossBlueprint
-        ? bossBlueprint.scoring.passingScore || bossBlueprint.scoring.passMark
+        ? ('passMark' in bossBlueprint.scoring ? bossBlueprint.scoring.passMark : ('passingScore' in bossBlueprint.scoring ? bossBlueprint.scoring.passingScore : 75))
         : (exam.levelNumber === 10 ? 75 : exam.levelNumber === 20 ? 75 : exam.levelNumber === 30 ? 80 : exam.levelNumber === 40 ? 85 : 70);
 
       // Store generated questions in Exam

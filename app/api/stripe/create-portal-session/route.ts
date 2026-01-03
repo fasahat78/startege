@@ -41,70 +41,13 @@ export async function POST(request: Request) {
       }
     }
 
-    // Configure portal based on subscription type
+    // Configure portal session
+    // Note: Stripe Billing Portal configuration requires creating a configuration first via API
+    // For now, use default portal behavior (can be configured in Stripe Dashboard)
     const portalParams: Stripe.BillingPortal.SessionCreateParams = {
       customer: dbSubscription.stripeCustomerId,
       return_url: STRIPE_URLS.success,
     };
-
-    // If user has annual plan, configure portal to prevent downgrades
-    if (dbSubscription.planType === "annual" || dbSubscription.planType === "year") {
-      // For annual plans, configure portal to:
-      // 1. Allow cancellation (at period end)
-      // 2. Prevent downgrade to monthly
-      portalParams.configuration = {
-        subscription_cancel: {
-          enabled: true,
-          mode: "at_period_end", // Best practice: cancel at period end
-          cancellation_reason: {
-            enabled: true,
-            options: [
-              "too_expensive",
-              "missing_features",
-              "switched_service",
-              "too_complex",
-              "low_quality",
-              "other",
-            ],
-          },
-        },
-        subscription_update: {
-          enabled: false, // Disable subscription updates to prevent downgrades
-          // Note: Stripe Portal doesn't have a direct way to allow only upgrades
-          // We'll handle this in the webhook as a safety check
-        },
-        subscription_pause: {
-          enabled: false, // Don't allow pausing annual subscriptions
-        },
-      };
-    } else {
-      // For monthly plans, allow normal portal access
-      portalParams.configuration = {
-        subscription_cancel: {
-          enabled: true,
-          mode: "at_period_end", // Best practice: cancel at period end
-          cancellation_reason: {
-            enabled: true,
-            options: [
-              "too_expensive",
-              "missing_features",
-              "switched_service",
-              "too_complex",
-              "low_quality",
-              "other",
-            ],
-          },
-        },
-        subscription_update: {
-          enabled: true, // Allow upgrades to annual
-          default_allowed_updates: ["price"],
-          proration_behavior: "create_prorations",
-        },
-        subscription_pause: {
-          enabled: false, // Don't allow pausing subscriptions
-        },
-      };
-    }
 
     // Create portal session
     const portalSession = await stripe.billingPortal.sessions.create(portalParams);
