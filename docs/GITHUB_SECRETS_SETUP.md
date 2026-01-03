@@ -64,11 +64,12 @@ gh secret set NEXT_PUBLIC_FIREBASE_API_KEY --body "your-api-key"
 - [ ] `GCP_LOCATION`
 - [ ] `NEXT_PUBLIC_GCP_PROJECT_ID`
 - [ ] `NEXT_PUBLIC_GCP_LOCATION`
-- [ ] `GCS_BUCKET_NAME`
-- [ ] `VECTOR_SEARCH_INDEX_ID`
-- [ ] `VECTOR_SEARCH_ENDPOINT_ID`
-- [ ] `VECTOR_SEARCH_DEPLOYMENT_ID`
+- [ ] `GCS_BUCKET_NAME` (recommended: `startege-storage` or `startege-{project-id}-storage`)
+- [ ] `VECTOR_SEARCH_INDEX_ID` (recommended: `startege-vector-index`)
+- [ ] `VECTOR_SEARCH_ENDPOINT_ID` (recommended: `startege-vector-endpoint`)
+- [ ] `VECTOR_SEARCH_DEPLOYMENT_ID` (recommended: `startege-vector-deployment`)
 - [ ] `CLOUD_SCHEDULER_SECRET_KEY`
+- [ ] `GCP_SA_KEY` (service account JSON for `startege-github-actions-deploy`)
 
 ### ✅ Application
 - [ ] `NEXT_PUBLIC_APP_URL`

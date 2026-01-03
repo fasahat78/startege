@@ -21,7 +21,7 @@ Go to: https://console.cloud.google.com/apis/library
 
 Go to: https://console.cloud.google.com/iam-admin/serviceaccounts
 
-- [ ] Service account created: `github-actions-deploy`
+- [ ] Service account created: `startege-github-actions-deploy`
 - [ ] Role assigned: Cloud Run Admin
 - [ ] Role assigned: Service Account User
 - [ ] Role assigned: Cloud Build Editor

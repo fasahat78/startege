@@ -8,6 +8,19 @@ This guide covers deploying Startege to Google Cloud Run via GitHub Actions usin
 2. **GitHub Repository** with code pushed (✅ Done)
 3. **GitHub Secrets** configured (see `GITHUB_SECRETS_SETUP.md`)
 
+## Naming Conventions
+
+All GCP resources use the `startege-` prefix to differentiate from other projects:
+
+- **Service Account**: `startege-github-actions-deploy`
+- **Cloud Run Service**: `startege`
+- **Cloud SQL Instance**: `startege-db`
+- **Database Name**: `startege`
+- **Storage Bucket**: `startege-storage` or `startege-{project-id}-storage` (if using)
+- **Vector Search Index**: `startege-vector-index` (if using)
+- **Vector Search Endpoint**: `startege-vector-endpoint` (if using)
+- **Vector Search Deployment**: `startege-vector-deployment` (if using)
+
 ## Step 1: Enable Required APIs
 
 ### Via Google Cloud Console
@@ -34,9 +47,9 @@ This guide covers deploying Startege to Google Cloud Run via GitHub Actions usin
 3. Click **"+ CREATE SERVICE ACCOUNT"**
 
 **Service Account Details:**
-- **Service account name**: `github-actions-deploy`
-- **Service account ID**: `github-actions-deploy` (auto-filled)
-- **Description**: `Service account for GitHub Actions to deploy to Cloud Run`
+- **Service account name**: `startege-github-actions-deploy`
+- **Service account ID**: `startege-github-actions-deploy` (auto-filled)
+- **Description**: `Startege service account for GitHub Actions to deploy to Cloud Run`
 - Click **"CREATE AND CONTINUE"**
 
 **Grant Roles:**
@@ -57,13 +70,13 @@ Click **"CONTINUE"**
 ### Via Google Cloud Console
 
 1. Go to: https://console.cloud.google.com/iam-admin/serviceaccounts
-2. Find the service account you just created: `github-actions-deploy`
+2. Find the service account you just created: `startege-github-actions-deploy`
 3. Click on the service account email
 4. Go to the **"KEYS"** tab
 5. Click **"ADD KEY"** → **"Create new key"**
 6. Select **JSON** format
 7. Click **"CREATE"**
-8. **Download the JSON file** - this is your `gcp-sa-key.json`
+8. **Download the JSON file** - this is your `startege-gcp-sa-key.json`
 9. **Save this file securely** - you'll need it for GitHub Secrets
 
 ⚠️ **Important**: Keep this file secure. Never commit it to GitHub.
@@ -109,7 +122,7 @@ Click **"CONTINUE"**
 
 **GCP Service Account Key:**
 - **Name**: `GCP_SA_KEY`
-- **Value**: Open the downloaded `gcp-sa-key.json` file, copy ALL contents (entire JSON), paste here
+- **Value**: Open the downloaded `startege-gcp-sa-key.json` file, copy ALL contents (entire JSON), paste here
 - Click **"Add secret"**
 
 **Database:**
@@ -151,10 +164,10 @@ Click **"CONTINUE"**
 - `GCP_LOCATION` (e.g., `us-central1`)
 - `NEXT_PUBLIC_GCP_PROJECT_ID` (same as GCP_PROJECT_ID)
 - `NEXT_PUBLIC_GCP_LOCATION` (same as GCP_LOCATION)
-- `GCS_BUCKET_NAME` (if using Cloud Storage)
-- `VECTOR_SEARCH_INDEX_ID` (if using Vertex AI Vector Search)
-- `VECTOR_SEARCH_ENDPOINT_ID` (if using Vertex AI Vector Search)
-- `VECTOR_SEARCH_DEPLOYMENT_ID` (if using Vertex AI Vector Search)
+- `GCS_BUCKET_NAME` (if using Cloud Storage, recommended: `startege-storage` or `startege-{project-id}-storage`)
+- `VECTOR_SEARCH_INDEX_ID` (if using Vertex AI Vector Search, recommended: `startege-vector-index`)
+- `VECTOR_SEARCH_ENDPOINT_ID` (if using Vertex AI Vector Search, recommended: `startege-vector-endpoint`)
+- `VECTOR_SEARCH_DEPLOYMENT_ID` (if using Vertex AI Vector Search, recommended: `startege-vector-deployment`)
 - `CLOUD_SCHEDULER_SECRET_KEY` (if using Cloud Scheduler)
 
 **Application:**
