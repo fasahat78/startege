@@ -82,11 +82,13 @@ Go to: https://github.com/fasahat78/startege/settings/secrets/actions
 ### Other Secrets:
 
 - [ ] `OPENAI_API_KEY` or `CHATGPT_API_KEY`
-- [ ] `GCS_BUCKET_NAME` (if using)
-- [ ] `VECTOR_SEARCH_INDEX_ID` (if using)
-- [ ] `VECTOR_SEARCH_ENDPOINT_ID` (if using)
-- [ ] `VECTOR_SEARCH_DEPLOYMENT_ID` (if using)
-- [ ] `CLOUD_SCHEDULER_SECRET_KEY` (if using)
+- [ ] `GCS_BUCKET_NAME` (if using Cloud Storage)
+- [ ] `CLOUD_SCHEDULER_SECRET_KEY` (if using Cloud Scheduler)
+
+**Not Required:**
+- ❌ `VECTOR_SEARCH_INDEX_ID` - Not used (app uses keyword search, not semantic search)
+- ❌ `VECTOR_SEARCH_ENDPOINT_ID` - Not used
+- ❌ `VECTOR_SEARCH_DEPLOYMENT_ID` - Not used
 
 ## ✅ Step 6: Deploy
 

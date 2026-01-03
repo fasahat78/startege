@@ -71,9 +71,6 @@ jobs:
           NEXT_PUBLIC_GCP_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_GCP_PROJECT_ID }}
           NEXT_PUBLIC_GCP_LOCATION: ${{ secrets.NEXT_PUBLIC_GCP_LOCATION }}
           GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
-          VECTOR_SEARCH_INDEX_ID: ${{ secrets.VECTOR_SEARCH_INDEX_ID }}
-          VECTOR_SEARCH_ENDPOINT_ID: ${{ secrets.VECTOR_SEARCH_ENDPOINT_ID }}
-          VECTOR_SEARCH_DEPLOYMENT_ID: ${{ secrets.VECTOR_SEARCH_DEPLOYMENT_ID }}
           CLOUD_SCHEDULER_SECRET_KEY: ${{ secrets.CLOUD_SCHEDULER_SECRET_KEY }}
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
@@ -126,9 +123,6 @@ jobs:
             --set-env-vars NEXT_PUBLIC_GCP_PROJECT_ID="${{ secrets.NEXT_PUBLIC_GCP_PROJECT_ID }}" \
             --set-env-vars NEXT_PUBLIC_GCP_LOCATION="${{ secrets.NEXT_PUBLIC_GCP_LOCATION }}" \
             --set-env-vars GCS_BUCKET_NAME="${{ secrets.GCS_BUCKET_NAME }}" \
-            --set-env-vars VECTOR_SEARCH_INDEX_ID="${{ secrets.VECTOR_SEARCH_INDEX_ID }}" \
-            --set-env-vars VECTOR_SEARCH_ENDPOINT_ID="${{ secrets.VECTOR_SEARCH_ENDPOINT_ID }}" \
-            --set-env-vars VECTOR_SEARCH_DEPLOYMENT_ID="${{ secrets.VECTOR_SEARCH_DEPLOYMENT_ID }}" \
             --set-env-vars CLOUD_SCHEDULER_SECRET_KEY="${{ secrets.CLOUD_SCHEDULER_SECRET_KEY }}" \
             --set-env-vars UPSTASH_REDIS_REST_URL="${{ secrets.UPSTASH_REDIS_REST_URL }}" \
             --set-env-vars UPSTASH_REDIS_REST_TOKEN="${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \

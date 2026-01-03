@@ -64,12 +64,16 @@ gh secret set NEXT_PUBLIC_FIREBASE_API_KEY --body "your-api-key"
 - [ ] `GCP_LOCATION`
 - [ ] `NEXT_PUBLIC_GCP_PROJECT_ID`
 - [ ] `NEXT_PUBLIC_GCP_LOCATION`
-- [ ] `GCS_BUCKET_NAME` (recommended: `startege-storage` or `startege-{project-id}-storage`)
-- [ ] `VECTOR_SEARCH_INDEX_ID` (recommended: `startege-vector-index`)
-- [ ] `VECTOR_SEARCH_ENDPOINT_ID` (recommended: `startege-vector-endpoint`)
-- [ ] `VECTOR_SEARCH_DEPLOYMENT_ID` (recommended: `startege-vector-deployment`)
-- [ ] `CLOUD_SCHEDULER_SECRET_KEY`
+- [ ] `GCS_BUCKET_NAME` (if using Cloud Storage, recommended: `startege-storage` or `startege-{project-id}-storage`)
+- [ ] `CLOUD_SCHEDULER_SECRET_KEY` (if using Cloud Scheduler)
 - [ ] `GCP_SA_KEY` (service account JSON for `startege-github-actions-deploy`)
+
+**Not Required:**
+- ❌ `VECTOR_SEARCH_INDEX_ID` - Not used (app uses keyword search, not semantic search)
+- ❌ `VECTOR_SEARCH_ENDPOINT_ID` - Not used
+- ❌ `VECTOR_SEARCH_DEPLOYMENT_ID` - Not used
+
+**Note**: Vertex AI is only used for Gemini (LLM), not for vector search. The app uses cost-effective keyword search instead of semantic search.
 
 ### ✅ Application
 - [ ] `NEXT_PUBLIC_APP_URL`

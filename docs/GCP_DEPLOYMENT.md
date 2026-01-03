@@ -16,10 +16,9 @@ All GCP resources use the `startege-` prefix to differentiate from other project
 - **Cloud Run Service**: `startege`
 - **Cloud SQL Instance**: `startege-db`
 - **Database Name**: `startege`
-- **Storage Bucket**: `startege-storage` or `startege-{project-id}-storage` (if using)
-- **Vector Search Index**: `startege-vector-index` (if using)
-- **Vector Search Endpoint**: `startege-vector-endpoint` (if using)
-- **Vector Search Deployment**: `startege-vector-deployment` (if using)
+- **Storage Bucket**: `startege-storage` or `startege-{project-id}-storage` (if using Cloud Storage)
+
+**Note**: Vertex AI is used only for Gemini (LLM), not for vector search. Semantic search is not implemented - the app uses cost-effective keyword search instead.
 
 ## Step 1: Enable Required APIs
 
@@ -165,10 +164,9 @@ Click **"CONTINUE"**
 - `NEXT_PUBLIC_GCP_PROJECT_ID` (same as GCP_PROJECT_ID)
 - `NEXT_PUBLIC_GCP_LOCATION` (same as GCP_LOCATION)
 - `GCS_BUCKET_NAME` (if using Cloud Storage, recommended: `startege-storage` or `startege-{project-id}-storage`)
-- `VECTOR_SEARCH_INDEX_ID` (if using Vertex AI Vector Search, recommended: `startege-vector-index`)
-- `VECTOR_SEARCH_ENDPOINT_ID` (if using Vertex AI Vector Search, recommended: `startege-vector-endpoint`)
-- `VECTOR_SEARCH_DEPLOYMENT_ID` (if using Vertex AI Vector Search, recommended: `startege-vector-deployment`)
 - `CLOUD_SCHEDULER_SECRET_KEY` (if using Cloud Scheduler)
+
+**Note**: Vector Search is NOT required. The app uses keyword search (cost-effective, proven quality). Vertex AI is only used for Gemini LLM, not for vector search.
 
 **Application:**
 - `NEXT_PUBLIC_APP_URL` (will be set after deployment, e.g., `https://startege-xxxxx-uc.a.run.app`)
@@ -179,6 +177,11 @@ Click **"CONTINUE"**
 - `NEXT_PUBLIC_SENTRY_DSN`
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID`
 - `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`
+
+**Not Required (Vector Search):**
+- ❌ `VECTOR_SEARCH_INDEX_ID` - Not used (app uses keyword search)
+- ❌ `VECTOR_SEARCH_ENDPOINT_ID` - Not used (app uses keyword search)
+- ❌ `VECTOR_SEARCH_DEPLOYMENT_ID` - Not used (app uses keyword search)
 
 ## Step 6: Deploy to Cloud Run
 
