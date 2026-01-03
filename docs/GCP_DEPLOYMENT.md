@@ -132,9 +132,39 @@ Click **"CONTINUE"**
    - **Database name**: `startege`
    - Click **"CREATE"**
 
-## Step 5: Set Up GitHub Secrets
+## Step 5: Set Up Secrets
 
-### Via GitHub Web Interface
+**Recommended Approach**: Use **GCP Secrets Manager** for runtime secrets (better security, secret rotation, audit logging).
+
+See: [GCP Secrets Manager Setup Guide](./GCP_SECRETS_MANAGER_SETUP.md)
+
+### Option A: GCP Secrets Manager (Recommended for Production)
+
+1. **Enable Secrets Manager API**:
+   - Go to: https://console.cloud.google.com/apis/library
+   - Search for: **"Secret Manager API"**
+   - Click **"Enable"**
+
+2. **Create Secrets**:
+   - Go to: https://console.cloud.google.com/security/secret-manager
+   - Click **"CREATE SECRET"**
+   - Create secrets with `startege-` prefix:
+     - `startege-database-url`
+     - `startege-firebase-service-account`
+     - `startege-stripe-secret-key`
+     - etc.
+
+3. **Configure Cloud Run to Use Secrets**:
+   - Go to Cloud Run → Your service → Edit
+   - **Variables & Secrets** tab → **Secrets** section
+   - Click **"ADD SECRET VARIABLE"**
+   - Map each secret to environment variable
+
+See detailed guide: [GCP Secrets Manager Setup](./GCP_SECRETS_MANAGER_SETUP.md)
+
+### Option B: GitHub Secrets (Alternative - for CI/CD only)
+
+**Note**: GitHub Secrets are better for CI/CD build-time secrets. For runtime secrets, use GCP Secrets Manager.
 
 1. Go to: https://github.com/fasahat78/startege/settings/secrets/actions
 2. Click **"New repository secret"**
@@ -142,18 +172,20 @@ Click **"CONTINUE"**
 
 #### Required Secrets:
 
-**GCP Service Account Key:**
+**For CI/CD (GitHub Secrets - Required):**
 - **Name**: `GCP_SA_KEY`
 - **Value**: Open the downloaded `startege-gcp-sa-key.json` file, copy ALL contents (entire JSON), paste here
+- **Purpose**: Used by GitHub Actions to deploy to Cloud Run
 - Click **"Add secret"**
 
-**Database:**
-- **Name**: `DATABASE_URL`
-- **Value**: `postgresql://USERNAME:PASSWORD@/startege?host=/cloudsql/CONNECTION_NAME`
-  - Replace `USERNAME` with your Cloud SQL username
-  - Replace `PASSWORD` with your Cloud SQL password
-  - Replace `CONNECTION_NAME` with your Cloud SQL connection name
-- Click **"Add secret"**
+**For Runtime (GCP Secrets Manager - Recommended):**
+Create these in GCP Secrets Manager (not GitHub Secrets):
+- `startege-database-url` → Maps to `DATABASE_URL`
+- `startege-firebase-service-account` → Maps to `FIREBASE_SERVICE_ACCOUNT_KEY`
+- `startege-stripe-secret-key` → Maps to `STRIPE_SECRET_KEY`
+- etc.
+
+See: [GCP Secrets Manager Setup Guide](./GCP_SECRETS_MANAGER_SETUP.md)
 
 **Firebase (Client - NEXT_PUBLIC_*):**
 - `NEXT_PUBLIC_FIREBASE_API_KEY`
