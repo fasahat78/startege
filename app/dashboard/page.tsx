@@ -7,6 +7,7 @@ import OnboardingPrompt from "@/components/onboarding/OnboardingPrompt";
 import FeatureBlocks from "@/components/dashboard/FeatureBlocks";
 import SubscriptionRefresh from "@/components/dashboard/SubscriptionRefresh";
 import CreditBalance from "@/components/dashboard/CreditBalance";
+import Tooltip from "@/components/ui/Tooltip";
 
 // Mark as dynamic since it uses cookies
 export const dynamic = 'force-dynamic';
@@ -151,11 +152,16 @@ export default async function DashboardPage({
                 </p>
                 <p className="text-3xl font-bold text-card-foreground">{totalPoints.toLocaleString()}</p>
               </div>
-              <div className="bg-status-warning/10 rounded-lg p-3">
-                <svg className="h-6 w-6 text-status-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+              <Tooltip
+                content="Total points earned from completing concept cards, passing exams, and achieving milestones. Points reflect your overall progress and engagement with the platform."
+                position="left"
+              >
+                <div className="bg-status-warning/10 rounded-lg p-3 cursor-help">
+                  <svg className="h-6 w-6 text-status-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </Tooltip>
             </div>
           </div>
 
@@ -168,11 +174,16 @@ export default async function DashboardPage({
                 <p className="text-3xl font-bold text-card-foreground">{currentStreak}</p>
                 <p className="text-xs text-muted-foreground mt-1">Best: {longestStreak} days</p>
               </div>
-              <div className="bg-status-success/10 rounded-lg p-3">
-                <svg className="h-6 w-6 text-status-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+              <Tooltip
+                content={`Your current learning streak is ${currentStreak} day${currentStreak !== 1 ? 's' : ''}. Maintain your streak by completing concept cards or exams daily. Your best streak was ${longestStreak} day${longestStreak !== 1 ? 's' : ''}.`}
+                position="left"
+              >
+                <div className="bg-status-success/10 rounded-lg p-3 cursor-help">
+                  <svg className="h-6 w-6 text-status-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </Tooltip>
             </div>
           </div>
 
@@ -185,11 +196,16 @@ export default async function DashboardPage({
                 <p className="text-3xl font-bold text-card-foreground">{cardsCompleted}</p>
                 <p className="text-xs text-muted-foreground mt-1">of 360</p>
               </div>
-              <div className="bg-accent/10 rounded-lg p-3">
-                <svg className="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+              <Tooltip
+                content={`You've mastered ${cardsCompleted} out of 360 concept cards. Concept cards are interactive learning modules covering AI governance topics. Complete cards by reading and understanding the content to track your learning progress.`}
+                position="left"
+              >
+                <div className="bg-accent/10 rounded-lg p-3 cursor-help">
+                  <svg className="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </Tooltip>
             </div>
           </div>
 
@@ -201,11 +217,16 @@ export default async function DashboardPage({
                 </p>
                 <p className="text-3xl font-bold text-card-foreground">{badgesCount}</p>
               </div>
-              <div className="bg-brand-teal/10 rounded-lg p-3">
-                <svg className="h-6 w-6 text-brand-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                </svg>
-              </div>
+              <Tooltip
+                content={`You've earned ${badgesCount} badge${badgesCount !== 1 ? 's' : ''}. Badges are achievements unlocked by reaching milestones, completing challenges, and demonstrating mastery. View all badges in your collection to see your progress.`}
+                position="left"
+              >
+                <div className="bg-brand-teal/10 rounded-lg p-3 cursor-help">
+                  <svg className="h-6 w-6 text-brand-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                </div>
+              </Tooltip>
             </div>
           </div>
         </div>
