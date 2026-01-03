@@ -67,24 +67,29 @@
 
 **Alternative**: Start with single zone, upgrade to HA later
 
-#### 4. **Edition** (Cost Optimization)
+#### 4. **Edition** (Note: Standard May Not Be Available)
 **Current**: Enterprise  
-**Recommendation**: **Standard** edition is usually sufficient
+**Situation**: Google Cloud may have restructured editions - you may only see "Enterprise Plus" and "Enterprise" options
 
-**Why:**
-- Enterprise edition costs more
-- Standard edition has most features you need:
+**Recommendation**: 
+- Use **Enterprise** edition with **Development preset** (most cost-effective option)
+- The "Development" preset provides the features you need at a lower cost
+- Enterprise Plus is more expensive and typically not needed for most applications
+
+**Why Enterprise with Development preset:**
+- Provides essential features:
   - Automated backups ✅
   - Point-in-time recovery ✅
-  - Read replicas ✅
-- Enterprise features (advanced security, audit logs) may not be needed initially
+  - General purpose machines ✅
+- More cost-effective than Enterprise Plus
+- Sufficient for most production workloads
 
-**Cost impact**: Could save ~20-30% with Standard edition
-
-**When to use Enterprise:**
-- Need advanced security features
-- Need audit logging
-- Compliance requirements
+**When to use Enterprise Plus:**
+- Need 99.99% availability SLA
+- Need sub-second maintenance downtime
+- Need performance-optimized machines
+- Need advanced disaster recovery
+- Higher cost (~30-50% more than Enterprise)
 
 ## Recommended Configurations
 

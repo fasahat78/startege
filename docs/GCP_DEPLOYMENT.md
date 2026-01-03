@@ -92,8 +92,15 @@ Click **"CONTINUE"**
      - **Instance ID**: `startege-db`
      - **Password**: Set a strong password (save it!)
      - **Region**: `us-central1` (or your preferred region)
-     - **Database version**: PostgreSQL 15
-     - **Machine type**: Choose based on your needs (start with `db-f1-micro` for testing)
+     - **Database version**: PostgreSQL 15 (or PostgreSQL 17 if available)
+     - **Edition**: Select **Enterprise** (Standard edition may not be available - Enterprise with Development preset is cost-effective)
+     - **Edition preset**: Select **Development** (most cost-effective option)
+     - **Machine type**: Choose **db-custom-1-3840** (1 vCPU, 3.75 GB RAM) or customize as needed
+     - **Storage**: Set to **20-50 GB** (recommended, not 10 GB)
+     - **Network**: Select **Private IP** (more secure than Public IP)
+     - **Availability**: Single zone (can upgrade to High Availability later)
+     - **Backups**: Enable **Automated backups**
+     - **Point-in-time recovery**: Enable (recommended)
    - Click **"CREATE"**
    - Wait for instance to be created (5-10 minutes)
 
