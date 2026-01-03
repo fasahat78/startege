@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation';
 import AIGPExamsClient from '@/components/aigp-exams/AIGPExamsClient';
 import { prisma } from '@/lib/db';
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 export default async function AIGPExamsPage() {
   const user = await getCurrentUser();
   

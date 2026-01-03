@@ -8,6 +8,9 @@ import FeatureBlocks from "@/components/dashboard/FeatureBlocks";
 import SubscriptionRefresh from "@/components/dashboard/SubscriptionRefresh";
 import CreditBalance from "@/components/dashboard/CreditBalance";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage({
   searchParams,
 }: {

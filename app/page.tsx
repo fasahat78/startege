@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import Logo from "@/components/layout/Logo";
 import { ArrowRight, CheckCircle2, BookOpen, Trophy, Zap, Shield, TrendingUp, Users, Award, Target } from "lucide-react";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   // Check if user is authenticated with Firebase
   const user = await getCurrentUser();

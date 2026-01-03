@@ -6,6 +6,9 @@ import PricingClient from "@/components/pricing/PricingClient";
 import CreditBalance from "@/components/dashboard/CreditBalance";
 import SubscriptionRefresh from "@/components/dashboard/SubscriptionRefresh";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 export default async function PricingPage() {
   const user = await getCurrentUser();
 

@@ -3,6 +3,9 @@ import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 import { prisma } from "@/lib/db";
 import StartegizerClient from "@/components/startegizer/StartegizerClient";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 export default async function StartegizerPage() {
   const user = await getCurrentUser();
 
