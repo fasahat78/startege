@@ -104,13 +104,29 @@ Click **"CONTINUE"**
    - Click **"CREATE"**
    - Wait for instance to be created (5-10 minutes)
 
-3. **Get Connection Name:**
-   - Click on your instance
+3. **Configure Private IP (Recommended for Security):**
+   - Check the **"Private IP"** checkbox
+   - **Choose a private connection method**: Select **"Private Service Access (PSA)"**
+     - This is the recommended option for connecting Cloud Run to Cloud SQL
+     - Works with single VPC networks (which is what you need)
+   - **VPC Network**: Select **"default"** (or your project's default VPC)
+   - **Allocated IP range**: Select **"Automatic"** (Google will allocate the IP range automatically)
+   - Click **"Confirm network setup"** button
+     - This will:
+       - Enable the Service Networking API (if not already enabled)
+       - Allocate an IP range in your VPC network
+       - Typically takes 1-2 minutes
+   - Wait for the setup to complete
+
+   **Note**: If you see "Service Networking API" as "Not enabled", clicking "Confirm network setup" will enable it automatically.
+
+4. **Get Connection Name:**
+   - After instance is created, click on your instance
    - In the **"Overview"** tab, find **"Connection name"**
    - Copy this value (format: `PROJECT_ID:REGION:INSTANCE_NAME`)
    - You'll need this for Cloud Run configuration
 
-4. **Create Database:**
+5. **Create Database:**
    - Go to **"DATABASES"** tab
    - Click **"CREATE DATABASE"**
    - **Database name**: `startege`
