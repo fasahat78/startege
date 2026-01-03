@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+,Introduction to AI Governance,1,Introduction to AI Governance,beginner,high,false,,Domain 1,Foundation,Core introductory concept
+,What is AI?,1,Introduction to AI Governance,beginner,high,true,"1,5",Domain 1,Foundation,Appears in foundation levels
+,GDPR Overview,3,GDPR Fundamentals,beginner,high,true,"3,7",Domain 1,Legal Framework,Core GDPR concept
+,Data Protection Principles,4,Data Protection,beginner,high,false,,Domain 1,Legal Framework,
+,Right to Access,5,Privacy Rights,beginner,medium,false,,Domain 1,Privacy Rights,
+,AI Act Introduction,6,AI Act Overview,beginner,high,true,"6,13",Domain 2,Regulation,EU AI Act basics
+,Risk-Based Approach,7,Risk Management,intermediate,high,true,"7,15,27",Domain 2,Risk Management,Core risk management concept
+,Transparency Requirements,8,Transparency,intermediate,high,false,,Domain 2,Compliance,
+,Accountability Mechanisms,9,Accountability,intermediate,high,false,,Domain 2,Governance,
+,Foundation Review,10,Foundation Mastery,intermediate,medium,false,,Domain 1,Review,Mastery level
+

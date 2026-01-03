@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L3-C01,Purpose and Scope of GDPR,3,GDPR Fundamentals,beginner,high,false,,Domain 2,Data Protection & Privacy Law,Introduces GDPR intent and applicability
+L3-C02,Personal Data vs Non-Personal Data,3,GDPR Fundamentals,beginner,high,true,"3,4,12",Domain 2,Data Protection & Privacy Law,Foundational classification used throughout GDPR compliance
+L3-C03,Processing of Personal Data,3,GDPR Fundamentals,beginner,high,true,"3,4,14",Domain 2,Data Protection & Privacy Law,Defines legal trigger for GDPR obligations
+L3-C04,Data Controller vs Data Processor,3,GDPR Fundamentals,beginner,high,true,"3,5,18",Domain 2,Data Protection & Privacy Law,Critical role distinction reused across compliance and contracts
+L3-C05,Lawful Basis for Processing Personal Data,3,GDPR Fundamentals,beginner,high,true,"3,4,15",Domain 2,Data Protection & Privacy Law,Central requirement for lawful processing
+L3-C06,Special Category (Sensitive) Personal Data,3,GDPR Fundamentals,beginner,high,true,"3,4,17",Domain 2,Data Protection & Privacy Law,Introduces heightened protection and risk
+L3-C07,GDPR Territorial Scope,3,GDPR Fundamentals,beginner,high,true,"3,12,22",Domain 2,Data Protection & Privacy Law,Explains extraterritorial application of GDPR
+L3-C08,Relationship Between GDPR and AI Systems,3,GDPR Fundamentals,beginner,high,false,,Domain 2,Data Protection & Privacy Law,Explicitly connects GDPR obligations to AI use
+L3-C09,Accountability Principle under GDPR,3,GDPR Fundamentals,beginner,high,true,"3,9,16",Domain 2,Data Protection & Privacy Law,Bridges governance accountability with legal obligation
+L3-C10,Data Protection Across the AI Lifecycle,3,GDPR Fundamentals,beginner,high,true,"3,4,27",Domain 2,Data Protection & Privacy Law,Applies GDPR thinking across lifecycle stages
+

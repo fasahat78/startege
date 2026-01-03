@@ -1,0 +1,31 @@
+🔍 Pre-Migration Data Integrity Check
+
+📊 Data Counts:
+
+✅ Users: 21
+✅ Concept Cards: 360
+✅ Challenges: 80
+✅ Exams: 40
+✅ Exam Attempts: 17
+✅ User Progress: 2
+✅ User Points: 1
+✅ User Streaks: 1
+✅ Badges: 12
+✅ User Badges: 1
+✅ Level Progress: 23
+✅ Category Progress: 280
+✅ Users with Progress: 1
+✅ Users with Points: 1
+
+📈 Total Records: 840
+
+🔗 Checking Relationships...
+
+✅ No orphaned UserProgress records
+
+✅ Pre-Migration Check Complete
+
+❌ Error during data integrity check: ReferenceError: orphanedProgress is not defined
+    at checkDataIntegrity (/Users/fasahatferoze/Desktop/Startege/scripts/pre-migration-data-check.ts:100:25)
+❌ Check failed: ReferenceError: orphanedProgress is not defined
+    at checkDataIntegrity (/Users/fasahatferoze/Desktop/Startege/scripts/pre-migration-data-check.ts:100:25)

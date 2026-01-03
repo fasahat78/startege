@@ -1,0 +1,365 @@
+/**
+ * Create missing concepts for Level 36 and assign them
+ * 
+ * This script:
+ * 1. Creates ConceptCard records for missing concepts with placeholder definitions
+ * 2. Assigns all concepts (existing + newly created) to Level 36
+ * 3. Sets up LevelCategoryCoverage for Level 36
+ */
+
+import { prisma } from "../lib/db";
+import { LEVEL_CONFIGS } from "../lib/levels";
+
+// Level 36 concepts with metadata
+const LEVEL_36_CONCEPTS = [
+  {
+    name: "What Expert Review of AI Governance Entails",
+    domain: "Domain 1",
+    category: "Expert Governance Assessment & Review",
+    difficulty: "expert",
+    notes: "Sets assessor mindset",
+  },
+  {
+    name: "Evaluating Governance Effectiveness vs Existence",
+    domain: "Domain 1",
+    category: "Expert Governance Assessment & Review",
+    difficulty: "expert",
+    notes: "Avoids paper governance",
+  },
+  {
+    name: "Identifying Systemic Weaknesses in Governance Design",
+    domain: "Domain 1",
+    category: "Expert Governance Assessment & Review",
+    difficulty: "expert",
+    notes: "Goes beyond surface gaps",
+  },
+  {
+    name: "Assessing Governance Defensibility Under Scrutiny",
+    domain: "Domain 1",
+    category: "Expert Governance Assessment & Review",
+    difficulty: "expert",
+    notes: "Tests resilience",
+  },
+  {
+    name: "Distinguishing Control Failures from Design Failures",
+    domain: "Domain 1",
+    category: "Expert Governance Assessment & Review",
+    difficulty: "expert",
+    notes: "Enables precise remediation",
+  },
+  {
+    name: "Prioritising Remediation Actions",
+    domain: "Domain 1",
+    category: "Expert Governance Assessment & Review",
+    difficulty: "expert",
+    notes: "Forces expert judgement",
+  },
+  {
+    name: "Evaluating Risk Management Effectiveness Across Portfolios",
+    domain: "Domain 3",
+    category: "Advanced Risk Management & Tolerance",
+    difficulty: "expert",
+    notes: "Enterprise-level insight",
+  },
+  {
+    name: "Analysing Governance Performance During Investigations",
+    domain: "Domain 4",
+    category: "Enforcement Oversight & Remedies",
+    difficulty: "expert",
+    notes: "Uses hindsight pressure",
+  },
+  {
+    name: "Using Case Outcomes to Critique Governance Decisions",
+    domain: "Domain 2",
+    category: "Case Law & Precedent",
+    difficulty: "expert",
+    notes: "Grounds analysis in reality",
+  },
+  {
+    name: "Providing Defensible Expert Recommendations",
+    domain: "Domain 1",
+    category: "Expert Synthesis & Integrative Governance",
+    difficulty: "expert",
+    notes: "Authoritative judgement",
+  },
+];
+
+const PLACEHOLDER_DEFINITION = "TBD - Definition to be added. This concept will be populated with full content later.";
+
+async function findOrCreateCategory(domainName: string, categoryName: string) {
+  // Find domain
+  const domain = await (prisma as any).domain.findFirst({
+    where: { name: domainName },
+  });
+
+  if (!domain) {
+    throw new Error(`Domain not found: ${domainName}`);
+  }
+
+  // Check if category already exists
+  let category = await (prisma as any).category.findFirst({
+    where: {
+      domainId: domain.id,
+      name: categoryName,
+    },
+  });
+
+  if (category) {
+    return category;
+  }
+
+  // Find max order for this domain
+  const maxOrder = await (prisma as any).category.findFirst({
+    where: { domainId: domain.id },
+    orderBy: { order: "desc" },
+    select: { order: true },
+  });
+
+  const nextOrder = (maxOrder?.order || 0) + 1;
+
+  // Create category
+  category = await (prisma as any).category.create({
+    data: {
+      domainId: domain.id,
+      name: categoryName,
+      order: nextOrder,
+      examSystemPrompt: `Generate exam questions for ${categoryName}.`,
+    },
+  });
+
+  return category;
+}
+
+async function main() {
+  console.log("🚀 Setting up Level 36: Expert Analysis\n");
+
+  const levelNumber = 36;
+  const levelConfig = LEVEL_CONFIGS.find((c) => c.level === levelNumber);
+
+  if (!levelConfig) {
+    throw new Error(`Level ${levelNumber} config not found`);
+  }
+
+  // 1. Create or update Challenge
+  console.log(`📝 Creating/updating Challenge for Level ${levelNumber}...`);
+  const challenge = await (prisma as any).challenge.upsert({
+    where: { levelNumber },
+    update: {
+      title: levelConfig.title,
+      description: levelConfig.description,
+      questionCount: levelConfig.questionCount,
+      timeLimit: levelConfig.timeLimit,
+      passingScore: levelConfig.passingScore,
+      superLevelGroup: "MASTERY",
+      isBoss: false,
+    },
+    create: {
+      levelNumber,
+      level: levelNumber, // Legacy field
+      title: levelConfig.title,
+      description: levelConfig.description,
+      questionCount: levelConfig.questionCount,
+      timeLimit: levelConfig.timeLimit,
+      passingScore: levelConfig.passingScore,
+      superLevelGroup: "MASTERY",
+      isBoss: false,
+      concepts: [],
+      examSystemPrompt: `Generate exam questions for Level ${levelNumber}: ${levelConfig.title}.`,
+    },
+  });
+  console.log(`✅ Challenge created/updated: ${challenge.title}\n`);
+
+  // 2. Create concepts and find existing ones
+  console.log("📚 Processing concepts...");
+  const conceptIds: string[] = [];
+
+  for (const conceptData of LEVEL_36_CONCEPTS) {
+    // Find or create category
+    const category = await findOrCreateCategory(conceptData.domain, conceptData.category);
+    console.log(`  Category: ${category.name} (${category.id})`);
+
+    // Check if concept exists by name
+    let concept = await (prisma as any).conceptCard.findFirst({
+      where: {
+        name: conceptData.name,
+      },
+    });
+
+    if (!concept) {
+      // Create concept
+      concept = await (prisma as any).conceptCard.create({
+        data: {
+          name: conceptData.name,
+          concept: conceptData.name,
+          definition: PLACEHOLDER_DEFINITION,
+          domain: conceptData.domain,
+          category: conceptData.category,
+          categoryId: category.id,
+          difficulty: conceptData.difficulty,
+          importance: "high",
+        },
+      });
+      console.log(`  ✅ Created concept: ${conceptData.name}`);
+    } else {
+      // Update category if needed
+      if (!concept.categoryId || concept.categoryId !== category.id) {
+        await (prisma as any).conceptCard.update({
+          where: { id: concept.id },
+          data: { categoryId: category.id },
+        });
+        console.log(`  🔄 Updated concept category: ${conceptData.name}`);
+      } else {
+        console.log(`  ✓ Found existing concept: ${conceptData.name}`);
+      }
+    }
+
+    conceptIds.push(concept.id);
+  }
+
+  console.log(`\n✅ Processed ${conceptIds.length} concepts\n`);
+
+  // 3. Assign concepts to challenge
+  console.log("🔗 Assigning concepts to Level 36...");
+  await (prisma as any).challenge.update({
+    where: { levelNumber },
+    data: {
+      concepts: conceptIds,
+    },
+  });
+  console.log(`✅ Assigned ${conceptIds.length} concepts to Level 36\n`);
+
+  // 4. Set up LevelCategoryCoverage
+  console.log("📊 Setting up LevelCategoryCoverage...");
+
+  // INTRODUCED categories
+  const introducedCategories = [
+    "Expert Governance Assessment & Review", // Domain 1
+  ];
+
+  // PRACTICED categories
+  const practicedCategories = [
+    "Governance Framework Design", // Domain 1
+    "Expert Synthesis & Integrative Governance", // Domain 1
+    "Advanced Risk Management & Tolerance", // Domain 3
+    "Enforcement Oversight & Remedies", // Domain 4
+    "Case Law & Precedent", // Domain 2
+  ];
+
+  // Get all domains
+  const domains = await (prisma as any).domain.findMany({
+    orderBy: { order: "asc" },
+  });
+
+  const domainMap = new Map(domains.map((d: any) => [d.name, d.id]));
+
+  // Process INTRODUCED categories
+  for (const categoryName of introducedCategories) {
+    // Find domain for this category (need to determine from category name or use a mapping)
+    let domainId: string | undefined;
+    
+    // Try to find category first to get its domain
+    const category = await (prisma as any).category.findFirst({
+      where: { name: categoryName },
+    });
+
+    if (category) {
+      domainId = category.domainId;
+    } else {
+      // Default to Domain 1 for Expert Governance Assessment & Review
+      domainId = domainMap.get("Domain 1");
+    }
+
+    if (!domainId) {
+      console.warn(`⚠️  Could not find domain for category: ${categoryName}`);
+      continue;
+    }
+
+    const categoryRecord = await findOrCreateCategory(
+      Array.from(domainMap.entries()).find(([_, id]) => id === domainId)?.[0] || "Domain 1",
+      categoryName
+    );
+
+    // Check if coverage already exists
+    const existing = await (prisma as any).levelCategoryCoverage.findFirst({
+      where: {
+        levelNumber,
+        categoryId: categoryRecord.id,
+        coverageType: "INTRODUCED",
+      },
+    });
+
+    if (!existing) {
+      await (prisma as any).levelCategoryCoverage.create({
+        data: {
+          levelNumber,
+          categoryId: categoryRecord.id,
+          coverageType: "INTRODUCED",
+        },
+      });
+      console.log(`  ✅ INTRODUCED: ${categoryName}`);
+    } else {
+      console.log(`  ✓ Already exists: INTRODUCED ${categoryName}`);
+    }
+  }
+
+  // Process PRACTICED categories
+  for (const categoryName of practicedCategories) {
+    // Find category to get its domain
+    const category = await (prisma as any).category.findFirst({
+      where: { name: categoryName },
+      include: { domain: true },
+    });
+
+    if (!category) {
+      console.warn(`⚠️  Category not found: ${categoryName}, skipping...`);
+      continue;
+    }
+
+    const domainName = category.domain.name;
+
+    const categoryRecord = await findOrCreateCategory(domainName, categoryName);
+
+    // Check if coverage already exists
+    const existing = await (prisma as any).levelCategoryCoverage.findFirst({
+      where: {
+        levelNumber,
+        categoryId: categoryRecord.id,
+        coverageType: "PRACTICED",
+      },
+    });
+
+    if (!existing) {
+      await (prisma as any).levelCategoryCoverage.create({
+        data: {
+          levelNumber,
+          categoryId: categoryRecord.id,
+          coverageType: "PRACTICED",
+        },
+      });
+      console.log(`  ✅ PRACTICED: ${categoryName}`);
+    } else {
+      console.log(`  ✓ Already exists: PRACTICED ${categoryName}`);
+    }
+  }
+
+  console.log("\n✨ Level 36 setup complete!");
+  console.log(`\n📋 Summary:`);
+  console.log(`   - Challenge: ${challenge.title}`);
+  console.log(`   - Concepts: ${conceptIds.length}`);
+  console.log(`   - INTRODUCED categories: ${introducedCategories.length}`);
+  console.log(`   - PRACTICED categories: ${practicedCategories.length}`);
+}
+
+main()
+  .then(() => {
+    console.log("\n🎉 Level 36 setup successful!");
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error("\n❌ Error setting up Level 36:", error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
+

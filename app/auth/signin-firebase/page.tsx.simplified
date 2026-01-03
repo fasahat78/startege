@@ -1,0 +1,52 @@
+// SIMPLIFIED VERSION - Replace the fetch block with this:
+
+        // Server now returns 302 redirect - browser will follow automatically
+        PersistentLogger.log("Calling verify route (server will return 302 redirect)");
+        console.log("[CLIENT] Calling verify route...");
+        console.log("[CLIENT] Server will return 302 redirect - browser will follow automatically");
+        
+        try {
+          verifyResponse = await fetch("/api/auth/firebase/verify", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ idToken, redirect: targetRedirect }),
+            credentials: "include", // Ensure cookies are included
+            redirect: "follow", // Follow redirect automatically
+          });
+          
+          PersistentLogger.log("Verify response status", verifyResponse.status);
+          PersistentLogger.log("Verify response URL", verifyResponse.url);
+          console.log("[CLIENT] Verify response status:", verifyResponse.status);
+          console.log("[CLIENT] Verify response URL:", verifyResponse.url);
+          
+          // If we get here, redirect was followed successfully
+          // The page should have already redirected, but reload just in case
+          if (verifyResponse.ok || verifyResponse.status === 200) {
+            PersistentLogger.log("✅ Redirect followed successfully");
+            console.log("[CLIENT] ✅ Redirect followed successfully");
+            // Page should already be at the redirected URL
+            // No need to manually redirect - browser handled it
+            setLoading(false);
+            return;
+          }
+          
+          // Handle errors
+          if (!verifyResponse.ok) {
+            const errorText = await verifyResponse.text();
+            PersistentLogger.error("Verify response not OK", {
+              status: verifyResponse.status,
+              error: errorText.substring(0, 500),
+            });
+            console.error("[CLIENT] Verify response not OK:", verifyResponse.status);
+            console.error("[CLIENT] Error response:", errorText.substring(0, 500));
+            throw new Error(`Verification failed: ${verifyResponse.status}`);
+          }
+        } catch (fetchError: any) {
+          PersistentLogger.error("Fetch error", fetchError);
+          console.error("[CLIENT] Fetch error:", fetchError);
+          setLoading(false);
+          throw new Error(`Network error: ${fetchError.message}`);
+        }
+

@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L8-C01,Purpose of Transparency in AI Governance,8,Transparency,beginner,high,true,"8,17,39",Domain 4,Transparency & Communication,Frames transparency as a governance and trust mechanism
+L8-C02,Transparency vs Explainability (Conceptual Distinction),8,Transparency,beginner,high,true,"8,17,36",Domain 4,Transparency & Communication,Prevents early technical explainability drift
+L8-C03,Stakeholders of AI Transparency,8,Transparency,beginner,high,true,"8,18,39",Domain 4,Transparency & Communication,Anchors transparency obligations to audience needs
+L8-C04,User-Facing Transparency for AI Systems,8,Transparency,beginner,high,true,"8,15,36",Domain 4,Transparency & Communication,Introduces disclosure expectations for users
+L8-C05,Internal Transparency for Decision-Makers,8,Transparency,beginner,high,true,"8,26,35",Domain 4,Transparency & Communication,Enables governance oversight and accountability
+L8-C06,Transparency Trade-offs (Clarity vs Complexity vs Risk),8,Transparency,beginner,high,true,"8,28,39",Domain 4,Transparency & Communication,Introduces judgement in transparency decisions
+L8-C07,Why Documentation Is a Governance Control,8,Transparency,beginner,high,true,"8,16,37",Domain 3,Documentation & Record-Keeping,Positions documentation as active governance control
+L8-C08,Types of AI Governance Documentation,8,Transparency,beginner,high,true,"8,16,37",Domain 3,Documentation & Record-Keeping,Introduces common governance artefacts
+L8-C09,Documentation Across the AI Lifecycle,8,Transparency,beginner,high,true,"8,16,37",Domain 3,Documentation & Record-Keeping,Aligns documentation with lifecycle governance
+L8-C10,Record-Keeping vs Knowledge Sharing,8,Transparency,beginner,high,true,"8,26,37",Domain 3,Documentation & Record-Keeping,Clarifies different documentation purposes
+

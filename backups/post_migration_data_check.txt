@@ -1,0 +1,99 @@
+{
+  "timestamp": "2025-12-28T13:08:57.437Z",
+  "success": true,
+  "checks": [
+    {
+      "name": "Users",
+      "count": 21,
+      "status": "✅"
+    },
+    {
+      "name": "Concept Cards",
+      "count": 360,
+      "status": "✅"
+    },
+    {
+      "name": "Challenges",
+      "count": 80,
+      "status": "✅"
+    },
+    {
+      "name": "Exams",
+      "count": 40,
+      "status": "✅"
+    },
+    {
+      "name": "Exam Attempts",
+      "count": 17,
+      "status": "✅"
+    },
+    {
+      "name": "User Progress",
+      "count": 2,
+      "status": "✅"
+    },
+    {
+      "name": "User Points",
+      "count": 1,
+      "status": "✅"
+    },
+    {
+      "name": "User Streaks",
+      "count": 1,
+      "status": "✅"
+    },
+    {
+      "name": "Badges",
+      "count": 12,
+      "status": "✅"
+    },
+    {
+      "name": "User Badges",
+      "count": 1,
+      "status": "✅"
+    },
+    {
+      "name": "Level Progress",
+      "count": 23,
+      "status": "✅"
+    },
+    {
+      "name": "Category Progress",
+      "count": 280,
+      "status": "✅"
+    },
+    {
+      "name": "User Profiles (NEW)",
+      "count": 0,
+      "status": "✅"
+    },
+    {
+      "name": "User Interests (NEW)",
+      "count": 0,
+      "status": "✅"
+    },
+    {
+      "name": "User Goals (NEW)",
+      "count": 0,
+      "status": "✅"
+    },
+    {
+      "name": "Onboarding Scenarios (NEW)",
+      "count": 0,
+      "status": "✅"
+    },
+    {
+      "name": "Prompt Templates (NEW)",
+      "count": 0,
+      "status": "✅"
+    },
+    {
+      "name": "Market Scan Articles (NEW)",
+      "count": 0,
+      "status": "✅"
+    }
+  ],
+  "totalRecords": 838,
+  "enumsFound": 6,
+  "expectedEnums": 6
+}

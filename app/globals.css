@@ -1,0 +1,108 @@
+/* Syntax highlighting for code blocks - must be before @tailwind */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Brand foundation */
+  --brand-midnight: 15 23 42;   /* #0F172A */
+  --brand-slate: 51 65 85;      /* #334155 */
+  --brand-teal: 13 148 136;     /* #0D9488 */
+
+  /* Status */
+  --status-success: 22 163 74;  /* #16A34A */
+  --status-warning: 217 119 6;  /* #D97706 */
+  --status-error: 220 38 38;    /* #DC2626 */
+  --status-disabled: 148 163 184; /* #94A3B8 */
+
+  /* App surface system (light) */
+  --background: 255 255 255;
+  --foreground: var(--brand-midnight);
+
+  --card: 255 255 255;
+  --card-foreground: var(--brand-midnight);
+
+  --muted: 241 245 249;         /* slate-100-ish */
+  --muted-foreground: 100 116 139; /* slate-500-ish */
+
+  --border: 226 232 240;        /* slate-200-ish */
+  --input: 226 232 240;
+  --ring: var(--brand-teal);
+
+  /* Primary action */
+  --primary: var(--brand-midnight);
+  --primary-foreground: 255 255 255;
+
+  /* Secondary action */
+  --secondary: var(--brand-slate);
+  --secondary-foreground: 255 255 255;
+
+  /* Accent */
+  --accent: var(--brand-teal);
+  --accent-foreground: 255 255 255;
+
+  /* Destructive */
+  --destructive: var(--status-error);
+  --destructive-foreground: 255 255 255;
+
+  /* Radius */
+  --radius: 1rem; /* 16px */
+}
+
+/* Optional dark mode */
+.dark {
+  --background: var(--brand-midnight);
+  --foreground: 248 250 252; /* slate-50 */
+
+  --card: 30 41 59;          /* slate-800-ish */
+  --card-foreground: 248 250 252;
+
+  --muted: 30 41 59;
+  --muted-foreground: 148 163 184; /* slate-400 */
+
+  --border: 51 65 85;        /* slate-700-ish */
+  --input: 51 65 85;
+  --ring: var(--brand-teal);
+
+  --primary: 248 250 252;
+  --primary-foreground: var(--brand-midnight);
+
+  --secondary: 51 65 85;
+  --secondary-foreground: 248 250 252;
+
+  --accent: var(--brand-teal);
+  --accent-foreground: 255 255 255;
+
+  --destructive: var(--status-error);
+  --destructive-foreground: 255 255 255;
+}
+
+body {
+  color: rgb(var(--foreground));
+  background: rgb(var(--background));
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+

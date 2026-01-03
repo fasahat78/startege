@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L5-C01,Overview of Data Subject Rights under GDPR,5,Privacy Rights,beginner,high,true,"5,18,36",Domain 2,Data Protection & Privacy Law,Introduces the full set of individual rights under GDPR
+L5-C02,Right of Access,5,Privacy Rights,beginner,high,true,"5,8,36",Domain 2,Data Protection & Privacy Law,Most commonly exercised GDPR right with AI relevance
+L5-C03,Right to Rectification,5,Privacy Rights,beginner,high,true,"5,7,27",Domain 2,Data Protection & Privacy Law,Links data subject rights to data quality and AI accuracy
+L5-C04,Right to Erasure (Right to be Forgotten),5,Privacy Rights,beginner,high,true,"5,27,40",Domain 2,Data Protection & Privacy Law,Challenges AI data retention and model training
+L5-C05,Right to Restriction of Processing,5,Privacy Rights,beginner,high,true,"5,18,36",Domain 2,Data Protection & Privacy Law,Introduces limits on continued AI processing
+L5-C06,Right to Data Portability,5,Privacy Rights,beginner,high,true,"5,12,34",Domain 2,Data Protection & Privacy Law,Introduces data reuse and interoperability expectations
+L5-C07,Right to Object to Processing,5,Privacy Rights,beginner,high,true,"5,18,36",Domain 2,Data Protection & Privacy Law,Relevant for AI-driven profiling and decisions
+L5-C08,Handling Data Subject Requests in AI Systems,5,Privacy Rights,beginner,high,true,"5,8,18",Domain 3,Data Governance & Management,Bridges rights to operational governance processes
+L5-C09,Automated Decision-Making and Individual Rights,5,Privacy Rights,beginner,high,true,"5,15,33",Domain 3,Data Governance & Management,Explicit GDPR hook for AI-driven decisions
+L5-C10,Explainability Expectations for Data Subject Requests,5,Privacy Rights,beginner,high,true,"5,8,17",Domain 3,Data Governance & Management,Sets expectations without technical explainability depth
+

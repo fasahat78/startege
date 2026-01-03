@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L1-C01,Artificial Intelligence vs Traditional Software,1,Introduction to AI Governance,beginner,high,false,,Domain 1,AI Fundamentals,Establishes why AI requires distinct governance approaches
+L1-C02,Types of AI Systems (Rule-Based ML Generative),1,Introduction to AI Governance,beginner,high,false,,Domain 1,AI Fundamentals,Introduces minimum AI system taxonomy
+L1-C03,AI System vs AI Model vs AI Capability,1,Introduction to AI Governance,beginner,high,false,,Domain 1,AI Fundamentals,Prevents common governance terminology confusion
+L1-C04,Autonomy and Decision-Making in AI Systems,1,Introduction to AI Governance,beginner,high,true,"1,7,21",Domain 1,AI Fundamentals,Foundation for later risk and accountability concepts
+L1-C05,Purpose of AI Governance,1,Introduction to AI Governance,beginner,high,false,,Domain 1,Governance Principles,Explains why governance exists in AI contexts
+L1-C06,Accountability as a Governance Principle,1,Introduction to AI Governance,beginner,high,true,"1,9,16",Domain 1,Governance Principles,Core principle revisited in accountability and audit levels
+L1-C07,Transparency as a Governance Principle,1,Introduction to AI Governance,beginner,high,true,"1,8,17",Domain 1,Governance Principles,High-level transparency concept before technical explainability
+L1-C08,AI Governance vs Corporate Governance,1,Introduction to AI Governance,beginner,high,false,,Domain 1,Governance Structures & Roles,Positions AI governance within existing organisational governance
+L1-C09,Role of the Organisation in AI Accountability,1,Introduction to AI Governance,beginner,high,true,"1,9,26",Domain 1,Governance Structures & Roles,Shifts accountability from models to organisations
+L1-C10,AI System Owner vs AI User,1,Introduction to AI Governance,beginner,high,true,"1,9,33",Domain 1,Governance Structures & Roles,Introduces role separation critical for later controls
+

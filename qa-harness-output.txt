@@ -1,0 +1,105 @@
+🧪 Exam QA Harness - Testing Levels 1-9 and Categories
+
+============================================================
+
+📋 Testing Level Exams (Levels 1-9)...
+
+  Level 1:
+    Generation 1... ✅ PASSED
+    Generation 2... ✅ PASSED
+    Generation 3... ✅ PASSED
+
+  Level 2:
+    Generation 1... ✅ PASSED
+    Generation 2... ❌ FAILED (1 errors)
+    Generation 3... ✅ PASSED
+
+  Level 3:
+    Generation 1... ❌ FAILED (1 errors)
+    Generation 2... ✅ PASSED
+    Generation 3... ❌ FAILED (1 errors)
+
+  Level 4:
+    Generation 1... ❌ FAILED (1 errors)
+    Generation 2... ❌ FAILED (1 errors)
+    Generation 3... ❌ FAILED (1 errors)
+
+  Level 5:
+    Generation 1... ❌ FAILED (3 errors)
+    Generation 2... ✅ PASSED
+    Generation 3... ❌ FAILED (1 errors)
+
+  Level 6:
+    Generation 1... ✅ PASSED
+    Generation 2... ✅ PASSED
+    Generation 3... ✅ PASSED
+
+  Level 7:
+    Generation 1... ✅ PASSED
+    Generation 2... ✅ PASSED
+    Generation 3... ✅ PASSED
+
+  Level 8:
+    Generation 1... ✅ PASSED
+    Generation 2... ✅ PASSED
+    Generation 3... ✅ PASSED
+
+  Level 9:
+    Generation 1... ❌ FAILED (1 errors)
+    Generation 2... ✅ PASSED
+    Generation 3... ✅ PASSED
+
+📋 Testing Category Exams...
+  Found 15 categories to test
+
+  AI Fundamentals:
+    Generation 1... ❌ FAILED (14 errors)
+    Generation 2... ❌ FAILED (15 errors)
+    Generation 3... ❌ FAILED (14 errors)
+  Governance Principles:
+    Generation 1... ❌ FAILED (10 errors)
+    Generation 2... ❌ FAILED (10 errors)
+    Generation 3... ❌ FAILED (10 errors)
+    ⚠️  Constraint conflict detected — stopping regeneration for Governance Principles
+    Failed rule: Question Q1: categoryId must be "cmj461y0p00070aiqg9s9t06i", found: cat_ai_governance
+  Governance Structures & Roles:
+    Generation 1... ❌ FAILED (10 errors)
+    Generation 2... ❌ FAILED (10 errors)
+    Generation 3... ❌ FAILED (10 errors)
+    ⚠️  Constraint conflict detected — stopping regeneration for Governance Structures & Roles
+    Failed rule: Question Q1: categoryId must be "cmj461y0q00090aiq8t510okb", found: cat_governance
+  Policies & Standards (Internal):
+    Generation 1... ❌ FAILED (10 errors)
+    Generation 2... ❌ FAILED (10 errors)
+    Generation 3... ❌ FAILED (10 errors)
+    ⚠️  Constraint conflict detected — stopping regeneration for Policies & Standards (Internal)
+    Failed rule: Question Q1: categoryId must be "cmj461y0r000b0aiqonv7roh4", found: cat_xxx
+  AI Lifecycle Governance:
+    Generation 1... ❌ FAILED (15 errors)
+    Generation 2... ❌ FAILED (13 errors)
+    Generation 3... ❌ FAILED (13 errors)
+  Data Protection & Privacy Law:
+    Generation 1... ❌ FAILED (10 errors)
+    Generation 2... ❌ FAILED (10 errors)
+    Generation 3... ❌ FAILED (10 errors)
+    ⚠️  Constraint conflict detected — stopping regeneration for Data Protection & Privacy Law
+    Failed rule: Question Q1: categoryId must be "cmj461y0x000n0aiqyovrc0zb", found: Data Protection & Privacy Law
+  Data Governance & Management:
+    Generation 1... ❌ FAILED (10 errors)
+    Generation 2... ❌ FAILED (10 errors)
+    Generation 3... ❌ FAILED (10 errors)
+    ⚠️  Constraint conflict detected — stopping regeneration for Data Governance & Management
+    Failed rule: Question Q1: categoryId must be "cmj461y1600170aiq9ec9dz3u", found: cat_xxx
+  Regulatory Oversight & Authorities:
+    Generation 1... ❌ FAILED (1 errors)
+    Generation 2... ❌ FAILED (1 errors)
+    Generation 3... ❌ FAILED (1 errors)
+    ⚠️  Constraint conflict detected — stopping regeneration for Regulatory Oversight & Authorities
+    Failed rule: No concepts assigned to category Regulatory Oversight & Authorities
+  AI-Specific Regulation:
+    Generation 1... ❌ FAILED (10 errors)
+    Generation 2... ❌ FAILED (11 errors)
+    Generation 3... ❌ FAILED (10 errors)
+  Risk Identification & Assessment:
+    Generation 1... ❌ FAILED (10 errors)
+    Generation 2... 

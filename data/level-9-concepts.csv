@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L9-C01,Accountability vs Responsibility vs Authority,9,Accountability,intermediate,high,true,"9,16,31",Domain 1,Decision-Making & Escalation,Clarifies critical governance distinctions before escalation logic
+L9-C02,Decision Rights in AI Governance,9,Accountability,intermediate,high,true,"9,26,35",Domain 1,Decision-Making & Escalation,Defines who can approve stop or escalate AI use
+L9-C03,Escalation Triggers in AI Systems,9,Accountability,intermediate,high,true,"9,18,35",Domain 1,Decision-Making & Escalation,Identifies when AI issues must be escalated
+L9-C04,Risk-Based Decision-Making in AI Governance,9,Accountability,intermediate,high,true,"9,27,35",Domain 1,Decision-Making & Escalation,Connects risk assessment to governance decisions
+L9-C05,Governance Forums and Committees,9,Accountability,intermediate,high,true,"9,26,35",Domain 1,Decision-Making & Escalation,Introduces formal governance decision bodies
+L9-C06,Documenting Decisions and Rationale,9,Accountability,intermediate,high,true,"9,16,37",Domain 1,Decision-Making & Escalation,Links accountability to transparency and records
+L9-C07,What Constitutes an AI Incident,9,Accountability,intermediate,high,true,"9,18,37",Domain 4,Incident & Issue Management,Defines boundary for incident handling
+L9-C08,Incidents vs Issues vs Defects,9,Accountability,intermediate,high,true,"9,18,37",Domain 4,Incident & Issue Management,Prevents misclassification and mis-escalation
+L9-C09,Incident Response Roles and Responsibilities,9,Accountability,intermediate,high,true,"9,18,26",Domain 4,Incident & Issue Management,Reinforces accountability during AI failures
+L9-C10,Communication During AI Incidents,9,Accountability,intermediate,high,true,"9,18,39",Domain 4,Incident & Issue Management,Connects incident handling to transparency obligations
+

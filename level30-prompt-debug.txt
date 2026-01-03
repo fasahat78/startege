@@ -1,0 +1,670 @@
+=== LEVEL 30 BOSS EXAM PROMPT ===
+Generated at: 2025-12-14T04:55:20.845Z
+
+--- SYSTEM PROMPT ---
+# Boss Exam System Prompt Template
+
+For Boss Levels (10, 20, 30, 40): Integration and mastery exams that test end-to-end governance decision-making.
+
+---
+
+## BOSS EXAM SYSTEM PROMPT
+
+You are generating a **BOSS EXAM** for a professional AI Governance learning platform.
+
+This exam tests **INTERMEDIATE MASTERY** across multiple governance domains and validates that learners can integrate use cases, regulation, risk, assurance, enforcement, and compliance frameworks into coherent governance decisions.
+
+---
+
+## CRITICAL RULES (MUST FOLLOW)
+
+1. This is a **BOSS EXAM** (NOT a regular level exam).
+2. **ALL questions must be scenario-based MCQs** that simulate real governance decision-making.
+3. **Each question must reference 2-3 concepts** from the provided scope.
+4. **Each question must reference 2+ governance categories**.
+5. Use **ONLY** the provided ConceptCard database IDs for conceptIds.
+6. Use **ONLY** canonical category database IDs for categoryIds.
+7. Do **NOT** invent or reuse concept IDs or category IDs.
+8. **NO recall-only questions** are allowed. All questions must be Apply, Analyse, or Judgement level.
+9. Every question MUST include:
+   - conceptIds (array with 2-3 IDs)
+   - categoryIds (array with 2+ IDs)
+   - difficultyTag ("apply", "analyse", or "judgement")
+
+---
+
+## EXAM GOAL
+
+The goal of this boss exam is to validate that the learner can:
+- Govern AI end-to-end in a real organisation
+- Make trade-offs under constraints
+- Defend decisions to stakeholders or regulators
+- Integrate multiple governance concepts simultaneously
+
+This exam should feel like governing a real AI portfolio.
+
+---
+
+## BOSS EXAM CONTEXT
+
+**Level Number:** 20
+**Level Title:** Intermediate Mastery
+**Super Level Group:** BUILDING
+**Number of Questions:** 20
+**Concepts in Scope:** 90
+**Level Range:** 11-19
+
+---
+
+## COMPOSITION REQUIREMENTS (NON-NEGOTIABLE)
+
+### Question Design
+- **All questions are scenario-based**
+- Each question references **2-3 concepts**
+- Each question references **2+ categories**
+- One correct answer only (MCQ)
+
+### Coverage Requirements
+- **Every introduced category** from the level range must appear at least once
+- **Every level cluster** must be represented
+
+### Difficulty Mix (Critical)
+- **Apply:** ~30% (~6 questions)
+- **Analyse:** ~40% (~8 questions)
+- **Judgement:** ~30% (~6 questions)
+
+**NO recall-only questions are allowed.**
+
+### Concept Frequency Rules
+- **No concept appears more than 4 times**
+- **At least 70% of questions** must include:
+  - one primary concept
+  - one supporting concept
+- Some reuse of "central" concepts is allowed (e.g. impact assessments, high-risk classification)
+
+### Category Weighting (Implicit, not equal)
+
+The exam should naturally emphasise:
+- Use case definition & scoping
+- AI Act obligations
+- Impact assessments
+- High-risk AI governance
+- Compliance frameworks
+
+Bias, enforcement, and assurance must still appear — but as decision constraints, not the whole problem.
+
+---
+
+## CONCEPTS IN SCOPE (MANDATORY)
+
+You may **ONLY** test concepts from the following scope (Levels 11-19).
+
+**Total concepts available:** 90
+
+1. What Is an AI Use Case (Governance Perspective) (cmj564ihr00000a80cx4xbfm4)
+2. Business Objective vs AI Capability (cmj564ihz00010a80ah9nh930)
+3. Defining Intended Purpose of an AI System (cmj564ii500020a80qkvapn3k)
+4. Users Subjects and Affected Stakeholders (cmj564iic00030a80s757h0rt)
+5. In-Scope vs Out-of-Scope Decisions (cmj564iih00040a80oz4eag13)
+6. Assumptions and Constraints in AI Use Cases (cmj564iim00050a80a889uyua)
+7. Who Owns an AI Use Case (cmj564iir00060a80j1k4s27r)
+8. Early Risk Signals During Use Case Design (cmj564iiw00070a809dooxe4c)
+9. When a Use Case Should Be Stopped or Redesigned (cmj564ij200080a80bixvn7md)
+10. Mapping Use Cases to the AI Lifecycle (cmj564ij700090a80nnhfdooi)
+11. What Cross-Border AI Means in Practice (cmj564ijj000a0a809iofbf2q)
+12. Jurisdiction vs Location vs Citizenship (cmj564ijo000b0a805maru4jj)
+13. Where AI Decisions Are Made vs Where Data Is Stored (cmj564ijt000c0a80k96pk3om)
+14. Applicable Law in Cross-Border AI Systems (cmj564ijz000d0a80w60ix6kl)
+15. Data Flow Mapping for AI Use Cases (cmj564ik4000e0a80vwwn8qcl)
+16. Why Cross-Border Context Increases Governance Risk (cmj564ik8000f0a801h5zzj5b)
+17. Personal Data in Cross-Border AI Systems (cmj564ikf000g0a80amx0q9ai)
+18. Cross-Border Consent and User Expectations (cmj564ikk000h0a80tjhrelna)
+19. Designing AI Use Cases for Multi-Jurisdiction Deployment (cmj564ikp000i0a80y0d05sm6)
+20. Early Cross-Border Risk Indicators (cmj564ikv000j0a803n270a2w)
+21. Structure of the EU AI Act (cmj56hbfh00030a09f027zeso)
+22. AI Act Risk Categories (Unacceptable High Limited Minimal) (cmj56hbfm00050a09e58mn8zr)
+23. How AI Systems Become High-Risk (cmj56hbfq00070a09xi14fw90)
+24. Obligations for High-Risk AI Systems (Overview) (cmj56hbfu00090a09415vuvpi)
+25. Obligations for Limited-Risk AI Systems (cmj56hbfy000b0a095bbe1yx9)
+26. Prohibited AI Practices (Conceptual) (cmj56hbg1000d0a09cvi2vt32)
+27. Applying AI Act Categories to AI Use Cases (cmj56hbg5000f0a09b54yfikj)
+28. General-Purpose AI vs Use-Case-Specific AI (cmj56hbg8000h0a098andpso0)
+29. Risk Classification as a Governance Decision (cmj56hbgb000j0a09gutqxemq)
+30. Designing Use Cases to Avoid Prohibited or High-Risk Classification (cmj56hbge000l0a09fvmcgtm8)
+31. Purpose of AI Impact Assessments (cmj56jqmi00010ahuo4f5tjhm)
+32. When an AI Impact Assessment Is Required (cmj56jqmo00030ahu8p7b0413)
+33. Types of Impact Assessments (DPIA AIA Hybrid) (cmj56jqmt00050ahub575zynn)
+34. Core Components of an AI Impact Assessment (cmj56jqmy00070ahu56o7keca)
+35. Risk Identification Within Impact Assessments (cmj56jqn200090ahuxzk43fv3)
+36. Documenting Intended Purpose and Context (cmj56jqn7000b0ahuxpr62ey7)
+37. AI Act Expectations for Risk Documentation (cmj56jqna000d0ahuklt6wz1r)
+38. Relationship Between DPIAs and AI Impact Assessments (cmj56jqne000f0ahu3pphyfx8)
+39. Who Owns and Approves Impact Assessments (cmj56jqnj000h0ahu2kgygpvm)
+40. Using Impact Assessments to Inform Go / No-Go Decisions (cmj56jqnm000j0ahu2d4yvo4y)
+41. Risk Management Expectations for High-Risk AI (cmj56mmg400090a7b16e478rt)
+42. Role of Impact Assessments in High-Risk AI Governance (cmj56mmgb000d0a7blylt8dbu)
+43. Accountability for High-Risk AI Systems (cmj56mmgg000f0a7bfzqdma3y)
+44. Residual Risk Acceptance for High-Risk AI (cmj56mmgj000h0a7b6thymxwg)
+45. High-Risk AI Obligations vs Limited-Risk Obligations (cmj56mmgn000j0a7bfd1lancm)
+46. What Makes an AI System High-Risk (cmj56mtld00030ad9injqse02)
+47. Annex III High-Risk Use Case Categories (Conceptual) (cmj56mtli00050ad9oh9qsaw1)
+48. High-Risk vs Non-High-Risk Boundary Cases (cmj56mtlm00070ad9s6l1nnlf)
+49. Lifecycle Obligations Triggered by High-Risk Classification (cmj56mtlr00090ad9sh8q3whx)
+50. Documentation Burden for High-Risk AI Systems (cmj56mtlx000b0ad9brjhix66)
+... and 40 more concepts (see full list in conceptIdMapping)
+
+---
+
+## CRITICAL: CONCEPT ID MAPPING (MANDATORY)
+
+You MUST use these exact conceptIds (ConceptCard database IDs) in your questions. DO NOT invent conceptIds like "L11-C01".
+
+Use ONLY these conceptIds:
+{
+  "cmj564ihr00000a80cx4xbfm4": "What Is an AI Use Case (Governance Perspective)",
+  "cmj564ihz00010a80ah9nh930": "Business Objective vs AI Capability",
+  "cmj564ii500020a80qkvapn3k": "Defining Intended Purpose of an AI System",
+  "cmj564iic00030a80s757h0rt": "Users Subjects and Affected Stakeholders",
+  "cmj564iih00040a80oz4eag13": "In-Scope vs Out-of-Scope Decisions",
+  "cmj564iim00050a80a889uyua": "Assumptions and Constraints in AI Use Cases",
+  "cmj564iir00060a80j1k4s27r": "Who Owns an AI Use Case",
+  "cmj564iiw00070a809dooxe4c": "Early Risk Signals During Use Case Design",
+  "cmj564ij200080a80bixvn7md": "When a Use Case Should Be Stopped or Redesigned",
+  "cmj564ij700090a80nnhfdooi": "Mapping Use Cases to the AI Lifecycle",
+  "cmj564ijj000a0a809iofbf2q": "What Cross-Border AI Means in Practice",
+  "cmj564ijo000b0a805maru4jj": "Jurisdiction vs Location vs Citizenship",
+  "cmj564ijt000c0a80k96pk3om": "Where AI Decisions Are Made vs Where Data Is Stored",
+  "cmj564ijz000d0a80w60ix6kl": "Applicable Law in Cross-Border AI Systems",
+  "cmj564ik4000e0a80vwwn8qcl": "Data Flow Mapping for AI Use Cases",
+  "cmj564ik8000f0a801h5zzj5b": "Why Cross-Border Context Increases Governance Risk",
+  "cmj564ikf000g0a80amx0q9ai": "Personal Data in Cross-Border AI Systems",
+  "cmj564ikk000h0a80tjhrelna": "Cross-Border Consent and User Expectations",
+  "cmj564ikp000i0a80y0d05sm6": "Designing AI Use Cases for Multi-Jurisdiction Deployment",
+  "cmj564ikv000j0a803n270a2w": "Early Cross-Border Risk Indicators",
+  "cmj56hbfh00030a09f027zeso": "Structure of the EU AI Act",
+  "cmj56hbfm00050a09e58mn8zr": "AI Act Risk Categories (Unacceptable High Limited Minimal)",
+  "cmj56hbfq00070a09xi14fw90": "How AI Systems Become High-Risk",
+  "cmj56hbfu00090a09415vuvpi": "Obligations for High-Risk AI Systems (Overview)",
+  "cmj56hbfy000b0a095bbe1yx9": "Obligations for Limited-Risk AI Systems",
+  "cmj56hbg1000d0a09cvi2vt32": "Prohibited AI Practices (Conceptual)",
+  "cmj56hbg5000f0a09b54yfikj": "Applying AI Act Categories to AI Use Cases",
+  "cmj56hbg8000h0a098andpso0": "General-Purpose AI vs Use-Case-Specific AI",
+  "cmj56hbgb000j0a09gutqxemq": "Risk Classification as a Governance Decision",
+  "cmj56hbge000l0a09fvmcgtm8": "Designing Use Cases to Avoid Prohibited or High-Risk Classification",
+  "cmj56jqmi00010ahuo4f5tjhm": "Purpose of AI Impact Assessments",
+  "cmj56jqmo00030ahu8p7b0413": "When an AI Impact Assessment Is Required",
+  "cmj56jqmt00050ahub575zynn": "Types of Impact Assessments (DPIA AIA Hybrid)",
+  "cmj56jqmy00070ahu56o7keca": "Core Components of an AI Impact Assessment",
+  "cmj56jqn200090ahuxzk43fv3": "Risk Identification Within Impact Assessments",
+  "cmj56jqn7000b0ahuxpr62ey7": "Documenting Intended Purpose and Context",
+  "cmj56jqna000d0ahuklt6wz1r": "AI Act Expectations for Risk Documentation",
+  "cmj56jqne000f0ahu3pphyfx8": "Relationship Between DPIAs and AI Impact Assessments",
+  "cmj56jqnj000h0ahu2kgygpvm": "Who Owns and Approves Impact Assessments",
+  "cmj56jqnm000j0ahu2d4yvo4y": "Using Impact Assessments to Inform Go / No-Go Decisions",
+  "cmj56mmg400090a7b16e478rt": "Risk Management Expectations for High-Risk AI",
+  "cmj56mmgb000d0a7blylt8dbu": "Role of Impact Assessments in High-Risk AI Governance",
+  "cmj56mmgg000f0a7bfzqdma3y": "Accountability for High-Risk AI Systems",
+  "cmj56mmgj000h0a7b6thymxwg": "Residual Risk Acceptance for High-Risk AI",
+  "cmj56mmgn000j0a7bfd1lancm": "High-Risk AI Obligations vs Limited-Risk Obligations",
+  "cmj56mtld00030ad9injqse02": "What Makes an AI System High-Risk",
+  "cmj56mtli00050ad9oh9qsaw1": "Annex III High-Risk Use Case Categories (Conceptual)",
+  "cmj56mtlm00070ad9s6l1nnlf": "High-Risk vs Non-High-Risk Boundary Cases",
+  "cmj56mtlr00090ad9sh8q3whx": "Lifecycle Obligations Triggered by High-Risk Classification",
+  "cmj56mtlx000b0ad9brjhix66": "Documentation Burden for High-Risk AI Systems",
+  "cmj56p8f200030atudtcw8ei3": "What Algorithmic Accountability Means in Practice",
+  "cmj56p8f700050atumrt90a3n": "Evidence-Based AI Governance",
+  "cmj56p8fb00070atujwc9n6zw": "Assurance vs Compliance vs Audit",
+  "cmj56p8ff00090atuijgaxe5z": "Traceability Across the AI Lifecycle",
+  "cmj56p8fj000b0atuqfgdj6dt": "Key Assurance Artefacts for AI Systems",
+  "cmj56p8fo000d0atutrjup0h7": "Assurance Readiness for High-Risk AI",
+  "cmj56p8ft000f0atutttgxpgq": "Using Impact Assessments as Assurance Evidence",
+  "cmj56p8fw000h0atuix53cy85": "Residual Risk Documentation and Sign-Off",
+  "cmj56p8fz000j0atus3en6xi3": "Independent Review and Challenge Functions",
+  "cmj56p8g4000n0atuguji719k": "Communicating Assurance Outcomes to Stakeholders",
+  "cmj56rwzl00030afe6jmv7daz": "What Bias Means in AI Systems",
+  "cmj56rwzr00050afewhos6jcl": "Sources of Bias Across the AI Lifecycle",
+  "cmj56rwzw00070afeef83niwn": "Fairness as a Governance Objective",
+  "cmj56rx0100090afexpz36gu1": "Trade-Offs Between Fairness Accuracy and Utility",
+  "cmj56rx05000b0afeybmjg7x7": "Protected Attributes and Sensitive Inference",
+  "cmj56rx09000d0afei3m2l2rl": "Model Risk Beyond Bias",
+  "cmj56rx0d000f0afek36302vk": "Evidence of Fairness and Bias Controls",
+  "cmj56rx0h000h0afeatg7bshb": "Assessing Materiality of Bias Risks",
+  "cmj56rx0l000j0afelkccw5gt": "Who Decides What Is Fair Enough",
+  "cmj56rx0p000l0afe933gq9qf": "Explaining Fairness Decisions to Stakeholders",
+  "cmj56vz5b00030a0zxowqjjvq": "What Enforcement Means in AI Governance",
+  "cmj56vz5i00050a0z5u5scglu": "Supervisory Authorities and Oversight Bodies",
+  "cmj56vz5m00070a0zpnle7b6f": "Triggers for Regulatory Intervention",
+  "cmj56vz5q00090a0zdrnolhhk": "Corrective Actions and Remediation Measures",
+  "cmj56vz5v000b0a0zh87njexv": "Suspension Withdrawal and Use Restrictions",
+  "cmj56vz5z000d0a0zxouqteci": "Remedies for Affected Individuals and Groups",
+  "cmj56vz63000f0a0zl78adlwx": "Responding to AI Governance Breaches",
+  "cmj56vz67000h0a0zyyy55w0j": "Using Assurance Evidence During Investigations",
+  "cmj56vz6b000j0a0zbw1uy3eu": "Internal Escalation During Enforcement Events",
+  "cmj56vz6f000l0a0zddxue3ms": "Communicating with Regulators and Stakeholders",
+  "cmj56xwwo00030a7moc9g0uey": "What an AI Compliance Framework Is",
+  "cmj56xwwu00050a7md6e2sgql": "Core Components of an AI Compliance Framework",
+  "cmj56xwwy00070a7m1liesjc7": "Policy Process Control and Evidence Layers",
+  "cmj56xwx300090a7m3qgh4mr5": "Integrating AI Governance into Enterprise Risk Management",
+  "cmj56xwx7000b0a7mp8bysr3j": "Roles and Responsibilities Within a Compliance Framework",
+  "cmj56xwxb000d0a7mytovtgb0": "Lifecycle Coverage in Compliance Frameworks",
+  "cmj56xwxf000f0a7mp9m8xfeh": "Mapping Regulatory Obligations to Framework Controls",
+  "cmj56xwxi000h0a7mryzym4iq": "Assurance Activities Within Compliance Frameworks",
+  "cmj56xwxm000j0a7mvz9kk5gg": "Risk-Based Prioritisation in Compliance Programs",
+  "cmj56xwxq000l0a7mii8srl1s": "Using Compliance Frameworks to Respond to Enforcement Events"
+}
+
+Every question's conceptIds array MUST contain 2-3 IDs from the mapping above.
+
+---
+
+## CRITICAL: CATEGORY ID MAPPING (MANDATORY)
+
+You MUST use these exact categoryIds (database IDs) in your questions. DO NOT use placeholder IDs like "cat_001", "cat_privacy", "cat_compliance", etc.
+
+Use ONLY these categoryIds:
+{
+  "cmj461y0q00090aiq8t510okb": "Governance Structures & Roles",
+  "cmj461y0s000d0aiq25eq20ab": "AI Lifecycle Governance",
+  "cmj461y0x000n0aiqyovrc0zb": "Data Protection & Privacy Law",
+  "cmj461y0y000p0aiqxmlcqzga": "AI-Specific Regulation",
+  "cmj461y0z000t0aiqgomdis67": "Cross-Border Data & Jurisdiction",
+  "cmj56rwze00010afej5kfm0fd": "Bias Fairness & Model Risk",
+  "cmj56xwwi00010a7mwvkw7foh": "Compliance Frameworks",
+  "cmj461y1500150aiqc8mpqkaf": "Use Case Definition & Scoping",
+  "cmj461y1700190aiquos1h4p4": "Risk Identification & Assessment",
+  "cmj461y17001b0aiqvn7tkmcv": "Impact Assessments",
+  "cmj56vz5500010a0zjcjby6v9": "Enforcement Oversight & Remedies",
+  "cmj461y1f001t0aiq9rc1z2ah": "Transparency & Communication",
+  "cmj461y1g001x0aiq30rg5zwh": "Incident & Issue Management",
+  "cmj56hbfb00010a096a00xc4b": "AI Act Obligations & Requirements",
+  "cmj56mtl700010ad9mq0od1zm": "High-Risk AI Systems",
+  "cmj56p8ew00010atudcxm05w2": "Algorithmic Accountability & Assurance",
+  "cmj56p8g1000l0atugppf0sky": "Transparency & Communication"
+}
+
+Every question's categoryIds array MUST contain 2+ IDs from the mapping above.
+
+---
+
+## REQUIRED CATEGORIES (MUST APPEAR)
+
+The following categories **MUST** appear at least once in the exam:
+
+- Governance Structures & Roles (ID: cmj461y0q00090aiq8t510okb)
+- AI Lifecycle Governance (ID: cmj461y0s000d0aiq25eq20ab)
+- Data Protection & Privacy Law (ID: cmj461y0x000n0aiqyovrc0zb)
+- AI-Specific Regulation (ID: cmj461y0y000p0aiqxmlcqzga)
+- Cross-Border Data & Jurisdiction (ID: cmj461y0z000t0aiqgomdis67)
+- Bias Fairness & Model Risk (ID: cmj56rwze00010afej5kfm0fd)
+- Compliance Frameworks (ID: cmj56xwwi00010a7mwvkw7foh)
+- Use Case Definition & Scoping (ID: cmj461y1500150aiqc8mpqkaf)
+- Risk Identification & Assessment (ID: cmj461y1700190aiquos1h4p4)
+- Impact Assessments (ID: cmj461y17001b0aiqvn7tkmcv)
+- Enforcement Oversight & Remedies (ID: cmj56vz5500010a0zjcjby6v9)
+- Transparency & Communication (ID: cmj461y1f001t0aiq9rc1z2ah)
+- Incident & Issue Management (ID: cmj461y1g001x0aiq30rg5zwh)
+- AI Act Obligations & Requirements (ID: cmj56hbfb00010a096a00xc4b)
+- High-Risk AI Systems (ID: cmj56mtl700010ad9mq0od1zm)
+- Algorithmic Accountability & Assurance (ID: cmj56p8ew00010atudcxm05w2)
+- Transparency & Communication (ID: cmj56p8g1000l0atugppf0sky)
+
+---
+
+## LEVEL CLUSTERS (MUST BE REPRESENTED)
+
+Each of these level clusters must be represented in the exam:
+
+- Levels 11: Use case design
+- Levels 12: Cross-border context
+- Levels 13: AI Act obligations
+- Levels 14: Impact assessments
+- Levels 15: High-risk AI
+- Levels 16: Assurance
+- Levels 17: Bias & fairness
+- Levels 18: Enforcement & remedies
+- Levels 19: Compliance frameworks
+
+---
+
+## OUTPUT FORMAT
+
+Generate exactly 20 multiple-choice questions.
+
+Each question must:
+- Be scenario-based (simulating real governance decisions)
+- Reference 2-3 concepts (from concept mapping above)
+- Reference 2+ categories (from category mapping above)
+- Include exactly 4 answer options
+- Have one correct answer
+- Use difficultyTag: "apply", "analyse", or "judgement" (NO "recall")
+
+Return ONLY valid JSON matching this exact JSON Schema:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["questions"],
+  "properties": {
+    "questions": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": ["id", "stem", "options", "correctOptionId", "conceptIds", "categoryIds", "difficultyTag", "rationale"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^Q[0-9]+$",
+            "description": "Sequential question ID (Q1, Q2, Q3, ...)"
+          },
+          "stem": {
+            "type": "string",
+            "minLength": 50,
+            "description": "Scenario-based question text that simulates real governance decision-making"
+          },
+          "options": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "required": ["id", "text"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "enum": ["A", "B", "C", "D"],
+                  "description": "Option identifier"
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 10,
+                  "description": "Option text"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "correctOptionId": {
+            "type": "string",
+            "enum": ["A", "B", "C", "D"],
+            "description": "The ID of the correct option"
+          },
+          "conceptIds": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "pattern": "^cmj[a-z0-9]+$",
+              "description": "ConceptCard database ID"
+            },
+            "description": "Array containing 2-3 ConceptCard database IDs"
+          },
+          "categoryIds": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "string",
+              "pattern": "^cmj[a-z0-9]+$",
+              "description": "Category database ID"
+            },
+            "description": "Array containing at least 2 category database IDs"
+          },
+          "difficultyTag": {
+            "type": "string",
+            "enum": ["apply", "analyse", "judgement"],
+            "description": "Difficulty tag - NO recall allowed"
+          },
+          "rationale": {
+            "type": "object",
+            "required": ["correct", "incorrect"],
+            "properties": {
+              "correct": {
+                "type": "string",
+                "minLength": 20,
+                "description": "Explanation of why the correct option is correct"
+              },
+              "incorrect": {
+                "type": "object",
+                "minProperties": 3,
+                "additionalProperties": {
+                  "type": "string",
+                  "minLength": 10
+                },
+                "description": "Explanations for each incorrect option, keyed by option ID"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
+```
+
+**Example valid output:**
+
+```json
+{
+  "questions": [
+    {
+      "id": "Q1",
+      "stem": "A healthcare organisation is designing an AI system to assist doctors in diagnosing rare diseases. The system will process patient medical records from multiple EU countries and use machine learning to identify patterns. As the AI governance lead, you need to determine the appropriate governance approach. Which combination of actions is most appropriate?",
+      "options": [
+        { "id": "A", "text": "Conduct a use case scoping exercise, classify as high-risk under the AI Act, and initiate an impact assessment before development begins." },
+        { "id": "B", "text": "Proceed with development and conduct an impact assessment only after the system is deployed." },
+        { "id": "C", "text": "Classify as limited-risk and only implement transparency measures." },
+        { "id": "D", "text": "Skip governance processes since this is a medical application with existing regulations." }
+      ],
+      "correctOptionId": "A",
+      "conceptIds": ["cmj4621ir00010an4f0j6i7p0", "cmj4621ir00010an4f0j6i7p1"],
+      "categoryIds": ["cmj461y0l00050aiqga4zs82y", "cmj461y0l00050aiqga4zs82z"],
+      "difficultyTag": "judgement",
+      "rationale": {
+        "correct": "This scenario requires early governance intervention. The use case involves cross-border data, medical decision-making (high-risk under AI Act), and requires proper scoping before development. Option A correctly integrates use case definition, risk classification, and impact assessment timing.",
+        "incorrect": {
+          "A": "This is actually the correct answer.",
+          "C": "Medical AI systems that assist in diagnosis are classified as high-risk under Annex III of the AI Act, not limited-risk.",
+          "D": "Existing medical regulations do not replace AI Act obligations. AI governance must still be applied."
+        }
+      }
+    }
+  ]
+}
+```
+
+**CRITICAL REMINDERS:**
+- Each question tests 2-3 concepts (multi-concept integration)
+- Each question spans 2+ categories (cross-category thinking)
+- All questions are scenario-based (real governance decisions)
+- Use ONLY ConceptCard IDs from the mapping above
+- Use ONLY canonical category IDs
+- Difficulty tags: "apply", "analyse", or "judgement" ONLY (NO "recall")
+- Generate exactly 20 questions
+- Ensure all required categories appear at least once
+- Ensure all level clusters are represented
+
+Do not include any markdown, commentary, or text outside the JSON payload.
+
+
+
+--- USER PROMPT ---
+Generate exactly 20 multiple-choice exam questions for a BOSS EXAM.
+
+Difficulty Level: advanced
+
+BOSS EXAM REQUIREMENTS (MANDATORY):
+- Multi-concept questions: ≥70% (≥14 questions) must involve 2-3 concepts
+- Cross-category questions: ≥70% (≥14 questions) must span 2+ categories
+- Scenario-based questions: ≥70% (≥14 questions) must be scenario-based, not definition recall
+- Framed from: enterprise governance, risk owner, accountable executive, governance committee context
+- No single concept should appear in more than 3 questions
+
+CRITICAL CONCEPT SCOPE RESTRICTION (MANDATORY):
+You MUST use ONLY these exact ConceptCard database IDs (NOT format like "L5-C01"):
+1. cmj564ihr00000a80cx4xbfm4
+2. cmj564ihz00010a80ah9nh930
+3. cmj564ii500020a80qkvapn3k
+4. cmj564iic00030a80s757h0rt
+5. cmj564iih00040a80oz4eag13
+6. cmj564iim00050a80a889uyua
+7. cmj564iir00060a80j1k4s27r
+8. cmj564iiw00070a809dooxe4c
+9. cmj564ij200080a80bixvn7md
+10. cmj564ij700090a80nnhfdooi
+11. cmj564ijj000a0a809iofbf2q
+12. cmj564ijo000b0a805maru4jj
+13. cmj564ijt000c0a80k96pk3om
+14. cmj564ijz000d0a80w60ix6kl
+15. cmj564ik4000e0a80vwwn8qcl
+16. cmj564ik8000f0a801h5zzj5b
+17. cmj564ikf000g0a80amx0q9ai
+18. cmj564ikk000h0a80tjhrelna
+19. cmj564ikp000i0a80y0d05sm6
+20. cmj564ikv000j0a803n270a2w
+21. cmj56hbfh00030a09f027zeso
+22. cmj56hbfm00050a09e58mn8zr
+23. cmj56hbfq00070a09xi14fw90
+24. cmj56hbfu00090a09415vuvpi
+25. cmj56hbfy000b0a095bbe1yx9
+26. cmj56hbg1000d0a09cvi2vt32
+27. cmj56hbg5000f0a09b54yfikj
+28. cmj56hbg8000h0a098andpso0
+29. cmj56hbgb000j0a09gutqxemq
+30. cmj56hbge000l0a09fvmcgtm8
+31. cmj56jqmi00010ahuo4f5tjhm
+32. cmj56jqmo00030ahu8p7b0413
+33. cmj56jqmt00050ahub575zynn
+34. cmj56jqmy00070ahu56o7keca
+35. cmj56jqn200090ahuxzk43fv3
+36. cmj56jqn7000b0ahuxpr62ey7
+37. cmj56jqna000d0ahuklt6wz1r
+38. cmj56jqne000f0ahu3pphyfx8
+39. cmj56jqnj000h0ahu2kgygpvm
+40. cmj56jqnm000j0ahu2d4yvo4y
+41. cmj56mmg400090a7b16e478rt
+42. cmj56mmgb000d0a7blylt8dbu
+43. cmj56mmgg000f0a7bfzqdma3y
+44. cmj56mmgj000h0a7b6thymxwg
+45. cmj56mmgn000j0a7bfd1lancm
+46. cmj56mtld00030ad9injqse02
+47. cmj56mtli00050ad9oh9qsaw1
+48. cmj56mtlm00070ad9s6l1nnlf
+49. cmj56mtlr00090ad9sh8q3whx
+50. cmj56mtlx000b0ad9brjhix66
+51. cmj56p8f200030atudtcw8ei3
+52. cmj56p8f700050atumrt90a3n
+53. cmj56p8fb00070atujwc9n6zw
+54. cmj56p8ff00090atuijgaxe5z
+55. cmj56p8fj000b0atuqfgdj6dt
+56. cmj56p8fo000d0atutrjup0h7
+57. cmj56p8ft000f0atutttgxpgq
+58. cmj56p8fw000h0atuix53cy85
+59. cmj56p8fz000j0atus3en6xi3
+60. cmj56p8g4000n0atuguji719k
+61. cmj56rwzl00030afe6jmv7daz
+62. cmj56rwzr00050afewhos6jcl
+63. cmj56rwzw00070afeef83niwn
+64. cmj56rx0100090afexpz36gu1
+65. cmj56rx05000b0afeybmjg7x7
+66. cmj56rx09000d0afei3m2l2rl
+67. cmj56rx0d000f0afek36302vk
+68. cmj56rx0h000h0afeatg7bshb
+69. cmj56rx0l000j0afelkccw5gt
+70. cmj56rx0p000l0afe933gq9qf
+71. cmj56vz5b00030a0zxowqjjvq
+72. cmj56vz5i00050a0z5u5scglu
+73. cmj56vz5m00070a0zpnle7b6f
+74. cmj56vz5q00090a0zdrnolhhk
+75. cmj56vz5v000b0a0zh87njexv
+76. cmj56vz5z000d0a0zxouqteci
+77. cmj56vz63000f0a0zl78adlwx
+78. cmj56vz67000h0a0zyyy55w0j
+79. cmj56vz6b000j0a0zbw1uy3eu
+80. cmj56vz6f000l0a0zddxue3ms
+81. cmj56xwwo00030a7moc9g0uey
+82. cmj56xwwu00050a7md6e2sgql
+83. cmj56xwwy00070a7m1liesjc7
+84. cmj56xwx300090a7m3qgh4mr5
+85. cmj56xwx7000b0a7mp8bysr3j
+86. cmj56xwxb000d0a7mytovtgb0
+87. cmj56xwxf000f0a7mp9m8xfeh
+88. cmj56xwxi000h0a7mryzym4iq
+89. cmj56xwxm000j0a7mvz9kk5gg
+90. cmj56xwxq000l0a7mii8srl1s
+
+DO NOT invent conceptIds like "L5-C01", "L10-C10", etc. Use ONLY the exact IDs listed above.
+These are database IDs (e.g., "cmj4621ir00010an4f0j6i7p0") - copy them exactly.
+
+CRITICAL CATEGORY ID MAPPING (MANDATORY):
+You MUST use these exact categoryIds (database IDs) in your questions:
+{
+  "cmj461y0q00090aiq8t510okb": "Governance Structures & Roles",
+  "cmj461y0s000d0aiq25eq20ab": "AI Lifecycle Governance",
+  "cmj461y0x000n0aiqyovrc0zb": "Data Protection & Privacy Law",
+  "cmj461y0y000p0aiqxmlcqzga": "AI-Specific Regulation",
+  "cmj461y0z000t0aiqgomdis67": "Cross-Border Data & Jurisdiction",
+  "cmj56rwze00010afej5kfm0fd": "Bias Fairness & Model Risk",
+  "cmj56xwwi00010a7mwvkw7foh": "Compliance Frameworks",
+  "cmj461y1500150aiqc8mpqkaf": "Use Case Definition & Scoping",
+  "cmj461y1700190aiquos1h4p4": "Risk Identification & Assessment",
+  "cmj461y17001b0aiqvn7tkmcv": "Impact Assessments",
+  "cmj56vz5500010a0zjcjby6v9": "Enforcement Oversight & Remedies",
+  "cmj461y1f001t0aiq9rc1z2ah": "Transparency & Communication",
+  "cmj461y1g001x0aiq30rg5zwh": "Incident & Issue Management",
+  "cmj56hbfb00010a096a00xc4b": "AI Act Obligations & Requirements",
+  "cmj56mtl700010ad9mq0od1zm": "High-Risk AI Systems",
+  "cmj56p8ew00010atudcxm05w2": "Algorithmic Accountability & Assurance",
+  "cmj56p8g1000l0atugppf0sky": "Transparency & Communication"
+}
+
+DO NOT use placeholder IDs like "cat_privacy", "cat_compliance", etc.
+You MUST use the exact categoryIds from the mapping above.
+
+Return ONLY valid JSON matching this exact schema:
+{
+  "questions": [
+    {
+      "id": "Q1",
+      "stem": "Scenario-based question text here",
+      "options": [
+        { "id": "A", "text": "Option A text" },
+        { "id": "B", "text": "Option B text" },
+        { "id": "C", "text": "Option C text" },
+        { "id": "D", "text": "Option D text" }
+      ],
+      "correctOptionId": "B",
+      "conceptIds": ["L1-C01", "L2-C03"],
+      "categoryIds": ["cmj461y0q00090aiq8t510okb", "cmj461y0s000d0aiq25eq20ab"],
+      "difficultyTag": "judgement",
+      "rationale": {
+        "correct": "Why this option is correct",
+        "incorrect": {
+          "A": "Why option A is incorrect",
+          "C": "Why option C is incorrect",
+          "D": "Why option D is incorrect"
+        }
+      }
+    }
+  ]
+}
+
+CRITICAL REQUIREMENTS:
+- Each question MUST include "conceptIds" array (2+ for multi-concept questions) - ONLY from the allowed list above
+- Each question MUST include "categoryIds" array (2+ for cross-category questions) - ONLY from the categoryId mapping above
+- Each question MUST include "difficultyTag" ("recall", "apply", or "judgement")
+- Multi-concept questions must test integration across concepts
+- Cross-category questions must require reasoning across categories
+- Scenario questions must be realistic governance situations
+
+Do not include any markdown, commentary, or text outside the JSON payload.
+
+--- PROMPT STATS ---
+System prompt: 23436 chars (5859 tokens approx)
+User prompt: 6263 chars (1566 tokens approx)
+Total: 29699 chars (7425 tokens approx)

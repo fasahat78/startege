@@ -1,0 +1,1213 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum SuperLevelGroup {
+  FOUNDATION
+  BUILDING
+  ADVANCED
+  MASTERY
+}
+
+enum ExamType {
+  CATEGORY
+  LEVEL
+}
+
+enum ExamStatus {
+  DRAFT
+  PUBLISHED
+  RETIRED
+}
+
+enum ProgressStatus {
+  LOCKED
+  AVAILABLE
+  PASSED
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  EVALUATED
+  EXPIRED
+}
+
+enum CoverageType {
+  INTRODUCED
+  PRACTICED
+  ASSESSED
+}
+
+enum PersonaType {
+  COMPLIANCE_OFFICER
+  AI_ETHICS_RESEARCHER
+  TECHNICAL_AI_DEVELOPER
+  LEGAL_REGULATORY_PROFESSIONAL
+  BUSINESS_EXECUTIVE
+  DATA_PROTECTION_OFFICER
+  AI_GOVERNANCE_CONSULTANT
+  AI_PRODUCT_MANAGER
+  STUDENT_ACADEMIC
+  OTHER
+}
+
+enum KnowledgeLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  NOT_ASSESSED
+}
+
+enum OnboardingStatus {
+  NOT_STARTED
+  PERSONA_SELECTED
+  KNOWLEDGE_ASSESSED
+  INTERESTS_SELECTED
+  GOALS_SELECTED
+  COMPLETED
+  SKIPPED
+}
+
+enum SourceType {
+  REGULATORY
+  NEWS
+  CASE_STUDY
+  STANDARD
+  LEGAL_DECISION
+  ACADEMIC
+  INDUSTRY_REPORT
+  BLOG
+}
+
+enum ScanType {
+  DAILY_REGULATORY
+  DAILY_NEWS
+  WEEKLY_CASE_STUDIES
+  WEEKLY_FRAMEWORKS
+  MONTHLY_COMPREHENSIVE
+  ON_DEMAND
+  BREAKING_NEWS
+}
+
+enum ScanStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum CreditTransactionType {
+  ALLOCATION // Monthly credit allocation
+  USAGE // API usage deduction
+  RESET // Monthly reset
+  PURCHASE // Purchased credits
+  BONUS // Bonus credits (promotions)
+  REFUND // Refund for failed API call
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id                       String    @id @default(cuid())
+  email                    String    @unique
+  name                     String?
+  password                 String? // Will be hashed (optional for OAuth users, deprecated in favor of Firebase)
+  firebaseUid              String?   @unique // Firebase Authentication UID
+  emailVerified            Boolean   @default(false) // Updated to Boolean for Firebase compatibility
+  emailVerifiedAt          DateTime? // When email was verified
+  image                    String?
+  subscriptionTier         String    @default("free") // free, premium
+  currentLevel             Int       @default(1)
+  maxUnlockedLevel         Int       @default(1) // Free users max at 10
+  totalChallengesCompleted Int       @default(0)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  // NextAuth relations
+  accounts Account[]
+  sessions Session[]
+
+  // App relations
+  progress          UserProgress[]
+  points            UserPoints?
+  badges            UserBadge[]
+  streaks           UserStreak?
+  challengeAttempts ChallengeAttempt[]
+  levelProgress     UserLevelProgress[]
+  categoryProgress  UserCategoryProgress[]
+  examAttempts      ExamAttempt[]
+  subscription      Subscription?
+  payments          Payment[]
+  settings          UserSettings?
+
+  // Onboarding & Profile
+  profile UserProfile?
+
+  // Startegizer
+  promptUsages       PromptUsage[]
+  agentConversations AgentConversation[]
+
+  // AI Credits
+  aiCredit           AICredit?
+  creditTransactions CreditTransaction[]
+
+  // AIGP Prep Exams
+  aigpExamAttempts AIGPExamAttempt[]
+  
+  // Remediation
+  remediationSessions RemediationSession[]
+}
+
+// NextAuth required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// CANONICAL TAXONOMY (Domain + Category)
+// ============================================
+
+model Domain {
+  id          String  @id @default(cuid())
+  name        String  @unique // "Domain 1".."Domain 4"
+  order       Int     @unique // 1..4
+  description String? @db.Text
+
+  categories Category[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  domainId    String
+  name        String // must be from locked list
+  order       Int // 1..9
+  description String? @db.Text
+
+  // Mandatory: stored prompt used to generate category exam questions
+  examSystemPrompt String @default("Generate exam questions for this category.") @db.Text
+
+  domain        Domain                  @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  concepts      ConceptCard[]
+  exams         Exam[]
+  levelCoverage LevelCategoryCoverage[]
+  userProgress  UserCategoryProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([domainId, name])
+  @@unique([domainId, order])
+  @@index([domainId])
+}
+
+// ============================================
+// CONCEPT CARDS (Updated with Category FK)
+// ============================================
+
+model ConceptCard {
+  id String @id @default(cuid())
+
+  // Legacy fields (temporary - will be removed after migration)
+  domain   String // Legacy - use domain via category
+  category String // Legacy - use categoryId
+
+  // New canonical category link (required after migration)
+  categoryId String?
+
+  concept              String
+  name                 String? @unique // Alias for concept (for easier matching)
+  definition           String  @db.Text
+  examples             String? @db.Text
+  scenarioQuestion     String? @db.Text
+  optionA              String?
+  optionB              String?
+  optionC              String?
+  optionD              String?
+  correctAnswer        String?
+  rationale            String? @db.Text
+  difficulty           String // beginner, intermediate, advanced, expert
+  importance           String  @default("medium") // high, medium, low
+  estimatedReadTime    Int     @default(0) // in minutes
+  domainClassification String? @db.Text
+  overview             String? @db.Text
+  governanceContext    String? @db.Text
+  ethicalImplications  String? @db.Text
+  keyTakeaways         String? @db.Text
+
+  // Optional: for overlap detection
+  shortDefinition String? @db.Text
+  boundary        String? @db.Text
+
+  version     String?  @default("1.0.0")
+  source      String? // market_scan, manual, import
+  sourceUrl   String?
+  lastUpdated DateTime @default(now())
+  updatedBy   String? // Admin user ID
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  categoryRelation Category?      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  progress         UserProgress[]
+}
+
+model UserProgress {
+  id            String    @id @default(cuid())
+  userId        String
+  conceptCardId String
+  status        String    @default("not_started") // not_started, in_progress, completed
+  completedAt   DateTime?
+  timeSpent     Int       @default(0) // in seconds
+  masteryScore  Float?    @default(0) // 0-1
+  
+  // Exam-specific tracking (Phase 2 enhancement)
+  timesSeen     Int       @default(0) // Number of times concept appeared in exams
+  timesCorrect  Int       @default(0) // Number of times user answered correctly
+  timesIncorrect Int      @default(0) // Number of times user answered incorrectly
+  lastSeen      DateTime? // Last time concept appeared in an exam
+  lastCorrect   DateTime? // Last time user answered correctly
+  lastIncorrect DateTime? // Last time user answered incorrectly
+  isWeakArea    Boolean   @default(false) // Flag for concepts user struggles with
+  flaggedAt     DateTime? // When concept was flagged as weak area
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conceptCard ConceptCard @relation(fields: [conceptCardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, conceptCardId])
+  @@index([userId])
+  @@index([conceptCardId])
+  @@index([isWeakArea])
+}
+
+// ============================================
+// GAMIFICATION
+// ============================================
+
+model UserPoints {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  totalPoints       Int      @default(0)
+  pointsEarnedToday Int      @default(0)
+  lastPointsReset   DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  iconUrl     String?
+  badgeType   String // learning, exam, streak, domain, social
+  rarity      String   @default("common") // common, uncommon, rare, epic, legendary
+  createdAt   DateTime @default(now())
+
+  // Relations
+  userBadges UserBadge[]
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+}
+
+model UserStreak {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  currentStreak    Int      @default(0)
+  longestStreak    Int      @default(0)
+  lastActivityDate DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// CHALLENGE SYSTEM (Updated)
+// ============================================
+
+model Challenge {
+  id          String  @id @default(cuid())
+  levelNumber Int?    @unique // 1..40 - optional during migration
+  title       String // must match LEVEL_CONFIGS exactly
+  description String? @db.Text
+
+  superLevelGroup SuperLevelGroup? // Optional during migration
+  isBoss          Boolean          @default(false) // true only for 10, 20, 30, 40
+
+  // Stored prompt used to generate this level's exam
+  examSystemPrompt String @default("Generate exam questions for this level.") @db.Text
+
+  // Legacy field (for backward compatibility - always equals levelNumber)
+  level         Int // Keep for existing code - will be removed
+  questionCount Int      @default(10)
+  timeLimit     Int      @default(20) // in minutes
+  passingScore  Int      @default(70) // percentage
+  concepts      String[] // Array of concept IDs
+  isActive      Boolean  @default(true)
+
+  // Relations
+  exams            Exam[]
+  attempts         ChallengeAttempt[]
+  questions        ChallengeQuestion[]
+  categoryCoverage LevelCategoryCoverage[]
+  userProgress     UserLevelProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([levelNumber])
+  @@index([superLevelGroup])
+}
+
+// Legacy ChallengeAttempt (keeping for backward compatibility)
+model ChallengeAttempt {
+  id             String   @id @default(cuid())
+  userId         String
+  challengeId    String
+  score          Float
+  percentage     Float
+  timeSpent      Int // in seconds
+  passed         Boolean
+  isFirstAttempt Boolean  @default(true)
+  completedAt    DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  // Relations
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge         @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  answers   ChallengeAnswer[]
+
+  @@index([userId])
+  @@index([challengeId])
+  @@index([completedAt])
+}
+
+model ChallengeQuestion {
+  id            String   @id @default(cuid())
+  challengeId   String
+  questionText  String   @db.Text
+  questionType  String   @default("multiple_choice") // multiple_choice, scenario, true_false
+  options       Json // Array of options {A: "...", B: "...", C: "...", D: "..."}
+  correctAnswer String // A, B, C, or D
+  rationale     String   @db.Text
+  conceptIds    String[] // Related concepts
+  difficulty    String
+  aiGenerated   Boolean  @default(false)
+  order         Int // Question order in challenge
+  createdAt     DateTime @default(now())
+
+  // Relations
+  challenge Challenge         @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  answers   ChallengeAnswer[]
+
+  @@index([challengeId])
+  @@index([order])
+}
+
+model ChallengeAnswer {
+  id             String   @id @default(cuid())
+  attemptId      String
+  questionId     String
+  selectedAnswer String // A, B, C, or D
+  isCorrect      Boolean
+  timeSpent      Int // seconds on this question
+  createdAt      DateTime @default(now())
+
+  // Relations
+  attempt  ChallengeAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question ChallengeQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId])
+  @@index([questionId])
+}
+
+// ============================================
+// PROGRESSIVE COVERAGE SYSTEM
+// ============================================
+
+model LevelCategoryCoverage {
+  id           String       @id @default(cuid())
+  levelNumber  Int
+  categoryId   String
+  coverageType CoverageType
+
+  // Optional: weighted distribution (especially for boss exams)
+  weight Float? @default(1.0)
+
+  challenge Challenge @relation(fields: [levelNumber], references: [levelNumber], onDelete: Cascade)
+  category  Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([levelNumber, categoryId, coverageType])
+  @@index([levelNumber])
+  @@index([categoryId])
+}
+
+// ============================================
+// UNIFIED EXAM SYSTEM
+// ============================================
+
+model Exam {
+  id      String     @id @default(cuid())
+  type    ExamType
+  status  ExamStatus @default(DRAFT)
+  version Int        @default(1)
+
+  // Exactly one target:
+  categoryId  String?
+  levelNumber Int?
+
+  // Snapshot of final prompt used for generation
+  systemPromptSnapshot String @db.Text
+
+  // JSON config e.g. {questionCount, passMark, difficulty, timeLimitSec}
+  generationConfig Json
+
+  // JSON payload: MCQs + answer key + rationales
+  questions Json
+
+  category  Category?  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  challenge Challenge? @relation(fields: [levelNumber], references: [levelNumber], onDelete: Cascade)
+
+  attempts ExamAttempt[]
+  remediationSessions RemediationSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type, status])
+  @@index([categoryId])
+  @@index([levelNumber])
+}
+
+model ExamAttempt {
+  id     String @id @default(cuid())
+  examId String
+  userId String
+
+  attemptNumber Int           @default(1)
+  status        AttemptStatus @default(IN_PROGRESS)
+
+  startedAt   DateTime  @default(now())
+  submittedAt DateTime?
+  evaluatedAt DateTime?
+
+  score Float?
+  pass  Boolean?
+
+  // answers: { answers: [{questionId, selectedOptionId}] }
+  answers Json
+
+  // feedback: computed deterministically; may include AI-generated coaching later
+  feedback Json?
+
+  // Optional: cooldown tracking (can also compute from attempt history)
+  nextEligibleAt DateTime?
+
+  exam Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, userId, attemptNumber])
+  @@index([userId])
+  @@index([examId])
+  @@index([status])
+}
+
+// ============================================
+// AIGP PREP EXAMS
+// ============================================
+
+model AIGPExam {
+  id          String  @id @default(cuid())
+  examId      String  @unique // "AIGP_Practice_Exam_01"
+  title       String // "AIGP Practice Exam 1"
+  version     String // "2026-01-01-r3"
+  description String? @db.Text
+
+  // Exam metadata
+  totalQuestions   Int    @default(100)
+  estimatedTimeMin Int // Total estimated time in minutes
+  passMark         Float? // Optional pass threshold (e.g., 70%)
+
+  // Blueprint compliance
+  domainDistribution       Json // { "I": 20, "II": 30, "III": 30, "IV": 20 }
+  difficultyDistribution   Json // { "easy": 20, "medium": 60, "hard": 20 }
+  jurisdictionDistribution Json // { "US": 35, "EU": 35, "Other": 15, "Mixed": 15 }
+
+  // Status
+  status   ExamStatus @default(PUBLISHED)
+  isActive Boolean    @default(true)
+
+  // Relations
+  questions AIGPQuestion[]
+  attempts  AIGPExamAttempt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, isActive])
+}
+
+model AIGPQuestion {
+  id         String @id @default(cuid())
+  examId     String
+  questionId String // "AIGP-Q-001" (unique across all exams)
+
+  // Question content (preserved exactly from JSON)
+  question      String @db.Text
+  options       Json // [{ key: "A", text: "..." }, ...]
+  correctAnswer String // "A" | "B" | "C" | "D"
+  explanation   String @db.Text
+
+  // Metadata
+  domain           String // "I" | "II" | "III" | "IV"
+  topic            String
+  difficulty       String // "easy" | "medium" | "hard"
+  isCaseStudy      Boolean  @default(false)
+  estimatedTimeSec Int
+  jurisdiction     String // "US" | "EU" | "Other" | "Mixed"
+  sourceRefs       String[] // ["AIGP_BOK", "GDPR"]
+
+  // Order within exam (for deterministic presentation)
+  questionOrder Int // 1-100
+
+  // Relations
+  exam           AIGPExam         @relation(fields: [examId], references: [id], onDelete: Cascade)
+  attemptAnswers AIGPExamAnswer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([examId, questionOrder])
+  @@unique([questionId]) // Ensure unique across all exams
+  @@index([examId])
+  @@index([domain])
+  @@index([difficulty])
+  @@index([jurisdiction])
+  @@index([topic])
+}
+
+model AIGPExamAttempt {
+  id     String @id @default(cuid())
+  examId String
+  userId String
+
+  attemptNumber Int           @default(1)
+  status        AttemptStatus @default(IN_PROGRESS)
+
+  // Timing
+  startedAt   DateTime  @default(now())
+  pausedAt    DateTime?
+  resumedAt   DateTime?
+  submittedAt DateTime?
+  evaluatedAt DateTime?
+
+  // Exam mode
+  isTimed          Boolean @default(true)
+  timeLimitSec     Int? // Optional time limit
+  timeRemainingSec Int? // For pause/resume
+
+  // Responses
+  answers AIGPExamAnswer[]
+
+  // Scoring
+  score          Float? // Percentage (0-100)
+  rawScore       Int? // Correct answers count
+  totalQuestions Int? // Total questions answered
+  pass           Boolean?
+
+  // Analytics (computed)
+  domainScores       Json? // { "I": { correct: 15, total: 20, score: 75 }, ... }
+  difficultyScores   Json? // { "easy": { correct: 18, total: 20, score: 90 }, ... }
+  jurisdictionScores Json? // { "US": { correct: 12, total: 15, score: 80 }, ... }
+  topicScores        Json? // Breakdown by topic
+
+  // Review flags
+  flaggedQuestions String[] // Question IDs flagged for review
+
+  // Relations
+  exam AIGPExam @relation(fields: [examId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, userId, attemptNumber])
+  @@index([userId])
+  @@index([examId])
+  @@index([status])
+  @@index([submittedAt])
+}
+
+model AIGPExamAnswer {
+  id         String @id @default(cuid())
+  attemptId  String
+  questionId String
+
+  // Response
+  selectedAnswer String? // "A" | "B" | "C" | "D" | null (unanswered)
+  isCorrect      Boolean?
+  timeSpentSec   Int? // Time spent on this question
+
+  // Option shuffling (if implemented)
+  optionOrder   Json? // Original order mapping: { "A": 0, "B": 1, "C": 2, "D": 3 }
+  shuffledOrder Json? // Shuffled order: { "0": "C", "1": "A", "2": "D", "3": "B" }
+
+  // Review flag
+  isFlagged Boolean @default(false)
+
+  // Relations
+  attempt  AIGPExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question AIGPQuestion    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@index([questionId])
+  @@index([isCorrect])
+}
+
+// ============================================
+// PROGRESS TRACKING (Mandatory Gating)
+// ============================================
+
+model UserCategoryProgress {
+  id         String @id @default(cuid())
+  userId     String
+  categoryId String
+
+  status    ProgressStatus @default(LOCKED)
+  bestScore Float?
+  passedAt  DateTime?
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryId])
+  @@index([userId])
+  @@index([categoryId])
+}
+
+model UserLevelProgress {
+  id          String @id @default(cuid())
+  userId      String
+  levelNumber Int
+
+  status        ProgressStatus @default(LOCKED)
+  bestScore     Float?
+  passedAt      DateTime?
+  unlockedAt    DateTime       @default(now())
+  attemptsCount Int            @default(0)
+
+  challenge Challenge @relation(fields: [levelNumber], references: [levelNumber], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, levelNumber])
+  @@index([userId])
+  @@index([levelNumber])
+}
+
+// ============================================
+// REMEDIATION SYSTEM (Phase 2)
+// ============================================
+
+model RemediationSession {
+  id             String   @id @default(cuid())
+  userId         String
+  examId         String
+  attemptId      String   // Failed exam attempt ID
+  weakConceptIds String[] // Concept IDs that need remediation
+  
+  status      String    @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, examId, attemptId])
+  @@index([userId])
+  @@index([examId])
+  @@index([status])
+}
+
+// ============================================
+// STRIPE SUBSCRIPTION MODELS
+// ============================================
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  stripeCustomerId     String    @unique
+  stripeSubscriptionId String?   @unique
+  stripePriceId        String?
+  status               String // active, canceled, past_due, incomplete, etc.
+  planType             String? // monthly, annual, lifetime
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aiCredit AICredit?
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+  @@index([status])
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  userId          String
+  stripePaymentId String   @unique
+  amount          Int // in cents
+  currency        String   @default("usd")
+  status          String // succeeded, pending, failed
+  planType        String? // monthly, annual, lifetime
+  createdAt       DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([stripePaymentId])
+  @@index([status])
+}
+
+// ============================================
+// ONBOARDING & USER PROFILE
+// ============================================
+
+model UserProfile {
+  id               String           @id @default(cuid())
+  userId           String           @unique
+  personaType      PersonaType?
+  customPersona    String? // If personaType is OTHER
+  knowledgeLevel   KnowledgeLevel   @default(NOT_ASSESSED)
+  onboardingStatus OnboardingStatus @default(NOT_STARTED)
+  completedAt      DateTime?
+
+  // Relations
+  user            User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interests       UserInterest[]
+  goals           UserGoal[]
+  scenarioAnswers OnboardingScenarioAnswer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([personaType])
+  @@index([onboardingStatus])
+}
+
+model UserInterest {
+  id       String @id @default(cuid())
+  userId   String
+  interest String // e.g., "Regulatory Compliance", "Ethical AI & Fairness"
+
+  userProfile UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, interest])
+  @@index([userId])
+  @@index([interest])
+}
+
+model UserGoal {
+  id     String @id @default(cuid())
+  userId String
+  goal   String // e.g., "AIGP Certification Preparation"
+
+  userProfile UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, goal])
+  @@index([userId])
+  @@index([goal])
+}
+
+model UserSettings {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  // Notification Preferences
+  emailNotifications Boolean @default(true)
+  inAppNotifications Boolean @default(true)
+  learningReminders  Boolean @default(false)
+  reminderTime       String? // e.g., "09:00" for 9 AM
+
+  // Privacy Settings
+  profileVisibility String  @default("private") // private, public
+  dataSharing       Boolean @default(false) // Allow data to be used for analytics
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model OnboardingScenario {
+  id            String      @id @default(cuid())
+  personaType   PersonaType
+  questionOrder Int // 1-5
+  scenario      String      @db.Text
+  question      String      @db.Text
+  optionA       String      @db.Text
+  optionB       String      @db.Text
+  optionC       String      @db.Text
+  optionD       String      @db.Text
+  correctAnswer String // "A", "B", "C", or "D"
+  explanation   String?     @db.Text
+
+  answers OnboardingScenarioAnswer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([personaType, questionOrder])
+  @@index([personaType])
+  @@index([questionOrder])
+}
+
+model OnboardingScenarioAnswer {
+  id             String   @id @default(cuid())
+  userId         String
+  scenarioId     String
+  selectedAnswer String // "A", "B", "C", or "D"
+  isCorrect      Boolean
+  answeredAt     DateTime @default(now())
+
+  userProfile UserProfile        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scenario    OnboardingScenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, scenarioId])
+  @@index([userId])
+  @@index([scenarioId])
+}
+
+// ============================================
+// STARTEGIZER PROMPT LIBRARY
+// ============================================
+
+model PromptTemplate {
+  id           String       @id @default(cuid())
+  name         String // e.g., "Compliance Scenario Analysis"
+  personaType  PersonaType?
+  scenarioType String? // e.g., "compliance", "ethics", "technical"
+  template     String       @db.Text // The prompt template
+  description  String?      @db.Text
+  tags         String[] // For categorization
+  usageCount   Int          @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  usages PromptUsage[]
+
+  @@index([personaType])
+  @@index([scenarioType])
+  @@index([tags])
+}
+
+model PromptUsage {
+  id              String  @id @default(cuid())
+  userId          String
+  templateId      String
+  userScenario    String  @db.Text // User's scenario description
+  generatedPrompt String  @db.Text // Final prompt sent to Gemini
+  response        String? @db.Text // Gemini response
+  rating          Int? // 1-5 rating
+  feedback        String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template PromptTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([templateId])
+  @@index([createdAt])
+}
+
+// ============================================
+// STARTEGIZER CONVERSATIONS
+// ============================================
+
+model AgentConversation {
+  id           String   @id @default(cuid())
+  userId       String
+  title        String? // Auto-generated from first message
+  messages     Json // Array of { id, role, content, timestamp, sources? }
+  contextUsed  Json? // RAG context retrieved
+  sourcesCited Json? // Sources referenced
+  messageCount Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+// ============================================
+// MARKET SCANNING & KNOWLEDGE BASE
+// ============================================
+
+model MarketScanArticle {
+  id             String     @id @default(cuid())
+  title          String
+  content        String     @db.Text
+  summary        String?    @db.Text // AI-generated summary
+  source         String // "EU Commission", "ICO", "Case Law", etc.
+  sourceUrl      String?    @unique
+  sourceType     SourceType // REGULATORY, NEWS, CASE_STUDY, STANDARD, etc.
+  category       String // "Legal Update", "Case Study", "News", etc.
+  jurisdiction   String? // "EU", "UK", "US", "Global", etc.
+  publishedAt    DateTime
+  scannedAt      DateTime   @default(now())
+  relevanceScore Float      @default(0) // 0-1 relevance score
+  relevanceTags  String[] // ["GDPR", "AI Act", "Bias", "Compliance", etc.]
+
+  // Content analysis
+  keyTopics          String[] // Extracted key topics
+  affectedFrameworks String[] // ["GDPR", "AI Act", "ISO 42001"]
+  riskAreas          String[] // ["Data Protection", "Bias", "Transparency"]
+  complianceImpact   String? // "High", "Medium", "Low"
+
+  // Enhanced metadata for user flexibility
+  sentiment          String? // "positive", "negative", "neutral"
+  urgency            String? // "breaking", "high", "medium", "low"
+  impactScope        String? // "global", "regional", "local", "industry-specific"
+  affectedIndustries String[] // ["Healthcare", "Finance", "Technology", "Education", etc.]
+  regulatoryBodies   String[] // ["EU Commission", "ICO", "FTC", "NIST", etc.]
+  relatedRegulations String[] // More detailed regulation references
+  actionItems        String[] // What users should do or be aware of
+  timeline           String?  @db.Text // Deadlines, effective dates, timelines mentioned
+  geographicRegions  String[] // More granular than jurisdiction (e.g., ["California", "New York", "Texas"])
+  mentionedEntities  String[] // Companies, organizations, people mentioned
+  enforcementActions String[] // Fines, penalties, warnings, sanctions
+  readingTimeMinutes Int? // Estimated reading time in minutes
+  complexityLevel    String? // "beginner", "intermediate", "advanced", "expert"
+  language           String?  @default("en") // Language code (en, es, fr, etc.)
+  author             String? // Article author if available
+  publisher          String? // Publisher name if different from source
+
+  // Embedding for vector search
+  embeddingId String? // Reference to Vertex AI Vector Search
+
+  // Relations
+  citations ArticleCitation[] @relation("ArticleCitations")
+  citedBy   ArticleCitation[] @relation("CitedArticles")
+  relations ArticleRelation[] @relation("ArticleRelations")
+  relatedTo ArticleRelation[] @relation("RelatedArticles")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Note: Fulltext search handled via Vertex AI Vector Search, not PostgreSQL fulltext
+
+  @@index([publishedAt])
+  @@index([sourceType])
+  @@index([category])
+  @@index([jurisdiction])
+  @@index([relevanceScore])
+  @@index([sentiment])
+  @@index([urgency])
+  @@index([impactScope])
+  @@index([complexityLevel])
+}
+
+model ArticleCitation {
+  id             String @id @default(cuid())
+  articleId      String
+  citedArticleId String // Reference to another article
+  citationType   String // "related", "updates", "contradicts", etc.
+  relevance      Float  @default(0)
+
+  article      MarketScanArticle @relation("ArticleCitations", fields: [articleId], references: [id], onDelete: Cascade)
+  citedArticle MarketScanArticle @relation("CitedArticles", fields: [citedArticleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, citedArticleId])
+  @@index([articleId])
+  @@index([citedArticleId])
+}
+
+model ArticleRelation {
+  id               String @id @default(cuid())
+  articleId        String
+  relatedArticleId String
+  relationType     String // "updates", "relates_to", "contradicts", etc.
+  strength         Float  @default(0) // 0-1 relation strength
+
+  article        MarketScanArticle @relation("ArticleRelations", fields: [articleId], references: [id], onDelete: Cascade)
+  relatedArticle MarketScanArticle @relation("RelatedArticles", fields: [relatedArticleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, relatedArticleId])
+  @@index([articleId])
+  @@index([relatedArticleId])
+}
+
+model ScanJob {
+  id                String     @id @default(cuid())
+  scanType          ScanType
+  status            ScanStatus @default(PENDING)
+  startedAt         DateTime   @default(now())
+  completedAt       DateTime?
+  articlesFound     Int        @default(0)
+  articlesProcessed Int        @default(0)
+  articlesAdded     Int        @default(0)
+  errors            Json? // Error logs
+  metadata          Json? // Additional metadata
+
+  @@index([scanType])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// ============================================
+// AI CREDITS SYSTEM
+// ============================================
+
+model AICredit {
+  id             String  @id @default(cuid())
+  userId         String  @unique
+  subscriptionId String? @unique // Link to subscription (optional, unique)
+
+  // Credit allocation (in cents)
+  monthlyAllowance Int @default(1000) // $10.00 in cents (50% = $5 API usage)
+  currentBalance   Int @default(1000) // Current balance in cents
+  purchasedCredits Int @default(0) // Purchased credits (expire at cycle end)
+
+  // Billing cycle tracking
+  billingCycleStart DateTime @default(now())
+  billingCycleEnd   DateTime // Next reset date
+
+  // Usage tracking
+  totalCreditsUsed     Int @default(0) // Lifetime total
+  creditsUsedThisCycle Int @default(0) // Current cycle
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription       Subscription?       @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  creditTransactions CreditTransaction[]
+
+  @@index([userId])
+  @@index([billingCycleEnd])
+  @@index([subscriptionId])
+}
+
+model CreditTransaction {
+  id       String @id @default(cuid())
+  creditId String
+  userId   String
+
+  // Transaction details
+  amount      Int // Amount in cents (positive = credit, negative = debit)
+  type        CreditTransactionType
+  description String                @db.Text
+
+  // API usage details
+  service      String? // "startegizer", "exam_generation", "concept_generation"
+  tokensUsed   Int? // Number of tokens consumed
+  costPerToken Float? // Cost per token (for tracking)
+  inputTokens  Int? // Input tokens (Gemini)
+  outputTokens Int? // Output tokens (Gemini)
+
+  // Balance tracking
+  balanceBefore Int // Balance before transaction
+  balanceAfter  Int // Balance after transaction
+
+  // Purchase tracking (for purchased credits)
+  stripePaymentId String? // Link to Stripe payment if purchased
+  expiresAt       DateTime? // Expiration date for purchased credits
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  credit AICredit @relation(fields: [creditId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([creditId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([service])
+  @@index([stripePaymentId])
+}

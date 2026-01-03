@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L2-C01,Responsible AI as a Governance Concept,2,Core Principles,beginner,high,false,,Domain 1,Governance Principles,Frames Responsible AI as a governance construct rather than ethics alone
+L2-C02,Risk-Based Approach to AI Governance,2,Core Principles,beginner,high,true,"2,7,15",Domain 1,Governance Principles,Foundational risk framing reused in later risk management levels
+L2-C03,Proportionality in AI Governance,2,Core Principles,beginner,high,true,"2,6,13",Domain 1,Governance Principles,Explains why governance intensity varies by risk
+L2-C04,Human Oversight as a Governance Principle,2,Core Principles,beginner,high,true,"2,7,36",Domain 1,Governance Principles,Introduces oversight before lifecycle and operational controls
+L2-C05,Accountability vs Responsibility in AI Contexts,2,Core Principles,beginner,high,true,"2,9,16",Domain 1,Governance Principles,Clarifies governance ownership distinctions
+L2-C06,Purpose of Internal AI Policies,2,Core Principles,beginner,high,false,,Domain 1,Policies & Standards (Internal),Explains why organisations formalise AI expectations
+L2-C07,AI Policy vs AI Standard vs AI Procedure,2,Core Principles,beginner,high,true,"2,19,32",Domain 1,Policies & Standards (Internal),Prevents structural confusion in governance artefacts
+L2-C08,Principle-Based vs Rule-Based AI Policies,2,Core Principles,beginner,high,true,"2,19,28",Domain 1,Policies & Standards (Internal),Introduces policy design trade-offs
+L2-C09,AI Lifecycle Stages (Design to Decommission),2,Core Principles,beginner,high,true,"2,5,31",Domain 1,AI Lifecycle Governance,Defines shared lifecycle language
+L2-C10,Governance Controls Across the AI Lifecycle,2,Core Principles,beginner,high,true,"2,7,27",Domain 1,AI Lifecycle Governance,Introduces stage-based governance controls
+

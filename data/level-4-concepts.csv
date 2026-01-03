@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L4-C01,Data Protection Principles under GDPR,4,Data Protection,beginner,high,true,"4,5,14",Domain 2,Data Protection & Privacy Law,Introduces core GDPR principles without article-level detail
+L4-C02,Purpose Limitation,4,Data Protection,beginner,high,true,"4,5,14",Domain 2,Data Protection & Privacy Law,Foundational principle shaping AI data use
+L4-C03,Data Minimisation,4,Data Protection,beginner,high,true,"4,5,17",Domain 2,Data Protection & Privacy Law,Key control for reducing AI data risk
+L4-C04,Accuracy and Data Quality,4,Data Protection,beginner,high,true,"4,7,27",Domain 2,Data Protection & Privacy Law,Links legal accuracy to model risk and performance
+L4-C05,Storage Limitation,4,Data Protection,beginner,high,true,"4,5,27",Domain 2,Data Protection & Privacy Law,Introduces retention and lifecycle thinking
+L4-C06,Integrity and Confidentiality (Security Principle),4,Data Protection,beginner,high,true,"4,7,18",Domain 2,Data Protection & Privacy Law,Frames security as a legal data protection principle
+L4-C07,Data Governance in AI Systems,4,Data Protection,beginner,high,true,"4,7,26",Domain 3,Data Governance & Management,Introduces ownership and accountability for AI data
+L4-C08,Training Data vs Operational Data,4,Data Protection,beginner,high,true,"4,7,17",Domain 3,Data Governance & Management,Critical AI data distinction
+L4-C09,Data Lineage and Provenance,4,Data Protection,beginner,high,true,"4,8,16",Domain 3,Data Governance & Management,Prepares for documentation and audit
+L4-C10,Consent and Data Collection in AI Contexts,4,Data Protection,beginner,high,true,"4,5,12",Domain 3,Data Governance & Management,Applies lawful basis thinking to AI data intake
+

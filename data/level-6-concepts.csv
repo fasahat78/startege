@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L6-C01,Purpose and Objectives of the EU AI Act,6,AI Act Overview,beginner,high,false,,Domain 2,AI-Specific Regulation,Explains why AI required a dedicated regulatory framework
+L6-C02,Risk-Based Structure of the EU AI Act,6,AI Act Overview,beginner,high,true,"6,7,13",Domain 2,AI-Specific Regulation,Core mental model for AI Act compliance
+L6-C03,Prohibited AI Practices,6,AI Act Overview,beginner,high,true,"6,15,30",Domain 2,AI-Specific Regulation,Defines AI uses that are outright banned
+L6-C04,High-Risk AI Systems (Conceptual Overview),6,AI Act Overview,beginner,high,true,"6,15,30",Domain 2,AI-Specific Regulation,Introduces high-risk category without obligations
+L6-C05,Limited-Risk AI Systems and Transparency Obligations,6,AI Act Overview,beginner,high,true,"6,8,15",Domain 2,AI-Specific Regulation,Introduces disclosure logic for certain AI uses
+L6-C06,Minimal-Risk AI Systems,6,AI Act Overview,beginner,high,false,,Domain 2,AI-Specific Regulation,Prevents over-regulation misunderstandings
+L6-C07,Relationship Between the AI Act and Other Laws,6,AI Act Overview,beginner,high,true,"6,12,22",Domain 2,AI-Specific Regulation,Clarifies interaction with GDPR and other laws
+L6-C08,AI Governance Implications of Risk Classification,6,AI Act Overview,beginner,high,true,"6,7,26",Domain 1,AI Lifecycle Governance,Connects AI Act risk tiers to governance design
+L6-C09,Organisational Responsibility under the AI Act,6,AI Act Overview,beginner,high,true,"6,9,18",Domain 1,Governance Structures & Roles,Reinforces organisational accountability under regulation
+L6-C10,Lifecycle Thinking in AI Regulation,6,AI Act Overview,beginner,high,true,"6,7,27",Domain 1,AI Lifecycle Governance,Aligns regulatory thinking with AI lifecycle governance
+

@@ -1,0 +1,12 @@
+conceptId,conceptName,primaryLevel,levelTheme,complexity,alignment,isSpiralLearning,spiralLevels,domain,category,notes
+L7-C01,AI Risk vs Traditional IT Risk,7,Risk Management,beginner,high,true,"7,27,33",Domain 3,Risk Identification & Assessment,Frames why AI risk requires distinct governance treatment
+L7-C02,Risk-Based Governance Lifecycle (Identify Assess Treat Monitor),7,Risk Management,beginner,high,true,"7,27,31",Domain 3,Risk Identification & Assessment,Introduces repeatable governance risk loop
+L7-C03,Risk Taxonomy for AI (Privacy Bias Safety Security Performance Legal),7,Risk Management,beginner,high,true,"7,17,33",Domain 3,Risk Identification & Assessment,Provides practical AI risk categories used across governance
+L7-C04,Likelihood vs Impact (Risk Scoring Basics),7,Risk Management,beginner,high,true,"7,14,27",Domain 3,Risk Identification & Assessment,Introduces basic assessment and prioritisation logic
+L7-C05,Residual Risk and Risk Acceptance,7,Risk Management,beginner,high,true,"7,27,35",Domain 3,Risk Identification & Assessment,Introduces risk acceptance and residual risk concept
+L7-C06,Risk Owners and Accountability in Risk Management,7,Risk Management,beginner,high,true,"7,9,26",Domain 3,Risk Identification & Assessment,Connects risk to ownership and governance accountability
+L7-C07,Why Monitoring Is Part of Governance,7,Risk Management,beginner,high,true,"7,21,39",Domain 4,Operational Monitoring & Controls,Positions monitoring as ongoing governance activity
+L7-C08,Key AI Monitoring Signals (Drift Errors Complaints Incidents),7,Risk Management,beginner,high,true,"7,21,37",Domain 4,Operational Monitoring & Controls,Introduces practical monitoring indicators without technical depth
+L7-C09,Controls vs Monitoring vs Audit (High-level Distinctions),7,Risk Management,beginner,high,true,"7,16,37",Domain 4,Operational Monitoring & Controls,Clarifies governance assurance concepts at a high level
+L7-C10,Risk Classification under the EU AI Act (Conceptual),7,Risk Management,beginner,high,true,"7,15,30",Domain 2,AI-Specific Regulation,Bridges AI Act risk tiers into governance risk thinking
+

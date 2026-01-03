@@ -1,0 +1,6 @@
+Price ID,Product ID,Product Name,Product Statement Descriptor,Product Tax Code,Description,Created (UTC),Amount,Currency,Interval,Interval Count,Usage Type,Aggregate Usage,Billing Scheme,Trial Period Days,Tax Behavior
+price_1SjgBUBek6nTXNYz1xF6HCIw,prod_Th4KZ8gjzSVHNW,AI Credits Large Top-Up,,txcd_10000000,,2025-12-29 13:08,25.00,usd,,,,,per_unit,,inclusive
+price_1Sjg8CBek6nTXNYzDZNO6b4J,prod_Th4GkGLldSCR6U,AI Credits Standard Top-Up,,txcd_10000000,,2025-12-29 13:05,10.00,usd,,,,,per_unit,,inclusive
+price_1Sjg57Bek6nTXNYzGCTW2Z3c,prod_Th4D9JlqYIqnav,AI Credits Small Top-Up,,txcd_10000000,,2025-12-29 13:01,5.00,usd,,,,,per_unit,,inclusive
+price_1SjfyHBek6nTXNYzWgm8OnVJ,prod_Th46N0Rdugel54,Startege Premium Annual,,txcd_10000000,,2025-12-29 12:54,199.00,usd,year,1,licensed,,per_unit,,inclusive
+price_1SjfvQBek6nTXNYzMPYOdLLj,prod_Th43Fn91hW1Siv,Startege Premium Monthly,,txcd_10000000,,2025-12-29 12:51,19.00,usd,month,1,licensed,,per_unit,,inclusive
