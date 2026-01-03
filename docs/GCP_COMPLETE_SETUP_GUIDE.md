@@ -234,7 +234,28 @@ postgresql://postgres:Zoya%4057Bruce@/startege?host=/cloudsql/startege:us-centra
 1. Open: https://console.cloud.google.com/security/secret-manager
 2. Make sure your project is selected
 
-### 4.3 Create Secrets
+### 4.3 Grant Cloud Run Service Account Access to Secrets
+
+**CRITICAL STEP**: Before creating secrets, grant the Cloud Run service account permission to access them.
+
+1. Go to: https://console.cloud.google.com/iam-admin/iam
+2. Find the service account: `785373873454-compute@developer.gserviceaccount.com` (or `PROJECT_NUMBER-compute@developer.gserviceaccount.com`)
+   - This is the default Compute Engine service account used by Cloud Run
+3. Click the **pencil icon** (Edit) next to the service account
+4. Click **"+ ADD ANOTHER ROLE"**
+5. Select: **Secret Manager Secret Accessor** (`roles/secretmanager.secretAccessor`)
+6. Click **"SAVE"**
+
+**Alternative Method (Project-level)**:
+1. Go to: https://console.cloud.google.com/iam-admin/iam
+2. Click **"GRANT ACCESS"**
+3. **New principals**: Enter `PROJECT_NUMBER-compute@developer.gserviceaccount.com` (replace PROJECT_NUMBER with your project number)
+4. **Role**: Select **Secret Manager Secret Accessor**
+5. Click **"SAVE"**
+
+**Note**: Your project number is `785373873454` (from the error message).
+
+### 4.4 Create Secrets
 
 Create each secret one by one:
 
@@ -575,6 +596,26 @@ Before deploying, review:
 ---
 
 ## Troubleshooting
+
+### Issue: Secret Manager Permission Denied
+
+**Symptoms**: Error message like:
+```
+Permission denied on secret: projects/785373873454/secrets/DATABASE_URL/versions/latest 
+for Revision service account 785373873454-compute@developer.gserviceaccount.com
+```
+
+**Solution**:
+1. Go to: https://console.cloud.google.com/iam-admin/iam
+2. Find service account: `785373873454-compute@developer.gserviceaccount.com` (replace with your project number)
+3. Click **pencil icon** (Edit)
+4. Click **"+ ADD ANOTHER ROLE"**
+5. Select: **Secret Manager Secret Accessor** (`roles/secretmanager.secretAccessor`)
+6. Click **"SAVE"**
+7. Wait 1-2 minutes for permissions to propagate
+8. Redeploy your Cloud Run service
+
+See detailed guide: [Fix Secret Manager Permissions](./FIX_SECRET_MANAGER_PERMISSIONS.md)
 
 ### Issue: Service Won't Start
 
