@@ -34,15 +34,11 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files
+# Copy necessary files from builder
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-
-# Set correct permissions
-RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
@@ -51,5 +47,6 @@ EXPOSE 8080
 ENV PORT 8080
 ENV HOSTNAME "0.0.0.0"
 
+# Use the standalone server from Next.js
 CMD ["node", "server.js"]
 
