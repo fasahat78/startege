@@ -5,6 +5,9 @@ import { getLevelConfig } from "@/lib/levels";
 import Link from "next/link";
 import ChallengeStart from "@/components/challenges/ChallengeStart";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 async function getChallenge(levelNumber: number) {
   const challenge = await (prisma as any).challenge.findUnique({
     where: { levelNumber },

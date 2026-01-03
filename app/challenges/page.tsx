@@ -4,6 +4,9 @@ import { prisma } from "@/lib/db";
 import { getLevelConfig, LEVEL_CONFIGS } from "@/lib/levels";
 import LevelCard from "@/components/challenges/LevelCard";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 async function getUserLevelProgress(userId: string) {
   const progress = await (prisma as any).userLevelProgress.findMany({
     where: { userId },

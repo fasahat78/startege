@@ -4,6 +4,9 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import SettingsClient from "@/components/dashboard/SettingsClient";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 export default async function SettingsPage() {
   const user = await getCurrentUser();
 
