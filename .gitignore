@@ -27,6 +27,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.local.firebase-config
 
 # GCP service account keys (NEVER commit these!)
 .secrets/
