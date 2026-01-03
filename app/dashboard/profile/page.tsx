@@ -5,6 +5,9 @@ import Link from "next/link";
 import { getPersonaDisplayName, getPersonaDescription } from "@/lib/onboarding-helpers";
 import { OnboardingStatus, PersonaType, KnowledgeLevel } from "@prisma/client";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage() {
   const user = await getCurrentUser();
 

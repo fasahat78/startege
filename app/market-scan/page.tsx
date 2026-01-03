@@ -3,6 +3,9 @@
  * Premium feature for browsing regulatory intelligence
  */
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 import { getCurrentUser } from '@/lib/firebase-auth-helpers';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';

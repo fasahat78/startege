@@ -4,6 +4,9 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import ConceptsClient from "@/components/concepts/ConceptsClient";
 
+// Mark as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 interface ConceptCard {
   id: string;
   domain: string;
