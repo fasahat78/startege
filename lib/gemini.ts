@@ -114,14 +114,20 @@ export async function generateResponse(
       }
     }
     
-    // Handle different response formats
+    // Handle different response formats and extract all text parts
     let text: string;
     if (typeof response.text === 'function') {
       text = response.text();
     } else if (response.candidates && response.candidates[0] && response.candidates[0].content) {
-      // Alternative response format
+      // Alternative response format - extract all parts
       const content = response.candidates[0].content;
-      if (content.parts && content.parts[0] && content.parts[0].text) {
+      if (content.parts && Array.isArray(content.parts)) {
+        // Concatenate all text parts (in case there are multiple)
+        text = content.parts
+          .map((part: any) => part.text || '')
+          .filter((t: string) => t.length > 0)
+          .join('');
+      } else if (content.parts && content.parts[0] && content.parts[0].text) {
         text = content.parts[0].text;
       } else if (typeof content === 'string') {
         text = content;
@@ -131,6 +137,12 @@ export async function generateResponse(
     } else {
       // Fallback: try to extract text from response
       text = response.text || JSON.stringify(response);
+    }
+    
+    // Ensure we have valid text
+    if (!text || typeof text !== 'string') {
+      console.error('[GEMINI] Invalid response format:', response);
+      throw new Error('Invalid response format from Gemini API');
     }
 
     // If response was truncated, append a note
