@@ -139,9 +139,39 @@ BEGIN
     END IF;
 END $$;
 
+-- Check and create OnboardingScenario table if needed
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'OnboardingScenario') THEN
+        CREATE TABLE "OnboardingScenario" (
+            "id" TEXT NOT NULL,
+            "personaType" "PersonaType" NOT NULL,
+            "questionOrder" INTEGER NOT NULL,
+            "scenario" TEXT NOT NULL,
+            "question" TEXT NOT NULL,
+            "optionA" TEXT NOT NULL,
+            "optionB" TEXT NOT NULL,
+            "optionC" TEXT NOT NULL,
+            "optionD" TEXT NOT NULL,
+            "correctAnswer" TEXT NOT NULL,
+            "explanation" TEXT,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL,
+
+            CONSTRAINT "OnboardingScenario_pkey" PRIMARY KEY ("id")
+        );
+
+        CREATE UNIQUE INDEX "OnboardingScenario_personaType_questionOrder_key" ON "OnboardingScenario"("personaType", "questionOrder");
+        CREATE INDEX "OnboardingScenario_personaType_idx" ON "OnboardingScenario"("personaType");
+        CREATE INDEX "OnboardingScenario_questionOrder_idx" ON "OnboardingScenario"("questionOrder");
+
+        RAISE NOTICE 'OnboardingScenario table created successfully';
+    ELSE
+        RAISE NOTICE 'OnboardingScenario table already exists';
+    END IF;
+END $$;
+
 -- Check and create OnboardingScenarioAnswer table if needed
--- Note: This table also references OnboardingScenario, but we'll create it without that FK for now
--- You may need to create OnboardingScenario table separately if it doesn't exist
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'OnboardingScenarioAnswer') THEN
@@ -161,8 +191,8 @@ BEGIN
         CREATE INDEX "OnboardingScenarioAnswer_scenarioId_idx" ON "OnboardingScenarioAnswer"("scenarioId");
         -- Note: OnboardingScenarioAnswer.userId references UserProfile.id (the profile's ID)
         ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-        -- Note: OnboardingScenarioAnswer.scenarioId should reference OnboardingScenario.id
-        -- But we'll skip this FK for now if OnboardingScenario doesn't exist
+        -- Note: OnboardingScenarioAnswer.scenarioId references OnboardingScenario.id
+        ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_scenarioId_fkey" FOREIGN KEY ("scenarioId") REFERENCES "OnboardingScenario"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
         RAISE NOTICE 'OnboardingScenarioAnswer table created successfully';
     ELSE
@@ -174,6 +204,7 @@ END $$;
 GRANT ALL PRIVILEGES ON TABLE "UserProfile" TO postgres;
 GRANT ALL PRIVILEGES ON TABLE "UserInterest" TO postgres;
 GRANT ALL PRIVILEGES ON TABLE "UserGoal" TO postgres;
+GRANT ALL PRIVILEGES ON TABLE "OnboardingScenario" TO postgres;
 GRANT ALL PRIVILEGES ON TABLE "OnboardingScenarioAnswer" TO postgres;
 
 -- Set default privileges for future tables
