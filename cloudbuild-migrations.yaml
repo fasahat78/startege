@@ -39,29 +39,32 @@ steps:
         echo "Generating Prisma client..."
         npx prisma generate
         
-        # Test database connection
+        # Test database connection using psql
         echo "Testing database connection..."
-        echo "DATABASE_URL format: postgresql://postgres:***@127.0.0.1:5432/startege"
-        npx prisma db execute --stdin <<< "SELECT version();" || echo "⚠️ Connection test failed"
+        apk add --no-cache postgresql-client
+        PGPASSWORD="Zoya@57Bruce" psql -h 127.0.0.1 -p 5432 -U postgres -d startege -c "SELECT version();" || {
+          echo "❌ Database connection failed!"
+          exit 1
+        }
         
         # Check current database state
         echo "Checking current database state..."
-        npx prisma db execute --stdin <<< "SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE';" || echo "⚠️ Could not check tables"
+        PGPASSWORD="Zoya@57Bruce" psql -h 127.0.0.1 -p 5432 -U postgres -d startege -c "SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE';" || true
         
-        # Apply schema directly (more reliable than migrate deploy for initial setup)
-        echo "Applying database schema..."
-        npx prisma db push --accept-data-loss --skip-generate --verbose || {
-          echo "❌ db push failed, exit code: $?"
-          echo "Trying with force flag..."
-          npx prisma db push --force-reset --accept-data-loss --skip-generate || {
-            echo "❌ Force reset also failed"
+        # Apply schema using prisma db push
+        echo "Applying database schema with prisma db push..."
+        npx prisma db push --accept-data-loss --skip-generate 2>&1 || {
+          echo "❌ prisma db push failed, trying with migration SQL directly..."
+          # Fallback: Run migration SQL directly
+          cat prisma/migrations/0_baseline/migration.sql | PGPASSWORD="Zoya@57Bruce" psql -h 127.0.0.1 -p 5432 -U postgres -d startege || {
+            echo "❌ Direct SQL execution also failed"
             exit 1
           }
         }
         
         # Verify tables were created
         echo "Verifying tables were created..."
-        npx prisma db execute --stdin <<< "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' ORDER BY table_name LIMIT 10;" || echo "⚠️ Could not verify tables"
+        PGPASSWORD="Zoya@57Bruce" psql -h 127.0.0.1 -p 5432 -U postgres -d startege -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' ORDER BY table_name LIMIT 10;" || true
         
         echo "✅ Schema application completed!"
         
