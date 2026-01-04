@@ -25,10 +25,10 @@ export default function Tooltip({
   };
 
   const arrowClasses = {
-    top: "top-full left-1/2 -translate-x-1/2 border-t-card border-l-transparent border-r-transparent border-b-transparent",
-    bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-card border-l-transparent border-r-transparent border-t-transparent",
-    left: "left-full top-1/2 -translate-y-1/2 border-l-card border-t-transparent border-b-transparent border-r-transparent",
-    right: "right-full top-1/2 -translate-y-1/2 border-r-card border-t-transparent border-b-transparent border-l-transparent",
+    top: "top-full left-1/2 -translate-x-1/2 border-t-slate-50 border-l-transparent border-r-transparent border-b-transparent",
+    bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-slate-50 border-l-transparent border-r-transparent border-t-transparent",
+    left: "left-full top-1/2 -translate-y-1/2 border-l-slate-50 border-t-transparent border-b-transparent border-r-transparent",
+    right: "right-full top-1/2 -translate-y-1/2 border-r-slate-50 border-t-transparent border-b-transparent border-l-transparent",
   };
 
   return (
