@@ -1,48 +1,4 @@
 steps:
-  # Run database migrations before building/deploying
-  # This ensures the database schema is always up-to-date
-  - name: 'gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0'
-    entrypoint: '/cloud-sql-proxy'
-    args:
-      - '${_CLOUD_SQL_INSTANCE}'
-      - '--port=5432'
-    id: 'start-cloud-sql-proxy'
-    waitFor: ['-']
-
-  # Wait for Cloud SQL Proxy to be ready and run migrations
-  - name: 'node:20-alpine'
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - |
-        apk add --no-cache netcat-openbsd
-        
-        echo "Waiting for Cloud SQL Proxy to be ready..."
-        for i in 1 2 3 4 5 6 7 8 9 10; do
-          if nc -z 127.0.0.1 5432; then
-            echo "✅ Cloud SQL Proxy is ready!"
-            break
-          fi
-          echo "Waiting... ($i/10)"
-          sleep 2
-        done
-        
-        echo "Installing dependencies..."
-        npm ci
-        
-        echo "Generating Prisma Client..."
-        npx prisma generate
-        
-        echo "Running database migrations..."
-        export DATABASE_URL="${_DATABASE_URL}"
-        npx prisma migrate deploy
-        
-        echo "✅ Migrations completed successfully!"
-    env:
-      - 'DATABASE_URL=${_DATABASE_URL}'
-    id: 'run-migrations'
-    waitFor: ['start-cloud-sql-proxy']
-
   # Build the container image
   # Pass NEXT_PUBLIC_* variables as build args (required at build time)
   - name: 'gcr.io/cloud-builders/docker'
@@ -74,7 +30,6 @@ steps:
       - 'gcr.io/${PROJECT_ID}/startege:latest'
       - '.'
     id: 'build-image'
-    waitFor: ['run-migrations']
 
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -119,8 +74,6 @@ steps:
 substitutions:
   _SERVICE_NAME: 'startege'
   _REGION: 'us-central1'
-  _CLOUD_SQL_INSTANCE: 'startege:us-central1:startege-db'
-  _DATABASE_URL: 'postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5432/startege'
 
 # Build options
 options:
