@@ -1,4 +1,28 @@
 steps:
+  # Run database migrations before building/deploying
+  # Start Cloud SQL Proxy in background
+  - name: 'gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0'
+    id: 'cloud-sql-proxy'
+    entrypoint: 'cloud-sql-proxy'
+    args:
+      - '--port=5432'
+      - '${_CLOUD_SQL_CONNECTION_NAME}'
+    waitFor: ['-']
+
+  # Install dependencies and run migrations
+  - name: 'node:20-alpine'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        npm install
+        npx prisma generate
+        npx prisma migrate deploy
+    env:
+      - 'DATABASE_URL=${_DATABASE_URL}'
+    id: 'run-migrations'
+    waitFor: ['cloud-sql-proxy']
+
   # Build the container image
   # Pass NEXT_PUBLIC_* variables as build args (required at build time)
   - name: 'gcr.io/cloud-builders/docker'
@@ -30,6 +54,7 @@ steps:
       - 'gcr.io/${PROJECT_ID}/startege:latest'
       - '.'
     id: 'build-image'
+    waitFor: ['run-migrations']
 
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -74,6 +99,8 @@ steps:
 substitutions:
   _SERVICE_NAME: 'startege'
   _REGION: 'us-central1'
+  _CLOUD_SQL_CONNECTION_NAME: 'startege:us-central1:startege-db'
+  _DATABASE_URL: 'postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5432/startege'
 
 # Build options
 options:
