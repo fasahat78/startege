@@ -9,6 +9,7 @@ echo ""
 echo "This will:"
 echo "1. Export dev database (localhost:5433)"
 echo "2. Import to production (via Cloud SQL Proxy on 5435)"
+echo "3. Production will match dev exactly"
 echo ""
 read -p "Continue? (y/n) " -n 1 -r
 echo
@@ -24,20 +25,14 @@ if ! lsof -i :5435 | grep LISTEN > /dev/null; then
     exit 1
 fi
 
-DEV_DB="postgresql://fasahatferoze@localhost:5433/startege"
-PROD_DB="postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5435/startege"
-
 echo ""
 echo "Step 1: Exporting dev database..."
-pg_dump -h localhost -p 5433 -U fasahatferoze -d startege \
-    --no-owner --no-acl --clean --if-exists \
-    > /tmp/dev-full-export.sql
+export DATABASE_URL="postgresql://fasahatferoze@localhost:5433/startege"
+npx tsx scripts/export-dev-database.ts
 
-echo "✅ Dev database exported"
 echo ""
-
 echo "Step 2: Importing to production..."
-echo "⚠️  This will DROP existing tables and recreate from dev"
+echo "⚠️  This will REPLACE all production data with dev data"
 read -p "Continue with import? (y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -45,7 +40,8 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
-psql "$PROD_DB" -f /tmp/dev-full-export.sql
+export DATABASE_URL="postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5435/startege"
+npx tsx scripts/import-to-production.ts
 
 echo ""
 echo "✅ Production database now matches dev!"
@@ -54,4 +50,3 @@ echo "Next steps:"
 echo "1. Refresh your production app"
 echo "2. Verify all features work"
 echo "3. Check /api/debug/production"
-
