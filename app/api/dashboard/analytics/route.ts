@@ -278,7 +278,7 @@ export async function GET() {
     // Badge progress calculation
     const earnedBadgeNames = new Set(userBadges.map((ub) => ub.badge.name));
     const totalPoints = userPoints?.totalPoints || 0;
-    const currentStreak = userStreak?.currentStreak || 0;
+    // currentStreak is already defined above (line 191)
     const conceptsCompleted = conceptsMastered;
 
     // Define badge requirements
