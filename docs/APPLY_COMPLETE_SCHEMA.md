@@ -15,7 +15,7 @@ Instead of creating tables one by one as errors occur, you can apply the complet
 
 If you want a truly idempotent script, you'll need to manually wrap CREATE statements in DO blocks, or run the script and ignore errors for objects that already exist.
 
-## Option 1: Run Complete Schema (Recommended)
+## Option 1: Run Complete Schema (Recommended - Idempotent Version)
 
 ### Steps
 
@@ -24,11 +24,11 @@ If you want a truly idempotent script, you'll need to manually wrap CREATE state
    - Click on database: `startege`
    - Click "Open Cloud SQL Studio"
 
-2. **Run the complete schema:**
-   - Copy the contents of `scripts/complete-schema.sql`
+2. **Run the idempotent schema:**
+   - Copy the contents of `scripts/complete-schema-idempotent.sql`
    - Paste into SQL editor
    - Click "Run"
-   - **Note**: You may see errors for objects that already exist - this is normal. The script will create missing objects.
+   - **This version checks for existence before creating objects, so it's safe to run multiple times**
 
 3. **Grant permissions:**
    After running the schema, run this to grant permissions:
