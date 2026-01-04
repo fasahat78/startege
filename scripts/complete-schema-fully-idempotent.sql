@@ -1,5 +1,5 @@
--- Complete Database Schema for Startege (Idempotent Version)
--- Safe to run multiple times - checks for existence before creating
+-- Complete Database Schema for Startege (Fully Idempotent)
+-- Safe to run multiple times - checks for existence of all objects
 
 -- Create enums (only if they don't exist)
 DO $$
@@ -45,9 +45,22 @@ BEGIN
     END IF;
 END $$;
 
--- Create tables and other objects
--- Wrap each CREATE TABLE in a DO block to check for existence
+-- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "public";
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateEnum
+-- CreateTable
 
 -- Create table User
 DO $$
@@ -73,6 +86,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Account
 DO $$
@@ -96,6 +110,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Session
 DO $$
@@ -111,6 +126,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table VerificationToken
 DO $$
@@ -120,9 +136,9 @@ BEGIN
             "identifier" TEXT NOT NULL,
             "token" TEXT NOT NULL,
             "expires" TIMESTAMP(3) NOT NULL
-        );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Domain
 DO $$
@@ -140,6 +156,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Category
 DO $$
@@ -159,6 +176,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table ConceptCard
 DO $$
@@ -202,6 +220,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserProgress
 DO $$
@@ -230,6 +249,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserPoints
 DO $$
@@ -248,6 +268,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Badge
 DO $$
@@ -266,6 +287,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserBadge
 DO $$
@@ -281,6 +303,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserStreak
 DO $$
@@ -299,6 +322,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Challenge
 DO $$
@@ -325,6 +349,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table ChallengeAttempt
 DO $$
@@ -346,6 +371,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table ChallengeQuestion
 DO $$
@@ -369,6 +395,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table ChallengeAnswer
 DO $$
@@ -387,6 +414,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table LevelCategoryCoverage
 DO $$
@@ -403,6 +431,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Exam
 DO $$
@@ -425,6 +454,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table ExamAttempt
 DO $$
@@ -449,6 +479,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table AIGPExam
 DO $$
@@ -475,6 +506,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table AIGPQuestion
 DO $$
@@ -503,6 +535,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table AIGPExamAttempt
 DO $$
@@ -536,6 +569,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table AIGPExamAnswer
 DO $$
@@ -556,6 +590,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserCategoryProgress
 DO $$
@@ -573,6 +608,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserLevelProgress
 DO $$
@@ -594,6 +630,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table RemediationSession
 DO $$
@@ -613,6 +650,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Subscription
 DO $$
@@ -636,6 +674,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table Payment
 DO $$
@@ -655,6 +694,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserProfile
 DO $$
@@ -675,6 +715,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserInterest
 DO $$
@@ -689,6 +730,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserGoal
 DO $$
@@ -703,6 +745,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table UserSettings
 DO $$
@@ -724,6 +767,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table OnboardingScenario
 DO $$
@@ -748,6 +792,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table OnboardingScenarioAnswer
 DO $$
@@ -765,6 +810,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table PromptTemplate
 DO $$
@@ -786,6 +832,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table PromptUsage
 DO $$
@@ -806,6 +853,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table AgentConversation
 DO $$
@@ -826,6 +874,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table MarketScanArticle
 DO $$
@@ -873,6 +922,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table ArticleCitation
 DO $$
@@ -889,6 +939,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table ArticleRelation
 DO $$
@@ -905,6 +956,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table ScanJob
 DO $$
@@ -926,6 +978,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table AICredit
 DO $$
@@ -949,6 +1002,7 @@ BEGIN
         );
     END IF;
 END $$;
+-- CreateTable
 
 -- Create table CreditTransaction
 DO $$
@@ -976,194 +1030,1698 @@ BEGIN
         );
     END IF;
 END $$;
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-CREATE UNIQUE INDEX "User_firebaseUid_key" ON "User"("firebaseUid");
-CREATE INDEX "Account_userId_idx" ON "Account"("userId");
-CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
-CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
-CREATE INDEX "Session_userId_idx" ON "Session"("userId");
-CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
-CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
-CREATE UNIQUE INDEX "Domain_name_key" ON "Domain"("name");
-CREATE UNIQUE INDEX "Domain_order_key" ON "Domain"("order");
-CREATE INDEX "Category_domainId_idx" ON "Category"("domainId");
-CREATE UNIQUE INDEX "Category_domainId_name_key" ON "Category"("domainId", "name");
-CREATE UNIQUE INDEX "Category_domainId_order_key" ON "Category"("domainId", "order");
-CREATE UNIQUE INDEX "ConceptCard_name_key" ON "ConceptCard"("name");
-CREATE INDEX "UserProgress_userId_idx" ON "UserProgress"("userId");
-CREATE INDEX "UserProgress_conceptCardId_idx" ON "UserProgress"("conceptCardId");
-CREATE INDEX "UserProgress_isWeakArea_idx" ON "UserProgress"("isWeakArea");
-CREATE UNIQUE INDEX "UserProgress_userId_conceptCardId_key" ON "UserProgress"("userId", "conceptCardId");
-CREATE UNIQUE INDEX "UserPoints_userId_key" ON "UserPoints"("userId");
-CREATE UNIQUE INDEX "Badge_name_key" ON "Badge"("name");
-CREATE INDEX "UserBadge_userId_idx" ON "UserBadge"("userId");
-CREATE UNIQUE INDEX "UserBadge_userId_badgeId_key" ON "UserBadge"("userId", "badgeId");
-CREATE UNIQUE INDEX "UserStreak_userId_key" ON "UserStreak"("userId");
-CREATE UNIQUE INDEX "Challenge_levelNumber_key" ON "Challenge"("levelNumber");
-CREATE INDEX "Challenge_levelNumber_idx" ON "Challenge"("levelNumber");
-CREATE INDEX "Challenge_superLevelGroup_idx" ON "Challenge"("superLevelGroup");
-CREATE INDEX "ChallengeAttempt_userId_idx" ON "ChallengeAttempt"("userId");
-CREATE INDEX "ChallengeAttempt_challengeId_idx" ON "ChallengeAttempt"("challengeId");
-CREATE INDEX "ChallengeAttempt_completedAt_idx" ON "ChallengeAttempt"("completedAt");
-CREATE INDEX "ChallengeQuestion_challengeId_idx" ON "ChallengeQuestion"("challengeId");
-CREATE INDEX "ChallengeQuestion_order_idx" ON "ChallengeQuestion"("order");
-CREATE INDEX "ChallengeAnswer_attemptId_idx" ON "ChallengeAnswer"("attemptId");
-CREATE INDEX "ChallengeAnswer_questionId_idx" ON "ChallengeAnswer"("questionId");
-CREATE INDEX "LevelCategoryCoverage_levelNumber_idx" ON "LevelCategoryCoverage"("levelNumber");
-CREATE INDEX "LevelCategoryCoverage_categoryId_idx" ON "LevelCategoryCoverage"("categoryId");
-CREATE UNIQUE INDEX "LevelCategoryCoverage_levelNumber_categoryId_coverageType_key" ON "LevelCategoryCoverage"("levelNumber", "categoryId", "coverageType");
-CREATE INDEX "Exam_type_status_idx" ON "Exam"("type", "status");
-CREATE INDEX "Exam_categoryId_idx" ON "Exam"("categoryId");
-CREATE INDEX "Exam_levelNumber_idx" ON "Exam"("levelNumber");
-CREATE INDEX "ExamAttempt_userId_idx" ON "ExamAttempt"("userId");
-CREATE INDEX "ExamAttempt_examId_idx" ON "ExamAttempt"("examId");
-CREATE INDEX "ExamAttempt_status_idx" ON "ExamAttempt"("status");
-CREATE UNIQUE INDEX "ExamAttempt_examId_userId_attemptNumber_key" ON "ExamAttempt"("examId", "userId", "attemptNumber");
-CREATE UNIQUE INDEX "AIGPExam_examId_key" ON "AIGPExam"("examId");
-CREATE INDEX "AIGPExam_status_isActive_idx" ON "AIGPExam"("status", "isActive");
-CREATE INDEX "AIGPQuestion_examId_idx" ON "AIGPQuestion"("examId");
-CREATE INDEX "AIGPQuestion_domain_idx" ON "AIGPQuestion"("domain");
-CREATE INDEX "AIGPQuestion_difficulty_idx" ON "AIGPQuestion"("difficulty");
-CREATE INDEX "AIGPQuestion_jurisdiction_idx" ON "AIGPQuestion"("jurisdiction");
-CREATE INDEX "AIGPQuestion_topic_idx" ON "AIGPQuestion"("topic");
-CREATE UNIQUE INDEX "AIGPQuestion_examId_questionOrder_key" ON "AIGPQuestion"("examId", "questionOrder");
-CREATE UNIQUE INDEX "AIGPQuestion_questionId_key" ON "AIGPQuestion"("questionId");
-CREATE INDEX "AIGPExamAttempt_userId_idx" ON "AIGPExamAttempt"("userId");
-CREATE INDEX "AIGPExamAttempt_examId_idx" ON "AIGPExamAttempt"("examId");
-CREATE INDEX "AIGPExamAttempt_status_idx" ON "AIGPExamAttempt"("status");
-CREATE INDEX "AIGPExamAttempt_submittedAt_idx" ON "AIGPExamAttempt"("submittedAt");
-CREATE UNIQUE INDEX "AIGPExamAttempt_examId_userId_attemptNumber_key" ON "AIGPExamAttempt"("examId", "userId", "attemptNumber");
-CREATE INDEX "AIGPExamAnswer_attemptId_idx" ON "AIGPExamAnswer"("attemptId");
-CREATE INDEX "AIGPExamAnswer_questionId_idx" ON "AIGPExamAnswer"("questionId");
-CREATE INDEX "AIGPExamAnswer_isCorrect_idx" ON "AIGPExamAnswer"("isCorrect");
-CREATE UNIQUE INDEX "AIGPExamAnswer_attemptId_questionId_key" ON "AIGPExamAnswer"("attemptId", "questionId");
-CREATE INDEX "UserCategoryProgress_userId_idx" ON "UserCategoryProgress"("userId");
-CREATE INDEX "UserCategoryProgress_categoryId_idx" ON "UserCategoryProgress"("categoryId");
-CREATE UNIQUE INDEX "UserCategoryProgress_userId_categoryId_key" ON "UserCategoryProgress"("userId", "categoryId");
-CREATE INDEX "UserLevelProgress_userId_idx" ON "UserLevelProgress"("userId");
-CREATE INDEX "UserLevelProgress_levelNumber_idx" ON "UserLevelProgress"("levelNumber");
-CREATE UNIQUE INDEX "UserLevelProgress_userId_levelNumber_key" ON "UserLevelProgress"("userId", "levelNumber");
-CREATE INDEX "RemediationSession_userId_idx" ON "RemediationSession"("userId");
-CREATE INDEX "RemediationSession_examId_idx" ON "RemediationSession"("examId");
-CREATE INDEX "RemediationSession_status_idx" ON "RemediationSession"("status");
-CREATE UNIQUE INDEX "RemediationSession_userId_examId_attemptId_key" ON "RemediationSession"("userId", "examId", "attemptId");
-CREATE UNIQUE INDEX "Subscription_userId_key" ON "Subscription"("userId");
-CREATE UNIQUE INDEX "Subscription_stripeCustomerId_key" ON "Subscription"("stripeCustomerId");
-CREATE UNIQUE INDEX "Subscription_stripeSubscriptionId_key" ON "Subscription"("stripeSubscriptionId");
-CREATE INDEX "Subscription_userId_idx" ON "Subscription"("userId");
-CREATE INDEX "Subscription_stripeCustomerId_idx" ON "Subscription"("stripeCustomerId");
-CREATE INDEX "Subscription_status_idx" ON "Subscription"("status");
-CREATE UNIQUE INDEX "Payment_stripePaymentId_key" ON "Payment"("stripePaymentId");
-CREATE INDEX "Payment_userId_idx" ON "Payment"("userId");
-CREATE INDEX "Payment_stripePaymentId_idx" ON "Payment"("stripePaymentId");
-CREATE INDEX "Payment_status_idx" ON "Payment"("status");
-CREATE UNIQUE INDEX "UserProfile_userId_key" ON "UserProfile"("userId");
-CREATE INDEX "UserProfile_userId_idx" ON "UserProfile"("userId");
-CREATE INDEX "UserProfile_personaType_idx" ON "UserProfile"("personaType");
-CREATE INDEX "UserProfile_onboardingStatus_idx" ON "UserProfile"("onboardingStatus");
-CREATE INDEX "UserInterest_userId_idx" ON "UserInterest"("userId");
-CREATE INDEX "UserInterest_interest_idx" ON "UserInterest"("interest");
-CREATE UNIQUE INDEX "UserInterest_userId_interest_key" ON "UserInterest"("userId", "interest");
-CREATE INDEX "UserGoal_userId_idx" ON "UserGoal"("userId");
-CREATE INDEX "UserGoal_goal_idx" ON "UserGoal"("goal");
-CREATE UNIQUE INDEX "UserGoal_userId_goal_key" ON "UserGoal"("userId", "goal");
-CREATE UNIQUE INDEX "UserSettings_userId_key" ON "UserSettings"("userId");
-CREATE INDEX "UserSettings_userId_idx" ON "UserSettings"("userId");
-CREATE INDEX "OnboardingScenario_personaType_idx" ON "OnboardingScenario"("personaType");
-CREATE INDEX "OnboardingScenario_questionOrder_idx" ON "OnboardingScenario"("questionOrder");
-CREATE UNIQUE INDEX "OnboardingScenario_personaType_questionOrder_key" ON "OnboardingScenario"("personaType", "questionOrder");
-CREATE INDEX "OnboardingScenarioAnswer_userId_idx" ON "OnboardingScenarioAnswer"("userId");
-CREATE INDEX "OnboardingScenarioAnswer_scenarioId_idx" ON "OnboardingScenarioAnswer"("scenarioId");
-CREATE UNIQUE INDEX "OnboardingScenarioAnswer_userId_scenarioId_key" ON "OnboardingScenarioAnswer"("userId", "scenarioId");
-CREATE INDEX "PromptTemplate_personaType_idx" ON "PromptTemplate"("personaType");
-CREATE INDEX "PromptTemplate_scenarioType_idx" ON "PromptTemplate"("scenarioType");
-CREATE INDEX "PromptTemplate_tags_idx" ON "PromptTemplate"("tags");
-CREATE INDEX "PromptUsage_userId_idx" ON "PromptUsage"("userId");
-CREATE INDEX "PromptUsage_templateId_idx" ON "PromptUsage"("templateId");
-CREATE INDEX "PromptUsage_createdAt_idx" ON "PromptUsage"("createdAt");
-CREATE INDEX "AgentConversation_userId_idx" ON "AgentConversation"("userId");
-CREATE INDEX "AgentConversation_createdAt_idx" ON "AgentConversation"("createdAt");
-CREATE INDEX "AgentConversation_updatedAt_idx" ON "AgentConversation"("updatedAt");
-CREATE UNIQUE INDEX "MarketScanArticle_sourceUrl_key" ON "MarketScanArticle"("sourceUrl");
-CREATE INDEX "MarketScanArticle_publishedAt_idx" ON "MarketScanArticle"("publishedAt");
-CREATE INDEX "MarketScanArticle_sourceType_idx" ON "MarketScanArticle"("sourceType");
-CREATE INDEX "MarketScanArticle_category_idx" ON "MarketScanArticle"("category");
-CREATE INDEX "MarketScanArticle_jurisdiction_idx" ON "MarketScanArticle"("jurisdiction");
-CREATE INDEX "MarketScanArticle_relevanceScore_idx" ON "MarketScanArticle"("relevanceScore");
-CREATE INDEX "MarketScanArticle_sentiment_idx" ON "MarketScanArticle"("sentiment");
-CREATE INDEX "MarketScanArticle_urgency_idx" ON "MarketScanArticle"("urgency");
-CREATE INDEX "MarketScanArticle_impactScope_idx" ON "MarketScanArticle"("impactScope");
-CREATE INDEX "MarketScanArticle_complexityLevel_idx" ON "MarketScanArticle"("complexityLevel");
-CREATE INDEX "ArticleCitation_articleId_idx" ON "ArticleCitation"("articleId");
-CREATE INDEX "ArticleCitation_citedArticleId_idx" ON "ArticleCitation"("citedArticleId");
-CREATE UNIQUE INDEX "ArticleCitation_articleId_citedArticleId_key" ON "ArticleCitation"("articleId", "citedArticleId");
-CREATE INDEX "ArticleRelation_articleId_idx" ON "ArticleRelation"("articleId");
-CREATE INDEX "ArticleRelation_relatedArticleId_idx" ON "ArticleRelation"("relatedArticleId");
-CREATE UNIQUE INDEX "ArticleRelation_articleId_relatedArticleId_key" ON "ArticleRelation"("articleId", "relatedArticleId");
-CREATE INDEX "ScanJob_scanType_idx" ON "ScanJob"("scanType");
-CREATE INDEX "ScanJob_status_idx" ON "ScanJob"("status");
-CREATE INDEX "ScanJob_startedAt_idx" ON "ScanJob"("startedAt");
-CREATE UNIQUE INDEX "AICredit_userId_key" ON "AICredit"("userId");
-CREATE UNIQUE INDEX "AICredit_subscriptionId_key" ON "AICredit"("subscriptionId");
-CREATE INDEX "AICredit_userId_idx" ON "AICredit"("userId");
-CREATE INDEX "AICredit_billingCycleEnd_idx" ON "AICredit"("billingCycleEnd");
-CREATE INDEX "AICredit_subscriptionId_idx" ON "AICredit"("subscriptionId");
-CREATE INDEX "CreditTransaction_creditId_idx" ON "CreditTransaction"("creditId");
-CREATE INDEX "CreditTransaction_userId_idx" ON "CreditTransaction"("userId");
-CREATE INDEX "CreditTransaction_createdAt_idx" ON "CreditTransaction"("createdAt");
-CREATE INDEX "CreditTransaction_service_idx" ON "CreditTransaction"("service");
-CREATE INDEX "CreditTransaction_stripePaymentId_idx" ON "CreditTransaction"("stripePaymentId");
-ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "Category" ADD CONSTRAINT "Category_domainId_fkey" FOREIGN KEY ("domainId") REFERENCES "Domain"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ConceptCard" ADD CONSTRAINT "ConceptCard_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "UserProgress" ADD CONSTRAINT "UserProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserProgress" ADD CONSTRAINT "UserProgress_conceptCardId_fkey" FOREIGN KEY ("conceptCardId") REFERENCES "ConceptCard"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserPoints" ADD CONSTRAINT "UserPoints_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserBadge" ADD CONSTRAINT "UserBadge_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserBadge" ADD CONSTRAINT "UserBadge_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "Badge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserStreak" ADD CONSTRAINT "UserStreak_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ChallengeAttempt" ADD CONSTRAINT "ChallengeAttempt_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ChallengeAttempt" ADD CONSTRAINT "ChallengeAttempt_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ChallengeQuestion" ADD CONSTRAINT "ChallengeQuestion_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ChallengeAnswer" ADD CONSTRAINT "ChallengeAnswer_attemptId_fkey" FOREIGN KEY ("attemptId") REFERENCES "ChallengeAttempt"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ChallengeAnswer" ADD CONSTRAINT "ChallengeAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "ChallengeQuestion"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "LevelCategoryCoverage" ADD CONSTRAINT "LevelCategoryCoverage_levelNumber_fkey" FOREIGN KEY ("levelNumber") REFERENCES "Challenge"("levelNumber") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "LevelCategoryCoverage" ADD CONSTRAINT "LevelCategoryCoverage_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "Exam" ADD CONSTRAINT "Exam_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "Exam" ADD CONSTRAINT "Exam_levelNumber_fkey" FOREIGN KEY ("levelNumber") REFERENCES "Challenge"("levelNumber") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ExamAttempt" ADD CONSTRAINT "ExamAttempt_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ExamAttempt" ADD CONSTRAINT "ExamAttempt_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "AIGPQuestion" ADD CONSTRAINT "AIGPQuestion_examId_fkey" FOREIGN KEY ("examId") REFERENCES "AIGPExam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "AIGPExamAttempt" ADD CONSTRAINT "AIGPExamAttempt_examId_fkey" FOREIGN KEY ("examId") REFERENCES "AIGPExam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "AIGPExamAttempt" ADD CONSTRAINT "AIGPExamAttempt_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "AIGPExamAnswer" ADD CONSTRAINT "AIGPExamAnswer_attemptId_fkey" FOREIGN KEY ("attemptId") REFERENCES "AIGPExamAttempt"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "AIGPExamAnswer" ADD CONSTRAINT "AIGPExamAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "AIGPQuestion"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserCategoryProgress" ADD CONSTRAINT "UserCategoryProgress_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserCategoryProgress" ADD CONSTRAINT "UserCategoryProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserLevelProgress" ADD CONSTRAINT "UserLevelProgress_levelNumber_fkey" FOREIGN KEY ("levelNumber") REFERENCES "Challenge"("levelNumber") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserLevelProgress" ADD CONSTRAINT "UserLevelProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "RemediationSession" ADD CONSTRAINT "RemediationSession_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "RemediationSession" ADD CONSTRAINT "RemediationSession_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "Payment" ADD CONSTRAINT "Payment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserProfile" ADD CONSTRAINT "UserProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserInterest" ADD CONSTRAINT "UserInterest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserGoal" ADD CONSTRAINT "UserGoal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "UserSettings" ADD CONSTRAINT "UserSettings_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_scenarioId_fkey" FOREIGN KEY ("scenarioId") REFERENCES "OnboardingScenario"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "PromptUsage" ADD CONSTRAINT "PromptUsage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "PromptUsage" ADD CONSTRAINT "PromptUsage_templateId_fkey" FOREIGN KEY ("templateId") REFERENCES "PromptTemplate"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "AgentConversation" ADD CONSTRAINT "AgentConversation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ArticleCitation" ADD CONSTRAINT "ArticleCitation_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "MarketScanArticle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ArticleCitation" ADD CONSTRAINT "ArticleCitation_citedArticleId_fkey" FOREIGN KEY ("citedArticleId") REFERENCES "MarketScanArticle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ArticleRelation" ADD CONSTRAINT "ArticleRelation_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "MarketScanArticle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "ArticleRelation" ADD CONSTRAINT "ArticleRelation_relatedArticleId_fkey" FOREIGN KEY ("relatedArticleId") REFERENCES "MarketScanArticle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "AICredit" ADD CONSTRAINT "AICredit_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "AICredit" ADD CONSTRAINT "AICredit_subscriptionId_fkey" FOREIGN KEY ("subscriptionId") REFERENCES "Subscription"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-ALTER TABLE "CreditTransaction" ADD CONSTRAINT "CreditTransaction_creditId_fkey" FOREIGN KEY ("creditId") REFERENCES "AICredit"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "CreditTransaction" ADD CONSTRAINT "CreditTransaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- CreateIndex
+
+-- Create index User_email_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'User_email_key') THEN
+        CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index User_firebaseUid_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'User_firebaseUid_key') THEN
+        CREATE UNIQUE INDEX "User_firebaseUid_key" ON "User"("firebaseUid");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Account_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Account_userId_idx') THEN
+        CREATE INDEX "Account_userId_idx" ON "Account"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Account_provider_providerAccountId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Account_provider_providerAccountId_key') THEN
+        CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Session_sessionToken_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Session_sessionToken_key') THEN
+        CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Session_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Session_userId_idx') THEN
+        CREATE INDEX "Session_userId_idx" ON "Session"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index VerificationToken_token_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'VerificationToken_token_key') THEN
+        CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index VerificationToken_identifier_token_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'VerificationToken_identifier_token_key') THEN
+        CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Domain_name_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Domain_name_key') THEN
+        CREATE UNIQUE INDEX "Domain_name_key" ON "Domain"("name");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Domain_order_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Domain_order_key') THEN
+        CREATE UNIQUE INDEX "Domain_order_key" ON "Domain"("order");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Category_domainId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Category_domainId_idx') THEN
+        CREATE INDEX "Category_domainId_idx" ON "Category"("domainId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Category_domainId_name_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Category_domainId_name_key') THEN
+        CREATE UNIQUE INDEX "Category_domainId_name_key" ON "Category"("domainId", "name");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Category_domainId_order_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Category_domainId_order_key') THEN
+        CREATE UNIQUE INDEX "Category_domainId_order_key" ON "Category"("domainId", "order");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ConceptCard_name_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ConceptCard_name_key') THEN
+        CREATE UNIQUE INDEX "ConceptCard_name_key" ON "ConceptCard"("name");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserProgress_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserProgress_userId_idx') THEN
+        CREATE INDEX "UserProgress_userId_idx" ON "UserProgress"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserProgress_conceptCardId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserProgress_conceptCardId_idx') THEN
+        CREATE INDEX "UserProgress_conceptCardId_idx" ON "UserProgress"("conceptCardId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserProgress_isWeakArea_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserProgress_isWeakArea_idx') THEN
+        CREATE INDEX "UserProgress_isWeakArea_idx" ON "UserProgress"("isWeakArea");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserProgress_userId_conceptCardId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserProgress_userId_conceptCardId_key') THEN
+        CREATE UNIQUE INDEX "UserProgress_userId_conceptCardId_key" ON "UserProgress"("userId", "conceptCardId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserPoints_userId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserPoints_userId_key') THEN
+        CREATE UNIQUE INDEX "UserPoints_userId_key" ON "UserPoints"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Badge_name_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Badge_name_key') THEN
+        CREATE UNIQUE INDEX "Badge_name_key" ON "Badge"("name");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserBadge_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserBadge_userId_idx') THEN
+        CREATE INDEX "UserBadge_userId_idx" ON "UserBadge"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserBadge_userId_badgeId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserBadge_userId_badgeId_key') THEN
+        CREATE UNIQUE INDEX "UserBadge_userId_badgeId_key" ON "UserBadge"("userId", "badgeId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserStreak_userId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserStreak_userId_key') THEN
+        CREATE UNIQUE INDEX "UserStreak_userId_key" ON "UserStreak"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Challenge_levelNumber_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Challenge_levelNumber_key') THEN
+        CREATE UNIQUE INDEX "Challenge_levelNumber_key" ON "Challenge"("levelNumber");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Challenge_levelNumber_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Challenge_levelNumber_idx') THEN
+        CREATE INDEX "Challenge_levelNumber_idx" ON "Challenge"("levelNumber");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Challenge_superLevelGroup_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Challenge_superLevelGroup_idx') THEN
+        CREATE INDEX "Challenge_superLevelGroup_idx" ON "Challenge"("superLevelGroup");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ChallengeAttempt_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ChallengeAttempt_userId_idx') THEN
+        CREATE INDEX "ChallengeAttempt_userId_idx" ON "ChallengeAttempt"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ChallengeAttempt_challengeId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ChallengeAttempt_challengeId_idx') THEN
+        CREATE INDEX "ChallengeAttempt_challengeId_idx" ON "ChallengeAttempt"("challengeId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ChallengeAttempt_completedAt_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ChallengeAttempt_completedAt_idx') THEN
+        CREATE INDEX "ChallengeAttempt_completedAt_idx" ON "ChallengeAttempt"("completedAt");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ChallengeQuestion_challengeId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ChallengeQuestion_challengeId_idx') THEN
+        CREATE INDEX "ChallengeQuestion_challengeId_idx" ON "ChallengeQuestion"("challengeId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ChallengeQuestion_order_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ChallengeQuestion_order_idx') THEN
+        CREATE INDEX "ChallengeQuestion_order_idx" ON "ChallengeQuestion"("order");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ChallengeAnswer_attemptId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ChallengeAnswer_attemptId_idx') THEN
+        CREATE INDEX "ChallengeAnswer_attemptId_idx" ON "ChallengeAnswer"("attemptId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ChallengeAnswer_questionId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ChallengeAnswer_questionId_idx') THEN
+        CREATE INDEX "ChallengeAnswer_questionId_idx" ON "ChallengeAnswer"("questionId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index LevelCategoryCoverage_levelNumber_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'LevelCategoryCoverage_levelNumber_idx') THEN
+        CREATE INDEX "LevelCategoryCoverage_levelNumber_idx" ON "LevelCategoryCoverage"("levelNumber");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index LevelCategoryCoverage_categoryId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'LevelCategoryCoverage_categoryId_idx') THEN
+        CREATE INDEX "LevelCategoryCoverage_categoryId_idx" ON "LevelCategoryCoverage"("categoryId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index LevelCategoryCoverage_levelNumber_categoryId_coverageType_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'LevelCategoryCoverage_levelNumber_categoryId_coverageType_key') THEN
+        CREATE UNIQUE INDEX "LevelCategoryCoverage_levelNumber_categoryId_coverageType_key" ON "LevelCategoryCoverage"("levelNumber", "categoryId", "coverageType");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Exam_type_status_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Exam_type_status_idx') THEN
+        CREATE INDEX "Exam_type_status_idx" ON "Exam"("type", "status");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Exam_categoryId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Exam_categoryId_idx') THEN
+        CREATE INDEX "Exam_categoryId_idx" ON "Exam"("categoryId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Exam_levelNumber_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Exam_levelNumber_idx') THEN
+        CREATE INDEX "Exam_levelNumber_idx" ON "Exam"("levelNumber");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ExamAttempt_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ExamAttempt_userId_idx') THEN
+        CREATE INDEX "ExamAttempt_userId_idx" ON "ExamAttempt"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ExamAttempt_examId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ExamAttempt_examId_idx') THEN
+        CREATE INDEX "ExamAttempt_examId_idx" ON "ExamAttempt"("examId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ExamAttempt_status_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ExamAttempt_status_idx') THEN
+        CREATE INDEX "ExamAttempt_status_idx" ON "ExamAttempt"("status");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ExamAttempt_examId_userId_attemptNumber_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ExamAttempt_examId_userId_attemptNumber_key') THEN
+        CREATE UNIQUE INDEX "ExamAttempt_examId_userId_attemptNumber_key" ON "ExamAttempt"("examId", "userId", "attemptNumber");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExam_examId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExam_examId_key') THEN
+        CREATE UNIQUE INDEX "AIGPExam_examId_key" ON "AIGPExam"("examId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExam_status_isActive_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExam_status_isActive_idx') THEN
+        CREATE INDEX "AIGPExam_status_isActive_idx" ON "AIGPExam"("status", "isActive");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPQuestion_examId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPQuestion_examId_idx') THEN
+        CREATE INDEX "AIGPQuestion_examId_idx" ON "AIGPQuestion"("examId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPQuestion_domain_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPQuestion_domain_idx') THEN
+        CREATE INDEX "AIGPQuestion_domain_idx" ON "AIGPQuestion"("domain");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPQuestion_difficulty_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPQuestion_difficulty_idx') THEN
+        CREATE INDEX "AIGPQuestion_difficulty_idx" ON "AIGPQuestion"("difficulty");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPQuestion_jurisdiction_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPQuestion_jurisdiction_idx') THEN
+        CREATE INDEX "AIGPQuestion_jurisdiction_idx" ON "AIGPQuestion"("jurisdiction");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPQuestion_topic_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPQuestion_topic_idx') THEN
+        CREATE INDEX "AIGPQuestion_topic_idx" ON "AIGPQuestion"("topic");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPQuestion_examId_questionOrder_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPQuestion_examId_questionOrder_key') THEN
+        CREATE UNIQUE INDEX "AIGPQuestion_examId_questionOrder_key" ON "AIGPQuestion"("examId", "questionOrder");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPQuestion_questionId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPQuestion_questionId_key') THEN
+        CREATE UNIQUE INDEX "AIGPQuestion_questionId_key" ON "AIGPQuestion"("questionId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAttempt_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAttempt_userId_idx') THEN
+        CREATE INDEX "AIGPExamAttempt_userId_idx" ON "AIGPExamAttempt"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAttempt_examId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAttempt_examId_idx') THEN
+        CREATE INDEX "AIGPExamAttempt_examId_idx" ON "AIGPExamAttempt"("examId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAttempt_status_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAttempt_status_idx') THEN
+        CREATE INDEX "AIGPExamAttempt_status_idx" ON "AIGPExamAttempt"("status");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAttempt_submittedAt_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAttempt_submittedAt_idx') THEN
+        CREATE INDEX "AIGPExamAttempt_submittedAt_idx" ON "AIGPExamAttempt"("submittedAt");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAttempt_examId_userId_attemptNumber_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAttempt_examId_userId_attemptNumber_key') THEN
+        CREATE UNIQUE INDEX "AIGPExamAttempt_examId_userId_attemptNumber_key" ON "AIGPExamAttempt"("examId", "userId", "attemptNumber");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAnswer_attemptId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAnswer_attemptId_idx') THEN
+        CREATE INDEX "AIGPExamAnswer_attemptId_idx" ON "AIGPExamAnswer"("attemptId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAnswer_questionId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAnswer_questionId_idx') THEN
+        CREATE INDEX "AIGPExamAnswer_questionId_idx" ON "AIGPExamAnswer"("questionId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAnswer_isCorrect_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAnswer_isCorrect_idx') THEN
+        CREATE INDEX "AIGPExamAnswer_isCorrect_idx" ON "AIGPExamAnswer"("isCorrect");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AIGPExamAnswer_attemptId_questionId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AIGPExamAnswer_attemptId_questionId_key') THEN
+        CREATE UNIQUE INDEX "AIGPExamAnswer_attemptId_questionId_key" ON "AIGPExamAnswer"("attemptId", "questionId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserCategoryProgress_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserCategoryProgress_userId_idx') THEN
+        CREATE INDEX "UserCategoryProgress_userId_idx" ON "UserCategoryProgress"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserCategoryProgress_categoryId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserCategoryProgress_categoryId_idx') THEN
+        CREATE INDEX "UserCategoryProgress_categoryId_idx" ON "UserCategoryProgress"("categoryId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserCategoryProgress_userId_categoryId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserCategoryProgress_userId_categoryId_key') THEN
+        CREATE UNIQUE INDEX "UserCategoryProgress_userId_categoryId_key" ON "UserCategoryProgress"("userId", "categoryId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserLevelProgress_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserLevelProgress_userId_idx') THEN
+        CREATE INDEX "UserLevelProgress_userId_idx" ON "UserLevelProgress"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserLevelProgress_levelNumber_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserLevelProgress_levelNumber_idx') THEN
+        CREATE INDEX "UserLevelProgress_levelNumber_idx" ON "UserLevelProgress"("levelNumber");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserLevelProgress_userId_levelNumber_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserLevelProgress_userId_levelNumber_key') THEN
+        CREATE UNIQUE INDEX "UserLevelProgress_userId_levelNumber_key" ON "UserLevelProgress"("userId", "levelNumber");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index RemediationSession_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'RemediationSession_userId_idx') THEN
+        CREATE INDEX "RemediationSession_userId_idx" ON "RemediationSession"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index RemediationSession_examId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'RemediationSession_examId_idx') THEN
+        CREATE INDEX "RemediationSession_examId_idx" ON "RemediationSession"("examId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index RemediationSession_status_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'RemediationSession_status_idx') THEN
+        CREATE INDEX "RemediationSession_status_idx" ON "RemediationSession"("status");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index RemediationSession_userId_examId_attemptId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'RemediationSession_userId_examId_attemptId_key') THEN
+        CREATE UNIQUE INDEX "RemediationSession_userId_examId_attemptId_key" ON "RemediationSession"("userId", "examId", "attemptId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Subscription_userId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Subscription_userId_key') THEN
+        CREATE UNIQUE INDEX "Subscription_userId_key" ON "Subscription"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Subscription_stripeCustomerId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Subscription_stripeCustomerId_key') THEN
+        CREATE UNIQUE INDEX "Subscription_stripeCustomerId_key" ON "Subscription"("stripeCustomerId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Subscription_stripeSubscriptionId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Subscription_stripeSubscriptionId_key') THEN
+        CREATE UNIQUE INDEX "Subscription_stripeSubscriptionId_key" ON "Subscription"("stripeSubscriptionId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Subscription_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Subscription_userId_idx') THEN
+        CREATE INDEX "Subscription_userId_idx" ON "Subscription"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Subscription_stripeCustomerId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Subscription_stripeCustomerId_idx') THEN
+        CREATE INDEX "Subscription_stripeCustomerId_idx" ON "Subscription"("stripeCustomerId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Subscription_status_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Subscription_status_idx') THEN
+        CREATE INDEX "Subscription_status_idx" ON "Subscription"("status");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Payment_stripePaymentId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Payment_stripePaymentId_key') THEN
+        CREATE UNIQUE INDEX "Payment_stripePaymentId_key" ON "Payment"("stripePaymentId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Payment_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Payment_userId_idx') THEN
+        CREATE INDEX "Payment_userId_idx" ON "Payment"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Payment_stripePaymentId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Payment_stripePaymentId_idx') THEN
+        CREATE INDEX "Payment_stripePaymentId_idx" ON "Payment"("stripePaymentId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index Payment_status_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Payment_status_idx') THEN
+        CREATE INDEX "Payment_status_idx" ON "Payment"("status");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserProfile_userId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserProfile_userId_key') THEN
+        CREATE UNIQUE INDEX "UserProfile_userId_key" ON "UserProfile"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserProfile_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserProfile_userId_idx') THEN
+        CREATE INDEX "UserProfile_userId_idx" ON "UserProfile"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserProfile_personaType_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserProfile_personaType_idx') THEN
+        CREATE INDEX "UserProfile_personaType_idx" ON "UserProfile"("personaType");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserProfile_onboardingStatus_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserProfile_onboardingStatus_idx') THEN
+        CREATE INDEX "UserProfile_onboardingStatus_idx" ON "UserProfile"("onboardingStatus");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserInterest_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserInterest_userId_idx') THEN
+        CREATE INDEX "UserInterest_userId_idx" ON "UserInterest"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserInterest_interest_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserInterest_interest_idx') THEN
+        CREATE INDEX "UserInterest_interest_idx" ON "UserInterest"("interest");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserInterest_userId_interest_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserInterest_userId_interest_key') THEN
+        CREATE UNIQUE INDEX "UserInterest_userId_interest_key" ON "UserInterest"("userId", "interest");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserGoal_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserGoal_userId_idx') THEN
+        CREATE INDEX "UserGoal_userId_idx" ON "UserGoal"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserGoal_goal_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserGoal_goal_idx') THEN
+        CREATE INDEX "UserGoal_goal_idx" ON "UserGoal"("goal");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserGoal_userId_goal_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserGoal_userId_goal_key') THEN
+        CREATE UNIQUE INDEX "UserGoal_userId_goal_key" ON "UserGoal"("userId", "goal");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserSettings_userId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserSettings_userId_key') THEN
+        CREATE UNIQUE INDEX "UserSettings_userId_key" ON "UserSettings"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index UserSettings_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'UserSettings_userId_idx') THEN
+        CREATE INDEX "UserSettings_userId_idx" ON "UserSettings"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index OnboardingScenario_personaType_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'OnboardingScenario_personaType_idx') THEN
+        CREATE INDEX "OnboardingScenario_personaType_idx" ON "OnboardingScenario"("personaType");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index OnboardingScenario_questionOrder_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'OnboardingScenario_questionOrder_idx') THEN
+        CREATE INDEX "OnboardingScenario_questionOrder_idx" ON "OnboardingScenario"("questionOrder");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index OnboardingScenario_personaType_questionOrder_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'OnboardingScenario_personaType_questionOrder_key') THEN
+        CREATE UNIQUE INDEX "OnboardingScenario_personaType_questionOrder_key" ON "OnboardingScenario"("personaType", "questionOrder");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index OnboardingScenarioAnswer_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'OnboardingScenarioAnswer_userId_idx') THEN
+        CREATE INDEX "OnboardingScenarioAnswer_userId_idx" ON "OnboardingScenarioAnswer"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index OnboardingScenarioAnswer_scenarioId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'OnboardingScenarioAnswer_scenarioId_idx') THEN
+        CREATE INDEX "OnboardingScenarioAnswer_scenarioId_idx" ON "OnboardingScenarioAnswer"("scenarioId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index OnboardingScenarioAnswer_userId_scenarioId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'OnboardingScenarioAnswer_userId_scenarioId_key') THEN
+        CREATE UNIQUE INDEX "OnboardingScenarioAnswer_userId_scenarioId_key" ON "OnboardingScenarioAnswer"("userId", "scenarioId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index PromptTemplate_personaType_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'PromptTemplate_personaType_idx') THEN
+        CREATE INDEX "PromptTemplate_personaType_idx" ON "PromptTemplate"("personaType");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index PromptTemplate_scenarioType_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'PromptTemplate_scenarioType_idx') THEN
+        CREATE INDEX "PromptTemplate_scenarioType_idx" ON "PromptTemplate"("scenarioType");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index PromptTemplate_tags_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'PromptTemplate_tags_idx') THEN
+        CREATE INDEX "PromptTemplate_tags_idx" ON "PromptTemplate"("tags");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index PromptUsage_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'PromptUsage_userId_idx') THEN
+        CREATE INDEX "PromptUsage_userId_idx" ON "PromptUsage"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index PromptUsage_templateId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'PromptUsage_templateId_idx') THEN
+        CREATE INDEX "PromptUsage_templateId_idx" ON "PromptUsage"("templateId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index PromptUsage_createdAt_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'PromptUsage_createdAt_idx') THEN
+        CREATE INDEX "PromptUsage_createdAt_idx" ON "PromptUsage"("createdAt");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AgentConversation_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AgentConversation_userId_idx') THEN
+        CREATE INDEX "AgentConversation_userId_idx" ON "AgentConversation"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AgentConversation_createdAt_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AgentConversation_createdAt_idx') THEN
+        CREATE INDEX "AgentConversation_createdAt_idx" ON "AgentConversation"("createdAt");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AgentConversation_updatedAt_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AgentConversation_updatedAt_idx') THEN
+        CREATE INDEX "AgentConversation_updatedAt_idx" ON "AgentConversation"("updatedAt");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_sourceUrl_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_sourceUrl_key') THEN
+        CREATE UNIQUE INDEX "MarketScanArticle_sourceUrl_key" ON "MarketScanArticle"("sourceUrl");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_publishedAt_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_publishedAt_idx') THEN
+        CREATE INDEX "MarketScanArticle_publishedAt_idx" ON "MarketScanArticle"("publishedAt");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_sourceType_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_sourceType_idx') THEN
+        CREATE INDEX "MarketScanArticle_sourceType_idx" ON "MarketScanArticle"("sourceType");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_category_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_category_idx') THEN
+        CREATE INDEX "MarketScanArticle_category_idx" ON "MarketScanArticle"("category");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_jurisdiction_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_jurisdiction_idx') THEN
+        CREATE INDEX "MarketScanArticle_jurisdiction_idx" ON "MarketScanArticle"("jurisdiction");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_relevanceScore_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_relevanceScore_idx') THEN
+        CREATE INDEX "MarketScanArticle_relevanceScore_idx" ON "MarketScanArticle"("relevanceScore");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_sentiment_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_sentiment_idx') THEN
+        CREATE INDEX "MarketScanArticle_sentiment_idx" ON "MarketScanArticle"("sentiment");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_urgency_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_urgency_idx') THEN
+        CREATE INDEX "MarketScanArticle_urgency_idx" ON "MarketScanArticle"("urgency");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_impactScope_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_impactScope_idx') THEN
+        CREATE INDEX "MarketScanArticle_impactScope_idx" ON "MarketScanArticle"("impactScope");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index MarketScanArticle_complexityLevel_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'MarketScanArticle_complexityLevel_idx') THEN
+        CREATE INDEX "MarketScanArticle_complexityLevel_idx" ON "MarketScanArticle"("complexityLevel");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ArticleCitation_articleId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ArticleCitation_articleId_idx') THEN
+        CREATE INDEX "ArticleCitation_articleId_idx" ON "ArticleCitation"("articleId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ArticleCitation_citedArticleId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ArticleCitation_citedArticleId_idx') THEN
+        CREATE INDEX "ArticleCitation_citedArticleId_idx" ON "ArticleCitation"("citedArticleId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ArticleCitation_articleId_citedArticleId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ArticleCitation_articleId_citedArticleId_key') THEN
+        CREATE UNIQUE INDEX "ArticleCitation_articleId_citedArticleId_key" ON "ArticleCitation"("articleId", "citedArticleId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ArticleRelation_articleId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ArticleRelation_articleId_idx') THEN
+        CREATE INDEX "ArticleRelation_articleId_idx" ON "ArticleRelation"("articleId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ArticleRelation_relatedArticleId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ArticleRelation_relatedArticleId_idx') THEN
+        CREATE INDEX "ArticleRelation_relatedArticleId_idx" ON "ArticleRelation"("relatedArticleId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ArticleRelation_articleId_relatedArticleId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ArticleRelation_articleId_relatedArticleId_key') THEN
+        CREATE UNIQUE INDEX "ArticleRelation_articleId_relatedArticleId_key" ON "ArticleRelation"("articleId", "relatedArticleId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ScanJob_scanType_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ScanJob_scanType_idx') THEN
+        CREATE INDEX "ScanJob_scanType_idx" ON "ScanJob"("scanType");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ScanJob_status_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ScanJob_status_idx') THEN
+        CREATE INDEX "ScanJob_status_idx" ON "ScanJob"("status");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index ScanJob_startedAt_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ScanJob_startedAt_idx') THEN
+        CREATE INDEX "ScanJob_startedAt_idx" ON "ScanJob"("startedAt");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AICredit_userId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AICredit_userId_key') THEN
+        CREATE UNIQUE INDEX "AICredit_userId_key" ON "AICredit"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AICredit_subscriptionId_key
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AICredit_subscriptionId_key') THEN
+        CREATE UNIQUE INDEX "AICredit_subscriptionId_key" ON "AICredit"("subscriptionId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AICredit_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AICredit_userId_idx') THEN
+        CREATE INDEX "AICredit_userId_idx" ON "AICredit"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AICredit_billingCycleEnd_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AICredit_billingCycleEnd_idx') THEN
+        CREATE INDEX "AICredit_billingCycleEnd_idx" ON "AICredit"("billingCycleEnd");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index AICredit_subscriptionId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'AICredit_subscriptionId_idx') THEN
+        CREATE INDEX "AICredit_subscriptionId_idx" ON "AICredit"("subscriptionId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index CreditTransaction_creditId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'CreditTransaction_creditId_idx') THEN
+        CREATE INDEX "CreditTransaction_creditId_idx" ON "CreditTransaction"("creditId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index CreditTransaction_userId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'CreditTransaction_userId_idx') THEN
+        CREATE INDEX "CreditTransaction_userId_idx" ON "CreditTransaction"("userId");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index CreditTransaction_createdAt_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'CreditTransaction_createdAt_idx') THEN
+        CREATE INDEX "CreditTransaction_createdAt_idx" ON "CreditTransaction"("createdAt");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index CreditTransaction_service_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'CreditTransaction_service_idx') THEN
+        CREATE INDEX "CreditTransaction_service_idx" ON "CreditTransaction"("service");
+    END IF;
+END $$;
+-- CreateIndex
+
+-- Create index CreditTransaction_stripePaymentId_idx
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'CreditTransaction_stripePaymentId_idx') THEN
+        CREATE INDEX "CreditTransaction_stripePaymentId_idx" ON "CreditTransaction"("stripePaymentId");
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint Account_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'Account_userId_fkey') THEN
+        ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint Session_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'Session_userId_fkey') THEN
+        ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint Category_domainId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'Category_domainId_fkey') THEN
+        ALTER TABLE "Category" ADD CONSTRAINT "Category_domainId_fkey" FOREIGN KEY ("domainId") REFERENCES "Domain"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ConceptCard_categoryId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ConceptCard_categoryId_fkey') THEN
+        ALTER TABLE "ConceptCard" ADD CONSTRAINT "ConceptCard_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserProgress_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserProgress_userId_fkey') THEN
+        ALTER TABLE "UserProgress" ADD CONSTRAINT "UserProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserProgress_conceptCardId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserProgress_conceptCardId_fkey') THEN
+        ALTER TABLE "UserProgress" ADD CONSTRAINT "UserProgress_conceptCardId_fkey" FOREIGN KEY ("conceptCardId") REFERENCES "ConceptCard"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserPoints_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserPoints_userId_fkey') THEN
+        ALTER TABLE "UserPoints" ADD CONSTRAINT "UserPoints_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserBadge_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserBadge_userId_fkey') THEN
+        ALTER TABLE "UserBadge" ADD CONSTRAINT "UserBadge_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserBadge_badgeId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserBadge_badgeId_fkey') THEN
+        ALTER TABLE "UserBadge" ADD CONSTRAINT "UserBadge_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "Badge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserStreak_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserStreak_userId_fkey') THEN
+        ALTER TABLE "UserStreak" ADD CONSTRAINT "UserStreak_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ChallengeAttempt_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ChallengeAttempt_userId_fkey') THEN
+        ALTER TABLE "ChallengeAttempt" ADD CONSTRAINT "ChallengeAttempt_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ChallengeAttempt_challengeId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ChallengeAttempt_challengeId_fkey') THEN
+        ALTER TABLE "ChallengeAttempt" ADD CONSTRAINT "ChallengeAttempt_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ChallengeQuestion_challengeId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ChallengeQuestion_challengeId_fkey') THEN
+        ALTER TABLE "ChallengeQuestion" ADD CONSTRAINT "ChallengeQuestion_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ChallengeAnswer_attemptId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ChallengeAnswer_attemptId_fkey') THEN
+        ALTER TABLE "ChallengeAnswer" ADD CONSTRAINT "ChallengeAnswer_attemptId_fkey" FOREIGN KEY ("attemptId") REFERENCES "ChallengeAttempt"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ChallengeAnswer_questionId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ChallengeAnswer_questionId_fkey') THEN
+        ALTER TABLE "ChallengeAnswer" ADD CONSTRAINT "ChallengeAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "ChallengeQuestion"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint LevelCategoryCoverage_levelNumber_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'LevelCategoryCoverage_levelNumber_fkey') THEN
+        ALTER TABLE "LevelCategoryCoverage" ADD CONSTRAINT "LevelCategoryCoverage_levelNumber_fkey" FOREIGN KEY ("levelNumber") REFERENCES "Challenge"("levelNumber") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint LevelCategoryCoverage_categoryId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'LevelCategoryCoverage_categoryId_fkey') THEN
+        ALTER TABLE "LevelCategoryCoverage" ADD CONSTRAINT "LevelCategoryCoverage_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint Exam_categoryId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'Exam_categoryId_fkey') THEN
+        ALTER TABLE "Exam" ADD CONSTRAINT "Exam_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint Exam_levelNumber_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'Exam_levelNumber_fkey') THEN
+        ALTER TABLE "Exam" ADD CONSTRAINT "Exam_levelNumber_fkey" FOREIGN KEY ("levelNumber") REFERENCES "Challenge"("levelNumber") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ExamAttempt_examId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ExamAttempt_examId_fkey') THEN
+        ALTER TABLE "ExamAttempt" ADD CONSTRAINT "ExamAttempt_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ExamAttempt_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ExamAttempt_userId_fkey') THEN
+        ALTER TABLE "ExamAttempt" ADD CONSTRAINT "ExamAttempt_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint AIGPQuestion_examId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'AIGPQuestion_examId_fkey') THEN
+        ALTER TABLE "AIGPQuestion" ADD CONSTRAINT "AIGPQuestion_examId_fkey" FOREIGN KEY ("examId") REFERENCES "AIGPExam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint AIGPExamAttempt_examId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'AIGPExamAttempt_examId_fkey') THEN
+        ALTER TABLE "AIGPExamAttempt" ADD CONSTRAINT "AIGPExamAttempt_examId_fkey" FOREIGN KEY ("examId") REFERENCES "AIGPExam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint AIGPExamAttempt_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'AIGPExamAttempt_userId_fkey') THEN
+        ALTER TABLE "AIGPExamAttempt" ADD CONSTRAINT "AIGPExamAttempt_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint AIGPExamAnswer_attemptId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'AIGPExamAnswer_attemptId_fkey') THEN
+        ALTER TABLE "AIGPExamAnswer" ADD CONSTRAINT "AIGPExamAnswer_attemptId_fkey" FOREIGN KEY ("attemptId") REFERENCES "AIGPExamAttempt"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint AIGPExamAnswer_questionId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'AIGPExamAnswer_questionId_fkey') THEN
+        ALTER TABLE "AIGPExamAnswer" ADD CONSTRAINT "AIGPExamAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "AIGPQuestion"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserCategoryProgress_categoryId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserCategoryProgress_categoryId_fkey') THEN
+        ALTER TABLE "UserCategoryProgress" ADD CONSTRAINT "UserCategoryProgress_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserCategoryProgress_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserCategoryProgress_userId_fkey') THEN
+        ALTER TABLE "UserCategoryProgress" ADD CONSTRAINT "UserCategoryProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserLevelProgress_levelNumber_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserLevelProgress_levelNumber_fkey') THEN
+        ALTER TABLE "UserLevelProgress" ADD CONSTRAINT "UserLevelProgress_levelNumber_fkey" FOREIGN KEY ("levelNumber") REFERENCES "Challenge"("levelNumber") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserLevelProgress_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserLevelProgress_userId_fkey') THEN
+        ALTER TABLE "UserLevelProgress" ADD CONSTRAINT "UserLevelProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint RemediationSession_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'RemediationSession_userId_fkey') THEN
+        ALTER TABLE "RemediationSession" ADD CONSTRAINT "RemediationSession_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint RemediationSession_examId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'RemediationSession_examId_fkey') THEN
+        ALTER TABLE "RemediationSession" ADD CONSTRAINT "RemediationSession_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint Subscription_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'Subscription_userId_fkey') THEN
+        ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint Payment_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'Payment_userId_fkey') THEN
+        ALTER TABLE "Payment" ADD CONSTRAINT "Payment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserProfile_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserProfile_userId_fkey') THEN
+        ALTER TABLE "UserProfile" ADD CONSTRAINT "UserProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserInterest_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserInterest_userId_fkey') THEN
+        ALTER TABLE "UserInterest" ADD CONSTRAINT "UserInterest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserGoal_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserGoal_userId_fkey') THEN
+        ALTER TABLE "UserGoal" ADD CONSTRAINT "UserGoal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint UserSettings_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'UserSettings_userId_fkey') THEN
+        ALTER TABLE "UserSettings" ADD CONSTRAINT "UserSettings_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint OnboardingScenarioAnswer_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'OnboardingScenarioAnswer_userId_fkey') THEN
+        ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint OnboardingScenarioAnswer_scenarioId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'OnboardingScenarioAnswer_scenarioId_fkey') THEN
+        ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_scenarioId_fkey" FOREIGN KEY ("scenarioId") REFERENCES "OnboardingScenario"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint PromptUsage_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'PromptUsage_userId_fkey') THEN
+        ALTER TABLE "PromptUsage" ADD CONSTRAINT "PromptUsage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint PromptUsage_templateId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'PromptUsage_templateId_fkey') THEN
+        ALTER TABLE "PromptUsage" ADD CONSTRAINT "PromptUsage_templateId_fkey" FOREIGN KEY ("templateId") REFERENCES "PromptTemplate"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint AgentConversation_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'AgentConversation_userId_fkey') THEN
+        ALTER TABLE "AgentConversation" ADD CONSTRAINT "AgentConversation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ArticleCitation_articleId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ArticleCitation_articleId_fkey') THEN
+        ALTER TABLE "ArticleCitation" ADD CONSTRAINT "ArticleCitation_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "MarketScanArticle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ArticleCitation_citedArticleId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ArticleCitation_citedArticleId_fkey') THEN
+        ALTER TABLE "ArticleCitation" ADD CONSTRAINT "ArticleCitation_citedArticleId_fkey" FOREIGN KEY ("citedArticleId") REFERENCES "MarketScanArticle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ArticleRelation_articleId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ArticleRelation_articleId_fkey') THEN
+        ALTER TABLE "ArticleRelation" ADD CONSTRAINT "ArticleRelation_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "MarketScanArticle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint ArticleRelation_relatedArticleId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'ArticleRelation_relatedArticleId_fkey') THEN
+        ALTER TABLE "ArticleRelation" ADD CONSTRAINT "ArticleRelation_relatedArticleId_fkey" FOREIGN KEY ("relatedArticleId") REFERENCES "MarketScanArticle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint AICredit_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'AICredit_userId_fkey') THEN
+        ALTER TABLE "AICredit" ADD CONSTRAINT "AICredit_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint AICredit_subscriptionId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'AICredit_subscriptionId_fkey') THEN
+        ALTER TABLE "AICredit" ADD CONSTRAINT "AICredit_subscriptionId_fkey" FOREIGN KEY ("subscriptionId") REFERENCES "Subscription"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint CreditTransaction_creditId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'CreditTransaction_creditId_fkey') THEN
+        ALTER TABLE "CreditTransaction" ADD CONSTRAINT "CreditTransaction_creditId_fkey" FOREIGN KEY ("creditId") REFERENCES "AICredit"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
+-- AddForeignKey
+
+-- Add constraint CreditTransaction_userId_fkey
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE connamespace = 'public'::regnamespace AND conname = 'CreditTransaction_userId_fkey') THEN
+        ALTER TABLE "CreditTransaction" ADD CONSTRAINT "CreditTransaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
 -- Grant permissions to postgres user
 DO $$
