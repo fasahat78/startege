@@ -7,9 +7,27 @@
 
 import OpenAI from "openai";
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || process.env.CHATGPT_API_KEY,
+// Lazy initialization to prevent build-time errors
+let openaiInstance: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (!openaiInstance) {
+    const apiKey = process.env.OPENAI_API_KEY || process.env.CHATGPT_API_KEY;
+    if (!apiKey) {
+      throw new Error("OpenAI API key not found in environment variables");
+    }
+    openaiInstance = new OpenAI({
+      apiKey,
+    });
+  }
+  return openaiInstance;
+}
+
+// Export a proxy that lazily initializes OpenAI
+const openai = new Proxy({} as OpenAI, {
+  get(_target, prop) {
+    return getOpenAI()[prop as keyof OpenAI];
+  },
 });
 
 export interface ExamAnalysisRequest {
