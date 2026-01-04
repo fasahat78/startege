@@ -122,7 +122,10 @@ export default function KnowledgeAssessmentClient({ scenarios }: KnowledgeAssess
   };
 
   const handleSkip = () => {
-    router.push("/onboarding/interests");
+    // Preserve edit mode if in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const editParam = urlParams.get("edit");
+    router.push(editParam === "true" ? "/onboarding/interests?edit=true" : "/onboarding/interests");
   };
 
   const handleSubmit = async () => {
