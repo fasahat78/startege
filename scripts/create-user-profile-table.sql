@@ -52,9 +52,9 @@ BEGIN
         CREATE UNIQUE INDEX "UserInterest_userId_interest_key" ON "UserInterest"("userId", "interest");
         CREATE INDEX "UserInterest_userId_idx" ON "UserInterest"("userId");
         CREATE INDEX "UserInterest_interest_idx" ON "UserInterest"("interest");
-        -- Note: UserInterest.userId references UserProfile.id (via userId), not User.id
-        -- This is because UserProfile.userId is unique and links to User.id
-        ALTER TABLE "UserInterest" ADD CONSTRAINT "UserInterest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
+        -- Note: UserInterest.userId references UserProfile.id (the profile's ID), not UserProfile.userId
+        -- This is because Prisma relation uses UserProfile.id as the reference field
+        ALTER TABLE "UserInterest" ADD CONSTRAINT "UserInterest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
         RAISE NOTICE 'UserInterest table created successfully';
     ELSE
@@ -77,8 +77,8 @@ BEGIN
         CREATE UNIQUE INDEX "UserGoal_userId_goal_key" ON "UserGoal"("userId", "goal");
         CREATE INDEX "UserGoal_userId_idx" ON "UserGoal"("userId");
         CREATE INDEX "UserGoal_goal_idx" ON "UserGoal"("goal");
-        -- Note: UserGoal.userId references UserProfile.id (via userId), not User.id
-        ALTER TABLE "UserGoal" ADD CONSTRAINT "UserGoal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
+        -- Note: UserGoal.userId references UserProfile.id (the profile's ID), not UserProfile.userId
+        ALTER TABLE "UserGoal" ADD CONSTRAINT "UserGoal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
         RAISE NOTICE 'UserGoal table created successfully';
     ELSE
@@ -106,8 +106,8 @@ BEGIN
         CREATE UNIQUE INDEX "OnboardingScenarioAnswer_userId_scenarioId_key" ON "OnboardingScenarioAnswer"("userId", "scenarioId");
         CREATE INDEX "OnboardingScenarioAnswer_userId_idx" ON "OnboardingScenarioAnswer"("userId");
         CREATE INDEX "OnboardingScenarioAnswer_scenarioId_idx" ON "OnboardingScenarioAnswer"("scenarioId");
-        -- Note: OnboardingScenarioAnswer.userId references UserProfile.id (via userId)
-        ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
+        -- Note: OnboardingScenarioAnswer.userId references UserProfile.id (the profile's ID)
+        ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
         -- Note: OnboardingScenarioAnswer.scenarioId should reference OnboardingScenario.id
         -- But we'll skip this FK for now if OnboardingScenario doesn't exist
 
