@@ -53,7 +53,13 @@ export default async function StartegizerPage() {
 
     // Fetch user's conversation history
     // Wrap in try-catch to handle missing table gracefully
-    let conversations = [];
+    let conversations: Array<{
+      id: string;
+      title: string | null;
+      messages: any;
+      createdAt: Date;
+      updatedAt: Date;
+    }> = [];
     try {
       conversations = await prisma.agentConversation.findMany({
         where: { userId: user.id },
