@@ -45,13 +45,16 @@ BEGIN
             "id" TEXT NOT NULL,
             "userId" TEXT NOT NULL,
             "interest" TEXT NOT NULL,
-            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
             CONSTRAINT "UserInterest_pkey" PRIMARY KEY ("id")
         );
 
+        CREATE UNIQUE INDEX "UserInterest_userId_interest_key" ON "UserInterest"("userId", "interest");
         CREATE INDEX "UserInterest_userId_idx" ON "UserInterest"("userId");
-        ALTER TABLE "UserInterest" ADD CONSTRAINT "UserInterest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        CREATE INDEX "UserInterest_interest_idx" ON "UserInterest"("interest");
+        -- Note: UserInterest.userId references UserProfile.id (via userId), not User.id
+        -- This is because UserProfile.userId is unique and links to User.id
+        ALTER TABLE "UserInterest" ADD CONSTRAINT "UserInterest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
 
         RAISE NOTICE 'UserInterest table created successfully';
     ELSE
@@ -67,13 +70,15 @@ BEGIN
             "id" TEXT NOT NULL,
             "userId" TEXT NOT NULL,
             "goal" TEXT NOT NULL,
-            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
             CONSTRAINT "UserGoal_pkey" PRIMARY KEY ("id")
         );
 
+        CREATE UNIQUE INDEX "UserGoal_userId_goal_key" ON "UserGoal"("userId", "goal");
         CREATE INDEX "UserGoal_userId_idx" ON "UserGoal"("userId");
-        ALTER TABLE "UserGoal" ADD CONSTRAINT "UserGoal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        CREATE INDEX "UserGoal_goal_idx" ON "UserGoal"("goal");
+        -- Note: UserGoal.userId references UserProfile.id (via userId), not User.id
+        ALTER TABLE "UserGoal" ADD CONSTRAINT "UserGoal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
 
         RAISE NOTICE 'UserGoal table created successfully';
     ELSE
@@ -82,6 +87,8 @@ BEGIN
 END $$;
 
 -- Check and create OnboardingScenarioAnswer table if needed
+-- Note: This table also references OnboardingScenario, but we'll create it without that FK for now
+-- You may need to create OnboardingScenario table separately if it doesn't exist
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'OnboardingScenarioAnswer') THEN
@@ -96,8 +103,13 @@ BEGIN
             CONSTRAINT "OnboardingScenarioAnswer_pkey" PRIMARY KEY ("id")
         );
 
+        CREATE UNIQUE INDEX "OnboardingScenarioAnswer_userId_scenarioId_key" ON "OnboardingScenarioAnswer"("userId", "scenarioId");
         CREATE INDEX "OnboardingScenarioAnswer_userId_idx" ON "OnboardingScenarioAnswer"("userId");
-        ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+        CREATE INDEX "OnboardingScenarioAnswer_scenarioId_idx" ON "OnboardingScenarioAnswer"("scenarioId");
+        -- Note: OnboardingScenarioAnswer.userId references UserProfile.id (via userId)
+        ALTER TABLE "OnboardingScenarioAnswer" ADD CONSTRAINT "OnboardingScenarioAnswer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
+        -- Note: OnboardingScenarioAnswer.scenarioId should reference OnboardingScenario.id
+        -- But we'll skip this FK for now if OnboardingScenario doesn't exist
 
         RAISE NOTICE 'OnboardingScenarioAnswer table created successfully';
     ELSE
