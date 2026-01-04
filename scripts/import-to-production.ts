@@ -57,10 +57,23 @@ async function importToProduction() {
 
     console.log('Importing challenges...');
     for (const challenge of exportData.data.challenges) {
+      // Handle challenges where levelNumber might be null - use level field or id
+      const levelNumber = challenge.levelNumber ?? challenge.level;
+      if (!levelNumber) {
+        console.warn(`Skipping challenge ${challenge.id} - no levelNumber or level`);
+        continue;
+      }
+      
       await prisma.challenge.upsert({
-        where: { levelNumber: challenge.levelNumber },
-        update: challenge,
-        create: challenge,
+        where: { levelNumber },
+        update: {
+          ...challenge,
+          levelNumber, // Ensure levelNumber is set
+        },
+        create: {
+          ...challenge,
+          levelNumber, // Ensure levelNumber is set
+        },
       });
     }
 
@@ -75,13 +88,28 @@ async function importToProduction() {
 
     if (exportData.data.agentConversations.length > 0) {
       console.log('Importing agent conversations...');
+      let imported = 0;
+      let skipped = 0;
       for (const conv of exportData.data.agentConversations) {
+        // Check if user exists in production
+        const userExists = await prisma.user.findUnique({
+          where: { id: conv.userId },
+          select: { id: true },
+        });
+        
+        if (!userExists) {
+          skipped++;
+          continue;
+        }
+        
         await prisma.agentConversation.upsert({
           where: { id: conv.id },
           update: conv,
           create: conv,
         });
+        imported++;
       }
+      console.log(`   Imported: ${imported}, Skipped: ${skipped} (user not in production)`);
     }
 
     console.log('\n✅ Production database imported successfully!');
