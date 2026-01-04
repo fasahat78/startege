@@ -42,7 +42,7 @@ export default function Tooltip({
         <div
           className={`absolute z-50 ${positionClasses[position]} pointer-events-none`}
         >
-          <div className="bg-slate-50 text-card-foreground text-xs rounded-lg shadow-lg border border-slate-200 px-4 py-2 max-w-md leading-relaxed">
+          <div className="bg-slate-50 text-card-foreground text-xs rounded-lg shadow-lg border border-slate-200 px-4 py-2 max-w-lg leading-relaxed">
             {typeof content === "string" ? (
               <p className="whitespace-normal">{content}</p>
             ) : (
