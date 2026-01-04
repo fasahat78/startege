@@ -12,11 +12,12 @@ echo "🚀 Running Prisma Migrations via Cloud Build"
 echo "=============================================="
 echo ""
 
-# Submit the build
+# Submit the build (specify region to match Cloud SQL)
 echo "📦 Submitting Cloud Build job..."
 gcloud builds submit \
   --config=cloudbuild-migrations.yaml \
   --project="$PROJECT_ID" \
+  --region="$REGION" \
   --substitutions=_CLOUD_SQL_CONNECTION_NAME="$CLOUD_SQL_CONNECTION",_DATABASE_URL="postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5432/startege" \
   --async
 
