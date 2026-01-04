@@ -19,12 +19,13 @@ export default function Logo({ width = 120, height = 32, className = "", priorit
   }, []);
 
   return (
-    <div className={`relative flex items-center justify-center ${className}`} style={{ width, height }}>
+    <div className={`relative flex items-center justify-start ${className}`} style={{ height, width: 'auto' }}>
       {!imgError ? (
         <img
           src={imgSrc}
           alt="Startege Logo"
           className="object-contain h-full w-auto"
+          style={{ display: 'block', margin: 0, padding: 0 }}
           onError={() => {
             // Fallback chain: SVG -> PNG -> root SVG -> root PNG
             if (imgSrc.includes('/images/Startege.svg')) {

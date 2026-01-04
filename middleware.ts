@@ -22,6 +22,8 @@ export async function middleware(request: NextRequest) {
     "/api/auth", // All /api/auth/* routes (including /api/auth/firebase/verify)
     "/api/stripe/webhook", // Stripe webhook endpoint (no auth required - uses signature verification)
     "/api/onboarding", // All /api/onboarding/* routes
+    "/api/debug", // Debug API endpoints
+    "/api/health", // Health check endpoint
     "/debug", // Debug pages
     "/test-redirect", // Test route for debugging
   ];

@@ -22,14 +22,33 @@ export async function GET() {
   // 2. Database connectivity check
   try {
     const dbStartTime = Date.now();
-    await prisma.$queryRaw`SELECT 1`;
-    const dbLatency = Date.now() - dbStartTime;
     
-    checks.database = {
-      status: "healthy",
-      message: "Database connection successful",
-      latency: dbLatency,
-    };
+    // Check if DATABASE_URL is set
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl) {
+      checks.database = {
+        status: "unhealthy",
+        message: "DATABASE_URL environment variable is not set",
+      };
+    } else {
+      // Validate DATABASE_URL format
+      const urlPattern = /^postgresql:\/\/.+\/.+\?host=\/cloudsql\/.+$/;
+      if (!urlPattern.test(dbUrl)) {
+        checks.database = {
+          status: "unhealthy",
+          message: `DATABASE_URL format is invalid. Expected format: postgresql://user:pass@/db?host=/cloudsql/connection-name`,
+        };
+      } else {
+        await prisma.$queryRaw`SELECT 1`;
+        const dbLatency = Date.now() - dbStartTime;
+        
+        checks.database = {
+          status: "healthy",
+          message: "Database connection successful",
+          latency: dbLatency,
+        };
+      }
+    }
   } catch (error: any) {
     checks.database = {
       status: "unhealthy",

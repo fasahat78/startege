@@ -22,15 +22,51 @@ function getFirebaseApp(): FirebaseApp {
       appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     };
 
-    // Only initialize if we have the required config (runtime check)
+    // Enhanced error logging
     if (!firebaseConfig.apiKey) {
-      throw new Error("NEXT_PUBLIC_FIREBASE_API_KEY is not set in environment variables");
+      const error = new Error("NEXT_PUBLIC_FIREBASE_API_KEY is not set in environment variables");
+      console.error("[FIREBASE] Configuration Error:", error.message);
+      console.error("[FIREBASE] Available env vars:", {
+        hasApiKey: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        hasAuthDomain: !!process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+        hasProjectId: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        nodeEnv: process.env.NODE_ENV,
+      });
+      throw error;
     }
 
-    if (getApps().length === 0) {
-      app = initializeApp(firebaseConfig);
-    } else {
-      app = getApps()[0];
+    // Validate API key format
+    if (!firebaseConfig.apiKey.startsWith("AIza")) {
+      const error = new Error(
+        `Invalid Firebase API key format. Expected to start with "AIza" but got "${firebaseConfig.apiKey.substring(0, 4)}". ` +
+        `Full key (first 10 chars): ${firebaseConfig.apiKey.substring(0, 10)}...`
+      );
+      console.error("[FIREBASE] API Key Format Error:", error.message);
+      throw error;
+    }
+
+    try {
+      if (getApps().length === 0) {
+        console.log("[FIREBASE] Initializing Firebase app...");
+        console.log("[FIREBASE] Config:", {
+          apiKey: `${firebaseConfig.apiKey.substring(0, 10)}...`,
+          authDomain: firebaseConfig.authDomain,
+          projectId: firebaseConfig.projectId,
+        });
+        app = initializeApp(firebaseConfig);
+        console.log("[FIREBASE] Firebase initialized successfully");
+      } else {
+        app = getApps()[0];
+        console.log("[FIREBASE] Using existing Firebase app");
+      }
+    } catch (error: any) {
+      console.error("[FIREBASE] Initialization Error:", error.message);
+      console.error("[FIREBASE] Error Details:", {
+        code: error.code,
+        message: error.message,
+        stack: error.stack,
+      });
+      throw error;
     }
   }
   return app;

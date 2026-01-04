@@ -22,11 +22,9 @@ export default async function Home() {
       <nav className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-3 group flex-shrink-0">
-              <div className="h-10 w-auto flex items-center">
-                <Logo width={120} height={40} className="h-10 w-auto" priority />
-              </div>
-              <div className="flex flex-col justify-center">
+            <Link href="/" className="flex items-center group flex-shrink-0">
+              <Logo width={120} height={40} className="h-10" priority />
+              <div className="flex flex-col justify-center ml-1">
                 <span className="text-lg font-bold text-foreground leading-tight">
                   STARTEGE
                 </span>
