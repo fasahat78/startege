@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import AnalyticsClient from "@/components/dashboard/AnalyticsClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AnalyticsPage() {
   const user = await getCurrentUser();
 

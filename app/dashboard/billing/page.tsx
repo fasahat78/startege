@@ -8,6 +8,8 @@ import BillingHistory from "@/components/dashboard/BillingHistory";
 import PaymentMethods from "@/components/dashboard/PaymentMethods";
 import CreditPurchaseHistory from "@/components/dashboard/CreditPurchaseHistory";
 
+export const dynamic = 'force-dynamic';
+
 export default async function BillingPage() {
   const user = await getCurrentUser();
 
