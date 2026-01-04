@@ -35,13 +35,14 @@ END $$;
 
 -- 4. Verify concepts are assigned to challenges
 -- (This is informational - concepts should be assigned via scripts)
+-- Note: concepts column is text[], not jsonb, so we check array length differently
 SELECT 
     'Total Concepts' as metric,
     COUNT(*)::text as value
 FROM "ConceptCard"
 UNION ALL
 SELECT 
-    'Challenges',
+    'Total Challenges',
     COUNT(*)::text
 FROM "Challenge"
 UNION ALL
@@ -50,6 +51,5 @@ SELECT
     COUNT(*)::text
 FROM "Challenge"
 WHERE "concepts" IS NOT NULL 
-AND jsonb_typeof("concepts"::jsonb) = 'array'
-AND jsonb_array_length("concepts"::jsonb) > 0;
+AND array_length("concepts", 1) > 0;
 
