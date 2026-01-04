@@ -18,15 +18,26 @@ export default async function CreditBalance({ userId, subscriptionTier }: Credit
   }
 
   // Get credit account details
-  const creditAccount = await prisma.aICredit.findUnique({
-    where: { userId },
-    select: {
-      currentBalance: true,
-      monthlyAllowance: true,
-      billingCycleEnd: true,
-      purchasedCredits: true,
-    },
-  });
+  let creditAccount = null;
+  try {
+    creditAccount = await prisma.aICredit.findUnique({
+      where: { userId },
+      select: {
+        currentBalance: true,
+        monthlyAllowance: true,
+        billingCycleEnd: true,
+        purchasedCredits: true,
+      },
+    });
+  } catch (error: any) {
+    // If AICredit table doesn't exist yet, return null (will show placeholder)
+    if (error.code === 'P2021' || error.message?.includes('does not exist')) {
+      console.log("[CreditBalance] AICredit table not found, showing placeholder");
+      creditAccount = null;
+    } else {
+      throw error;
+    }
+  }
 
   // If no credit account exists yet, show placeholder
   if (!creditAccount) {
