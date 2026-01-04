@@ -27,7 +27,7 @@ Click **"+ Add variable"** for each of these variables:
 
 #### Firebase Variables:
 1. **Variable**: `_NEXT_PUBLIC_FIREBASE_API_KEY`
-   **Value**: `AlzaSyCQet-j6HonZZioU8ip9W6g0apsRC_bats` (your Firebase API key)
+   **Value**: `AIzaSyCQet-j6HonZZioU8ip9W6g0apsRC_bats` (your Firebase API key)
 
 2. **Variable**: `_NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
    **Value**: `startege.firebaseapp.com`

@@ -37,24 +37,17 @@ async function getConcepts(
 
   const assignedConceptIds = new Set<string>();
   challenges.forEach((challenge) => {
-    if (Array.isArray(challenge.concepts) && challenge.concepts.length > 0) {
-      challenge.concepts.forEach((id: string) => {
-        if (id && typeof id === 'string') {
-          assignedConceptIds.add(id);
-        }
-      });
+    if (Array.isArray(challenge.concepts)) {
+      challenge.concepts.forEach((id: string) => assignedConceptIds.add(id));
     }
   });
 
   const where: any = {};
   const andConditions: any[] = [];
 
-  // Only filter by assigned concepts if there are any assigned
-  // If no concepts are assigned to challenges, show all concepts (don't filter)
   if (assignedConceptIds.size > 0) {
     andConditions.push({ id: { in: Array.from(assignedConceptIds) } });
   }
-  // Note: If assignedConceptIds.size === 0, we show ALL concepts (no filter)
 
   if (domain && domain !== "all") {
     andConditions.push({ domain });

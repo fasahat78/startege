@@ -169,7 +169,7 @@ model User {
 
   // AIGP Prep Exams
   aigpExamAttempts AIGPExamAttempt[]
-  
+
   // Remediation
   remediationSessions RemediationSession[]
 }
@@ -312,19 +312,19 @@ model UserProgress {
   completedAt   DateTime?
   timeSpent     Int       @default(0) // in seconds
   masteryScore  Float?    @default(0) // 0-1
-  
+
   // Exam-specific tracking (Phase 2 enhancement)
-  timesSeen     Int       @default(0) // Number of times concept appeared in exams
-  timesCorrect  Int       @default(0) // Number of times user answered correctly
-  timesIncorrect Int      @default(0) // Number of times user answered incorrectly
-  lastSeen      DateTime? // Last time concept appeared in an exam
-  lastCorrect   DateTime? // Last time user answered correctly
-  lastIncorrect DateTime? // Last time user answered incorrectly
-  isWeakArea    Boolean   @default(false) // Flag for concepts user struggles with
-  flaggedAt     DateTime? // When concept was flagged as weak area
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  timesSeen      Int       @default(0) // Number of times concept appeared in exams
+  timesCorrect   Int       @default(0) // Number of times user answered correctly
+  timesIncorrect Int       @default(0) // Number of times user answered incorrectly
+  lastSeen       DateTime? // Last time concept appeared in an exam
+  lastCorrect    DateTime? // Last time user answered correctly
+  lastIncorrect  DateTime? // Last time user answered incorrectly
+  isWeakArea     Boolean   @default(false) // Flag for concepts user struggles with
+  flaggedAt      DateTime? // When concept was flagged as weak area
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -540,7 +540,7 @@ model Exam {
   category  Category?  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   challenge Challenge? @relation(fields: [levelNumber], references: [levelNumber], onDelete: Cascade)
 
-  attempts ExamAttempt[]
+  attempts            ExamAttempt[]
   remediationSessions RemediationSession[]
 
   createdAt DateTime @default(now())
@@ -785,16 +785,16 @@ model RemediationSession {
   id             String   @id @default(cuid())
   userId         String
   examId         String
-  attemptId      String   // Failed exam attempt ID
+  attemptId      String // Failed exam attempt ID
   weakConceptIds String[] // Concept IDs that need remediation
-  
+
   status      String    @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
   createdAt   DateTime  @default(now())
   completedAt DateTime?
-  
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   exam Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
-  
+
   @@unique([userId, examId, attemptId])
   @@index([userId])
   @@index([examId])
