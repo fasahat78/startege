@@ -217,7 +217,7 @@ export default async function ProfilePage() {
 
               <div className="pt-4 border-t border-border">
                 <Link
-                  href="/onboarding/persona"
+                  href="/onboarding/persona?edit=true"
                   className="text-sm text-accent hover:text-accent/80 font-medium"
                 >
                   Edit Profile →

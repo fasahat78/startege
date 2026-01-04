@@ -6,7 +6,12 @@ import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export default async function KnowledgeAssessmentPage() {
+export default async function KnowledgeAssessmentPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ edit?: string }>;
+}) {
+  const params = await searchParams;
   const user = await getCurrentUser();
 
   if (!user) {
@@ -26,7 +31,8 @@ export default async function KnowledgeAssessmentPage() {
     redirect("/onboarding/persona");
   }
 
-  if (onboardingStatus === "COMPLETED") {
+  // Allow editing if edit=true query param is present, otherwise redirect if completed
+  if (onboardingStatus === "COMPLETED" && params.edit !== "true") {
     redirect("/dashboard");
   }
 

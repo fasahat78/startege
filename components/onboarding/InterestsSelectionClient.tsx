@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 
 interface InterestsSelectionClientProps {
   interests: string[];
+  isEditing?: boolean;
 }
 
-export default function InterestsSelectionClient({ interests }: InterestsSelectionClientProps) {
+export default function InterestsSelectionClient({ interests, isEditing = false }: InterestsSelectionClientProps) {
   const router = useRouter();
   const [selectedInterests, setSelectedInterests] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -50,8 +51,8 @@ export default function InterestsSelectionClient({ interests }: InterestsSelecti
         return;
       }
 
-      // Redirect to goals
-      router.push("/onboarding/goals");
+      // Redirect to goals (or back to profile if editing)
+      router.push(isEditing ? "/onboarding/goals?edit=true" : "/onboarding/goals");
     } catch (error) {
       setError("Something went wrong. Please try again.");
       setLoading(false);
@@ -67,7 +68,7 @@ export default function InterestsSelectionClient({ interests }: InterestsSelecti
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ interests: [] }),
       });
-      router.push("/onboarding/goals");
+      router.push(isEditing ? "/onboarding/goals?edit=true" : "/onboarding/goals");
     } catch (error) {
       setError("Something went wrong. Please try again.");
       setLoading(false);

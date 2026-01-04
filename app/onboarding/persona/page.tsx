@@ -7,8 +7,13 @@ import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export default async function PersonaSelectionPage() {
+export default async function PersonaSelectionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ edit?: string }>;
+}) {
   console.log("[ONBOARDING PERSONA PAGE] ===== Page loading =====");
+  const params = await searchParams;
   const user = await getCurrentUser();
   console.log("[ONBOARDING PERSONA PAGE] User:", user ? user.email : "null");
 
@@ -20,7 +25,8 @@ export default async function PersonaSelectionPage() {
   // Check if onboarding is already completed
   const onboardingStatus = await getOnboardingStatus(user.id);
   
-  if (onboardingStatus === "COMPLETED") {
+  // Allow editing if edit=true query param is present, otherwise redirect if completed
+  if (onboardingStatus === "COMPLETED" && params.edit !== "true") {
     redirect("/dashboard");
   }
 

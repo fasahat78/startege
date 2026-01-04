@@ -19,7 +19,12 @@ const GOAL_OPTIONS = [
   "Teaching & Training",
 ];
 
-export default async function GoalsSelectionPage() {
+export default async function GoalsSelectionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ edit?: string }>;
+}) {
+  const params = await searchParams;
   const user = await getCurrentUser();
 
   if (!user) {
@@ -39,9 +44,10 @@ export default async function GoalsSelectionPage() {
     redirect("/onboarding/persona");
   }
 
-  if (onboardingStatus === "COMPLETED") {
+  // Allow editing if edit=true query param is present, otherwise redirect if completed
+  if (onboardingStatus === "COMPLETED" && params.edit !== "true") {
     redirect("/dashboard");
   }
 
-  return <GoalsSelectionClient goals={GOAL_OPTIONS} />;
+  return <GoalsSelectionClient goals={GOAL_OPTIONS} isEditing={params.edit === "true"} />;
 }

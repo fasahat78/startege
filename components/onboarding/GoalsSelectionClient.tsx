@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 
 interface GoalsSelectionClientProps {
   goals: string[];
+  isEditing?: boolean;
 }
 
-export default function GoalsSelectionClient({ goals }: GoalsSelectionClientProps) {
+export default function GoalsSelectionClient({ goals, isEditing = false }: GoalsSelectionClientProps) {
   const router = useRouter();
   const [selectedGoals, setSelectedGoals] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -50,8 +51,8 @@ export default function GoalsSelectionClient({ goals }: GoalsSelectionClientProp
         return;
       }
 
-      // Redirect to completion page
-      router.push("/onboarding/complete");
+      // Redirect to completion page (or back to profile if editing)
+      router.push(isEditing ? "/dashboard/profile" : "/onboarding/complete");
     } catch (error) {
       setError("Something went wrong. Please try again.");
       setLoading(false);
@@ -67,7 +68,7 @@ export default function GoalsSelectionClient({ goals }: GoalsSelectionClientProp
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ goals: [] }),
       });
-      router.push("/onboarding/complete");
+      router.push(isEditing ? "/dashboard/profile" : "/onboarding/complete");
     } catch (error) {
       setError("Something went wrong. Please try again.");
       setLoading(false);

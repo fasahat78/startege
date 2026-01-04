@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
 interface Scenario {
@@ -12,10 +12,61 @@ interface Scenario {
   optionC: string;
   optionD: string;
   questionOrder: number;
+  correctAnswer?: string; // Original correct answer (A, B, C, or D)
+}
+
+interface ShuffledOptions {
+  id: string; // Shuffled position (A, B, C, or D)
+  text: string;
+  originalId: string; // Original position (A, B, C, or D)
 }
 
 interface KnowledgeAssessmentClientProps {
   scenarios: Scenario[];
+}
+
+/**
+ * Shuffle an array using Fisher-Yates algorithm
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+/**
+ * Shuffle options for a scenario question
+ */
+function shuffleScenarioOptions(scenario: Scenario): {
+  shuffledOptions: ShuffledOptions[];
+  optionMapping: Record<string, string>; // Maps original position to shuffled position
+} {
+  const originalOptions = [
+    { id: "A", text: scenario.optionA, originalId: "A" },
+    { id: "B", text: scenario.optionB, originalId: "B" },
+    { id: "C", text: scenario.optionC, originalId: "C" },
+    { id: "D", text: scenario.optionD, originalId: "D" },
+  ];
+
+  const shuffled = shuffleArray(originalOptions);
+  
+  // Create mapping: original position -> shuffled position
+  const optionMapping: Record<string, string> = {};
+  shuffled.forEach((option, index) => {
+    const newPosition = ['A', 'B', 'C', 'D'][index];
+    optionMapping[option.originalId] = newPosition;
+  });
+
+  // Update option IDs to reflect new positions
+  const shuffledOptions = shuffled.map((option, index) => ({
+    ...option,
+    id: ['A', 'B', 'C', 'D'][index],
+  }));
+
+  return { shuffledOptions, optionMapping };
 }
 
 export default function KnowledgeAssessmentClient({ scenarios }: KnowledgeAssessmentClientProps) {
@@ -25,7 +76,19 @@ export default function KnowledgeAssessmentClient({ scenarios }: KnowledgeAssess
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const currentScenario = scenarios[currentQuestionIndex];
+  // Shuffle options for each scenario once when component mounts
+  const shuffledScenarios = useMemo(() => {
+    return scenarios.map((scenario) => {
+      const { shuffledOptions, optionMapping } = shuffleScenarioOptions(scenario);
+      return {
+        ...scenario,
+        shuffledOptions,
+        optionMapping,
+      };
+    });
+  }, [scenarios]);
+
+  const currentScenario = shuffledScenarios[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / scenarios.length) * 100;
   const isLastQuestion = currentQuestionIndex === scenarios.length - 1;
 
@@ -67,10 +130,23 @@ export default function KnowledgeAssessmentClient({ scenarios }: KnowledgeAssess
     setError("");
 
     try {
-      const answerArray = Object.entries(answers).map(([scenarioId, selectedAnswer]) => ({
-        scenarioId,
-        selectedAnswer,
-      }));
+      // Map shuffled answers back to original positions for evaluation
+      const answerArray = Object.entries(answers).map(([scenarioId, selectedShuffledAnswer]) => {
+        const scenario = shuffledScenarios.find(s => s.id === scenarioId);
+        if (!scenario) {
+          return { scenarioId, selectedAnswer: selectedShuffledAnswer };
+        }
+        
+        // Map shuffled position back to original position
+        const originalAnswer = Object.entries(scenario.optionMapping).find(
+          ([_, shuffledPos]) => shuffledPos === selectedShuffledAnswer
+        )?.[0] || selectedShuffledAnswer;
+
+        return {
+          scenarioId,
+          selectedAnswer: originalAnswer, // Send original position to server
+        };
+      });
 
       const response = await fetch("/api/onboarding/knowledge", {
         method: "POST",
@@ -147,17 +223,15 @@ export default function KnowledgeAssessmentClient({ scenarios }: KnowledgeAssess
             {currentScenario.question}
           </h2>
 
-          {/* Options */}
+          {/* Options - Display shuffled options */}
           <div className="space-y-3">
-            {["A", "B", "C", "D"].map((option) => {
-              const optionKey = `option${option}` as keyof Scenario;
-              const optionText = currentScenario[optionKey] as string;
-              const isSelected = answers[currentScenario.id] === option;
+            {currentScenario.shuffledOptions.map((option) => {
+              const isSelected = answers[currentScenario.id] === option.id;
 
               return (
                 <button
-                  key={option}
-                  onClick={() => handleAnswerSelect(option)}
+                  key={option.id}
+                  onClick={() => handleAnswerSelect(option.id)}
                   className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
                     isSelected
                       ? "border-primary bg-primary/5 shadow-md"
@@ -188,9 +262,9 @@ export default function KnowledgeAssessmentClient({ scenarios }: KnowledgeAssess
                     </div>
                     <div className="flex-1">
                       <span className="font-semibold text-foreground mr-2">
-                        {option})
+                        {option.id})
                       </span>
-                      <span className="text-foreground">{optionText}</span>
+                      <span className="text-foreground">{option.text}</span>
                     </div>
                   </div>
                 </button>

@@ -19,7 +19,12 @@ const INTEREST_OPTIONS = [
   "Research & Academia",
 ];
 
-export default async function InterestsSelectionPage() {
+export default async function InterestsSelectionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ edit?: string }>;
+}) {
+  const params = await searchParams;
   const user = await getCurrentUser();
 
   if (!user) {
@@ -39,9 +44,10 @@ export default async function InterestsSelectionPage() {
     redirect("/onboarding/persona");
   }
 
-  if (onboardingStatus === "COMPLETED") {
+  // Allow editing if edit=true query param is present, otherwise redirect if completed
+  if (onboardingStatus === "COMPLETED" && params.edit !== "true") {
     redirect("/dashboard");
   }
 
-  return <InterestsSelectionClient interests={INTEREST_OPTIONS} />;
+  return <InterestsSelectionClient interests={INTEREST_OPTIONS} isEditing={params.edit === "true"} />;
 }
