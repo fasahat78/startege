@@ -18,7 +18,7 @@ gcloud builds submit \
   --config=cloudbuild-migrations.yaml \
   --project="$PROJECT_ID" \
   --region="$REGION" \
-  --substitutions=_CLOUD_SQL_CONNECTION_NAME="$CLOUD_SQL_CONNECTION",_DATABASE_URL="postgresql://postgres:Zoya%4057Bruce@localhost/startege?host=/cloudsql/startege:us-central1:startege-db" \
+  --substitutions=_DATABASE_URL="postgresql://postgres:Zoya%4057Bruce@localhost/startege?host=/cloudsql/startege:us-central1:startege-db" \
   --async
 
 echo ""
