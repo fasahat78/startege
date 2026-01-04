@@ -300,8 +300,23 @@ export async function POST(request: Request) {
     // Use server-side redirect (303) for POST → redirect
     // 303 is the correct status for POST redirects (browsers treat it as GET)
     // Build absolute URL for redirect - NextResponse.redirect requires absolute URL
-    const url = new URL(request.url);
-    const baseUrl = `${url.protocol}//${url.host}`;
+    // Use NEXT_PUBLIC_APP_URL if available, otherwise use request headers
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    let baseUrl: string;
+    
+    if (appUrl) {
+      // Use configured app URL (preferred)
+      baseUrl = appUrl.endsWith('/') ? appUrl.slice(0, -1) : appUrl;
+    } else {
+      // Fallback: Use request headers (Cloud Run provides correct host)
+      const host = request.headers.get('x-forwarded-host') || 
+                   request.headers.get('host') || 
+                   'localhost:3000';
+      const protocol = request.headers.get('x-forwarded-proto') || 
+                       (host.includes('localhost') ? 'http' : 'https');
+      baseUrl = `${protocol}://${host}`;
+    }
+    
     const redirectUrlFull = redirectUrl.startsWith("http") 
       ? redirectUrl 
       : `${baseUrl}${redirectUrl}`;
