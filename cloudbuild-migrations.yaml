@@ -2,36 +2,45 @@
 # This can be triggered manually or as part of deployment pipeline
 
 steps:
-  # Start Cloud SQL Proxy in background (required for Cloud Build)
+  # Install dependencies and run migrations
+  # Start Cloud SQL Proxy in background, then run migrations
   # Cloud Build doesn't have Unix sockets, so we use TCP via Cloud SQL Proxy
   - name: 'gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0'
-    id: 'cloud-sql-proxy'
-    entrypoint: '/cloud-sql-proxy'
-    args:
-      - '--port=5432'
-      - '${_CLOUD_SQL_CONNECTION_NAME}'
-    waitFor: ['-']
-
-  # Install dependencies and run migrations
-  # Note: Source code is already uploaded by gcloud builds submit
-  - name: 'node:20-alpine'
+    id: 'run-migrations'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
-        echo "Waiting for Cloud SQL Proxy..."
-        sleep 5
+        # Start Cloud SQL Proxy in background
+        /cloud-sql-proxy --port=5432 ${_CLOUD_SQL_CONNECTION_NAME} &
+        PROXY_PID=$!
+        
+        # Wait for proxy to be ready
+        echo "Waiting for Cloud SQL Proxy to start..."
+        for i in 1 2 3 4 5 6 7 8 9 10; do
+          if nc -z 127.0.0.1 5432 2>/dev/null; then
+            echo "Cloud SQL Proxy is ready!"
+            break
+          fi
+          echo "Waiting... ($i/10)"
+          sleep 2
+        done
+        
+        # Install dependencies and run migrations
         echo "Installing dependencies..."
+        apk add --no-cache nodejs npm postgresql-client
         npm install
         echo "Generating Prisma client..."
         npx prisma generate
         echo "Running migrations..."
         npx prisma migrate deploy
         echo "✅ Migrations completed successfully!"
+        
+        # Stop the proxy
+        kill $PROXY_PID 2>/dev/null || true
     env:
       - 'DATABASE_URL=${_DATABASE_URL}'
-    id: 'run-migrations'
-    waitFor: ['cloud-sql-proxy']
+      - 'CLOUD_SQL_CONNECTION_NAME=${_CLOUD_SQL_CONNECTION_NAME}'
 
 # Substitution variables
 substitutions:
