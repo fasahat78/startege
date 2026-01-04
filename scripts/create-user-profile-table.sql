@@ -1,6 +1,59 @@
 -- Create UserProfile table and related onboarding tables
 -- Run this script in Cloud SQL Studio or via gcloud sql connect
 
+-- First, create the required enum types if they don't exist
+DO $$
+BEGIN
+    -- Create PersonaType enum
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'PersonaType') THEN
+        CREATE TYPE "PersonaType" AS ENUM (
+            'COMPLIANCE_OFFICER',
+            'AI_ETHICS_RESEARCHER',
+            'TECHNICAL_AI_DEVELOPER',
+            'LEGAL_REGULATORY_PROFESSIONAL',
+            'BUSINESS_EXECUTIVE',
+            'DATA_PROTECTION_OFFICER',
+            'AI_GOVERNANCE_CONSULTANT',
+            'AI_PRODUCT_MANAGER',
+            'STUDENT_ACADEMIC',
+            'OTHER'
+        );
+        RAISE NOTICE 'PersonaType enum created successfully';
+    ELSE
+        RAISE NOTICE 'PersonaType enum already exists';
+    END IF;
+
+    -- Create KnowledgeLevel enum
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'KnowledgeLevel') THEN
+        CREATE TYPE "KnowledgeLevel" AS ENUM (
+            'BEGINNER',
+            'INTERMEDIATE',
+            'ADVANCED',
+            'NOT_ASSESSED'
+        );
+        RAISE NOTICE 'KnowledgeLevel enum created successfully';
+    ELSE
+        RAISE NOTICE 'KnowledgeLevel enum already exists';
+    END IF;
+
+    -- Create OnboardingStatus enum
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'OnboardingStatus') THEN
+        CREATE TYPE "OnboardingStatus" AS ENUM (
+            'NOT_STARTED',
+            'PERSONA_SELECTED',
+            'KNOWLEDGE_ASSESSED',
+            'INTERESTS_SELECTED',
+            'GOALS_SELECTED',
+            'COMPLETED',
+            'SKIPPED'
+        );
+        RAISE NOTICE 'OnboardingStatus enum created successfully';
+    ELSE
+        RAISE NOTICE 'OnboardingStatus enum already exists';
+    END IF;
+END $$;
+
+-- Now create the UserProfile table
 -- First, check if UserProfile table exists
 DO $$
 BEGIN
@@ -9,10 +62,10 @@ BEGIN
         CREATE TABLE "UserProfile" (
             "id" TEXT NOT NULL,
             "userId" TEXT NOT NULL,
-            "personaType" TEXT,
+            "personaType" "PersonaType",
             "customPersona" TEXT,
-            "knowledgeLevel" TEXT NOT NULL DEFAULT 'NOT_ASSESSED',
-            "onboardingStatus" TEXT NOT NULL DEFAULT 'NOT_STARTED',
+            "knowledgeLevel" "KnowledgeLevel" NOT NULL DEFAULT 'NOT_ASSESSED',
+            "onboardingStatus" "OnboardingStatus" NOT NULL DEFAULT 'NOT_STARTED',
             "completedAt" TIMESTAMP(3),
             "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP(3) NOT NULL,
