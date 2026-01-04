@@ -9,8 +9,8 @@ steps:
       - '-c'
       - |
         # Start Cloud SQL Proxy in background
-        /cloud-sql-proxy --port=5432 ${_CLOUD_SQL_CONNECTION_NAME} &
-        PROXY_PID=$!
+        /cloud-sql-proxy --port=5432 $${_CLOUD_SQL_CONNECTION_NAME} &
+        PROXY_PID=$$!
         
         # Wait for proxy to be ready
         echo "Waiting for Cloud SQL Proxy to start..."
@@ -32,7 +32,7 @@ steps:
         echo "✅ Migrations completed successfully!"
         
         # Stop the proxy
-        kill $PROXY_PID 2>/dev/null || true
+        kill $$PROXY_PID 2>/dev/null || true
     env:
       - 'DATABASE_URL=${_DATABASE_URL}'
       - 'CLOUD_SQL_CONNECTION_NAME=${_CLOUD_SQL_CONNECTION_NAME}'
