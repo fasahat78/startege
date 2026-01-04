@@ -14,6 +14,21 @@ const globalForPrisma = globalThis as unknown as {
  * For production, consider using a connection pooler like PgBouncer or
  * Google Cloud SQL Proxy which handles pooling at the infrastructure level.
  */
+// Log DATABASE_URL format for debugging (without exposing password)
+const dbUrl = process.env.DATABASE_URL;
+if (dbUrl) {
+  const maskedUrl = dbUrl.replace(/:([^:@]+)@/, ":***@");
+  console.log("[PRISMA] DATABASE_URL present:", {
+    length: dbUrl.length,
+    startsWith: dbUrl.substring(0, 20),
+    hasCloudSql: dbUrl.includes("/cloudsql/"),
+    hasEmptyHost: dbUrl.includes("@/"),
+    masked: maskedUrl.substring(0, 50) + "..." + maskedUrl.substring(maskedUrl.length - 30),
+  });
+} else {
+  console.error("[PRISMA] ❌ DATABASE_URL is not set!");
+}
+
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
   log: process.env.NODE_ENV === "development" 
     ? ["query", "error", "warn"] 
