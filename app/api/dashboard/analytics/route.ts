@@ -40,6 +40,9 @@ export async function GET() {
       categoryProgress,
       aigpAttempts,
       recentActivity,
+      userBadges,
+      allBadges,
+      dbUser,
     ] = await Promise.all([
       // Points
       prisma.userPoints.findUnique({
@@ -145,6 +148,29 @@ export async function GET() {
         },
         orderBy: { completedAt: "desc" },
       }),
+
+      // User badges
+      prisma.userBadge.findMany({
+        where: { userId: user.id },
+        include: { badge: true },
+        orderBy: { earnedAt: "desc" },
+      }),
+
+      // All badges
+      prisma.badge.findMany({
+        orderBy: [{ badgeType: "asc" }, { rarity: "asc" }, { name: "asc" }],
+      }),
+
+      // User data
+      prisma.user.findUnique({
+        where: { id: user.id },
+        select: {
+          currentLevel: true,
+          maxUnlockedLevel: true,
+          totalChallengesCompleted: true,
+          createdAt: true,
+        },
+      }),
     ]);
 
     // Calculate overview metrics
@@ -247,6 +273,215 @@ export async function GET() {
       .sort((a, b) => a.date.localeCompare(b.date))
       .slice(-10); // Last 10 exams
 
+    // ===== GAMIFICATION DATA =====
+    
+    // Badge progress calculation
+    const earnedBadgeNames = new Set(userBadges.map((ub) => ub.badge.name));
+    const totalPoints = userPoints?.totalPoints || 0;
+    const currentStreak = userStreak?.currentStreak || 0;
+    const conceptsCompleted = conceptsMastered;
+
+    // Define badge requirements
+    const badgeRequirements = [
+      { name: "First Steps", requirement: 1, type: "concepts", current: conceptsCompleted },
+      { name: "Getting Started", requirement: 10, type: "concepts", current: conceptsCompleted },
+      { name: "Dedicated Learner", requirement: 25, type: "concepts", current: conceptsCompleted },
+      { name: "Knowledge Seeker", requirement: 50, type: "concepts", current: conceptsCompleted },
+      { name: "Domain Master", requirement: 100, type: "concepts", current: conceptsCompleted },
+      { name: "AI Governance Expert", requirement: 200, type: "concepts", current: conceptsCompleted },
+      { name: "Perfect Week", requirement: 7, type: "streak", current: currentStreak },
+      { name: "Consistency Champion", requirement: 30, type: "streak", current: currentStreak },
+      { name: "Point Collector", requirement: 500, type: "points", current: totalPoints },
+      { name: "Point Master", requirement: 1000, type: "points", current: totalPoints },
+      { name: "Point Legend", requirement: 5000, type: "points", current: totalPoints },
+    ];
+
+    // Find next badge to unlock
+    const nextBadge = badgeRequirements
+      .filter((b) => !earnedBadgeNames.has(b.name))
+      .sort((a, b) => a.requirement - b.requirement)[0];
+
+    // Calculate badge progress
+    let badgeProgress = null;
+    if (nextBadge) {
+      const progress = Math.min((nextBadge.current / nextBadge.requirement) * 100, 100);
+      const remaining = Math.max(nextBadge.requirement - nextBadge.current, 0);
+      badgeProgress = {
+        badgeName: nextBadge.name,
+        current: nextBadge.current,
+        requirement: nextBadge.requirement,
+        progress: Math.round(progress),
+        remaining,
+        type: nextBadge.type,
+      };
+    }
+
+    // Recent achievements (last 5 badges)
+    const recentAchievements = userBadges.slice(0, 5).map((ub) => ({
+      name: ub.badge.name,
+      description: ub.badge.description,
+      rarity: ub.badge.rarity,
+      earnedAt: ub.earnedAt.toISOString(),
+    }));
+
+    // Level progression
+    const currentLevel = dbUser?.currentLevel || 1;
+    const maxUnlockedLevel = dbUser?.maxUnlockedLevel || 1;
+    const levelsPassed = levelProgress.filter((lp) => lp.status === "PASSED").length;
+    const nextLevel = maxUnlockedLevel + 1;
+    const isNextLevelBoss = [10, 20, 30, 40].includes(nextLevel);
+
+    // Get level statuses
+    const levelStatuses = [];
+    for (let level = 1; level <= Math.min(maxUnlockedLevel + 5, 40); level++) {
+      const progress = levelProgress.find((lp) => lp.levelNumber === level);
+      const status = progress?.status || (level <= maxUnlockedLevel ? "UNLOCKED" : "LOCKED");
+      levelStatuses.push({
+        levelNumber: level,
+        status,
+        isBoss: [10, 20, 30, 40].includes(level),
+        bestScore: progress?.bestScore || null,
+      });
+    }
+
+    // Milestones
+    const milestones = [];
+    
+    // Concept milestones
+    const conceptMilestones = [10, 25, 50, 100, 200];
+    const nextConceptMilestone = conceptMilestones.find((m) => m > conceptsCompleted);
+    if (nextConceptMilestone) {
+      milestones.push({
+        type: "concepts",
+        title: `Complete ${nextConceptMilestone} concepts`,
+        description: `Unlock "${badgeRequirements.find((b) => b.requirement === nextConceptMilestone && b.type === "concepts")?.name || "Achievement"}" badge`,
+        current: conceptsCompleted,
+        target: nextConceptMilestone,
+        remaining: nextConceptMilestone - conceptsCompleted,
+      });
+    }
+
+    // Streak milestones
+    const streakMilestones = [7, 30];
+    const nextStreakMilestone = streakMilestones.find((m) => m > currentStreak);
+    if (nextStreakMilestone) {
+      milestones.push({
+        type: "streak",
+        title: `Maintain ${nextStreakMilestone}-day streak`,
+        description: `Unlock "${badgeRequirements.find((b) => b.requirement === nextStreakMilestone && b.type === "streak")?.name || "Achievement"}" badge`,
+        current: currentStreak,
+        target: nextStreakMilestone,
+        remaining: nextStreakMilestone - currentStreak,
+      });
+    }
+
+    // Points milestones
+    const pointsMilestones = [500, 1000, 5000];
+    const nextPointsMilestone = pointsMilestones.find((m) => m > totalPoints);
+    if (nextPointsMilestone) {
+      milestones.push({
+        type: "points",
+        title: `Earn ${nextPointsMilestone} points`,
+        description: `Unlock "${badgeRequirements.find((b) => b.requirement === nextPointsMilestone && b.type === "points")?.name || "Achievement"}" badge`,
+        current: totalPoints,
+        target: nextPointsMilestone,
+        remaining: nextPointsMilestone - totalPoints,
+      });
+    }
+
+    // Level milestones
+    const levelMilestones = [5, 10, 20, 30, 40];
+    const nextLevelMilestone = levelMilestones.find((m) => m > levelsPassed);
+    if (nextLevelMilestone) {
+      milestones.push({
+        type: "levels",
+        title: `Pass ${nextLevelMilestone} levels`,
+        description: nextLevelMilestone === 10 ? "Unlock boss level 10" : `Reach level ${nextLevelMilestone}`,
+        current: levelsPassed,
+        target: nextLevelMilestone,
+        remaining: nextLevelMilestone - levelsPassed,
+      });
+    }
+
+    // Sort milestones by remaining (closest first)
+    milestones.sort((a, b) => a.remaining - b.remaining);
+
+    // Quick wins & daily goals
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayActivity = recentActivity.filter(
+      (a) => a.completedAt && new Date(a.completedAt) >= today
+    ).length;
+
+    const thisWeekStart = new Date();
+    thisWeekStart.setDate(thisWeekStart.getDate() - thisWeekStart.getDay());
+    thisWeekStart.setHours(0, 0, 0, 0);
+    const thisWeekActivity = recentActivity.filter(
+      (a) => a.completedAt && new Date(a.completedAt) >= thisWeekStart
+    ).length;
+
+    const quickWins = [];
+    
+    // Today's goal
+    if (currentStreak > 0 && todayActivity === 0) {
+      quickWins.push({
+        type: "maintain_streak",
+        title: "Maintain your streak",
+        description: `Complete 1 concept card today to keep your ${currentStreak}-day streak`,
+        action: "Browse Concepts",
+        actionUrl: "/concepts",
+        priority: "high",
+      });
+    } else if (currentStreak === 0) {
+      quickWins.push({
+        type: "start_streak",
+        title: "Start your learning streak",
+        description: "Complete 1 concept card today to begin your streak",
+        action: "Browse Concepts",
+        actionUrl: "/concepts",
+        priority: "high",
+      });
+    }
+
+    // Perfect Week goal
+    if (currentStreak >= 1 && currentStreak < 7 && thisWeekActivity < 7) {
+      const daysRemaining = 7 - currentStreak;
+      quickWins.push({
+        type: "perfect_week",
+        title: "Perfect Week badge",
+        description: `Complete ${daysRemaining} more day${daysRemaining > 1 ? "s" : ""} to unlock Perfect Week badge`,
+        action: "Continue Learning",
+        actionUrl: "/concepts",
+        priority: "medium",
+      });
+    }
+
+    // Next level goal
+    if (nextLevel <= 40) {
+      quickWins.push({
+        type: "next_level",
+        title: `Unlock Level ${nextLevel}${isNextLevelBoss ? " (Boss)" : ""}`,
+        description: isNextLevelBoss
+          ? "Complete the previous level to unlock this boss level"
+          : `Pass Level ${nextLevel - 1} to unlock Level ${nextLevel}`,
+        action: "View Challenges",
+        actionUrl: "/challenges",
+        priority: "medium",
+      });
+    }
+
+    // Next badge goal
+    if (badgeProgress && badgeProgress.remaining <= 5) {
+      quickWins.push({
+        type: "next_badge",
+        title: `Unlock "${badgeProgress.badgeName}" badge`,
+        description: `Complete ${badgeProgress.remaining} more ${badgeProgress.type === "concepts" ? "concept" : badgeProgress.type === "streak" ? "day" : "point"}${badgeProgress.remaining > 1 ? "s" : ""}`,
+        action: badgeProgress.type === "concepts" ? "Browse Concepts" : "Continue Learning",
+        actionUrl: badgeProgress.type === "concepts" ? "/concepts" : "/dashboard",
+        priority: "high",
+      });
+    }
+
     return NextResponse.json({
       overview: {
         totalStudyTime: Math.round(totalStudyTime / 60), // minutes
@@ -271,6 +506,27 @@ export async function GET() {
         totalLevelsPassed: levelProgress.filter((lp) => lp.status === "PASSED")
           .length,
         totalCategoriesCovered: categoryProgress.length,
+      },
+      // Gamification data
+      gamification: {
+        badgeProgress,
+        recentAchievements,
+        levelProgression: {
+          currentLevel,
+          maxUnlockedLevel,
+          nextLevel,
+          isNextLevelBoss,
+          levelsPassed,
+          levelStatuses,
+        },
+        milestones: milestones.slice(0, 5), // Top 5 closest milestones
+        quickWins: quickWins.slice(0, 4), // Top 4 quick wins
+        streak: {
+          current: currentStreak,
+          longest: userStreak?.longestStreak || 0,
+          daysToPerfectWeek: currentStreak < 7 ? 7 - currentStreak : 0,
+          daysToConsistencyChampion: currentStreak < 30 ? 30 - currentStreak : 0,
+        },
       },
     });
   } catch (error: any) {
