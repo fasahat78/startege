@@ -1,15 +1,6 @@
 steps:
   # Run database migrations before building/deploying
-  # Start Cloud SQL Proxy in background
-  - name: 'gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0'
-    id: 'cloud-sql-proxy'
-    entrypoint: 'cloud-sql-proxy'
-    args:
-      - '--port=5432'
-      - '${_CLOUD_SQL_CONNECTION_NAME}'
-    waitFor: ['-']
-
-  # Install dependencies and run migrations
+  # Using Unix socket connection format (no Cloud SQL Proxy needed)
   - name: 'node:20-alpine'
     entrypoint: 'sh'
     args:
@@ -21,7 +12,6 @@ steps:
     env:
       - 'DATABASE_URL=${_DATABASE_URL}'
     id: 'run-migrations'
-    waitFor: ['cloud-sql-proxy']
 
   # Build the container image
   # Pass NEXT_PUBLIC_* variables as build args (required at build time)
@@ -100,7 +90,7 @@ substitutions:
   _SERVICE_NAME: 'startege'
   _REGION: 'us-central1'
   _CLOUD_SQL_CONNECTION_NAME: 'startege:us-central1:startege-db'
-  _DATABASE_URL: 'postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5432/startege'
+  _DATABASE_URL: 'postgresql://postgres:Zoya%4057Bruce@localhost/startege?host=/cloudsql/startege:us-central1:startege-db'
 
 # Build options
 options:
