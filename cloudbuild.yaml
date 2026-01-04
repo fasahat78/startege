@@ -33,7 +33,7 @@ steps:
       - '--image'
       - 'gcr.io/${PROJECT_ID}/startege:${SHORT_SHA}'
       - '--region'
-      - '${_REGION}'
+      - 'us-central1'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
@@ -52,7 +52,6 @@ steps:
 # Substitution variables (can be overridden in trigger)
 substitutions:
   _SERVICE_NAME: 'startege'
-  _REGION: 'us-central1'
 
 # Build options
 options:
