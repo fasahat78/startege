@@ -42,7 +42,7 @@ function getGeminiModel() {
         temperature: 0.3, // Lower temperature for more focused, factual responses
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 8192, // Increased from 2048 to allow comprehensive responses
       },
     });
   }
@@ -70,6 +70,8 @@ export interface GeminiResponse {
     candidatesTokens?: number;
     totalTokens?: number;
   };
+  finishReason?: string; // e.g., "MAX_TOKENS", "STOP", etc.
+  wasTruncated?: boolean; // True if response was cut off due to token limit
 }
 
 /**
@@ -99,6 +101,19 @@ export async function generateResponse(
 
     const response = result.response;
     
+    // Extract finish reason to detect truncation
+    let finishReason: string | undefined;
+    let wasTruncated = false;
+    
+    if (response.candidates && response.candidates[0]) {
+      finishReason = response.candidates[0].finishReason;
+      // Check if response was truncated due to token limit
+      if (finishReason === 'MAX_TOKENS' || finishReason === 'OTHER') {
+        wasTruncated = true;
+        console.warn(`[GEMINI] Response truncated - finishReason: ${finishReason}`);
+      }
+    }
+    
     // Handle different response formats
     let text: string;
     if (typeof response.text === 'function') {
@@ -118,6 +133,11 @@ export async function generateResponse(
       text = response.text || JSON.stringify(response);
     }
 
+    // If response was truncated, append a note
+    if (wasTruncated && text && !text.includes("[Response truncated]")) {
+      text += "\n\n*[Note: Response was truncated due to length. Please ask me to continue if you need more information.]";
+    }
+
     // Extract usage information if available
     const usageMetadata = response.usageMetadata || result.response?.usageMetadata;
     const usage = usageMetadata
@@ -128,9 +148,19 @@ export async function generateResponse(
         }
       : undefined;
 
+    // Log response details for debugging
+    console.log(`[GEMINI] Response generated:`, {
+      textLength: text.length,
+      finishReason,
+      wasTruncated,
+      usage,
+    });
+
     return {
       text,
       usage,
+      finishReason,
+      wasTruncated,
     };
   } catch (error: any) {
     console.error("[GEMINI_ERROR]", error);
