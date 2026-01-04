@@ -14,22 +14,6 @@ export async function GET() {
 
     console.log("[ANALYTICS_API] User found:", user.id, user.email);
 
-    // Check premium status - allow free users for now (can be changed later)
-    const dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: { subscriptionTier: true },
-    });
-
-    console.log("[ANALYTICS_API] User subscription tier:", dbUser?.subscriptionTier);
-
-    // Temporarily allow all users (remove this check or make it optional)
-    // if (dbUser?.subscriptionTier !== "premium") {
-    //   return NextResponse.json(
-    //     { error: "Premium subscription required" },
-    //     { status: 403 }
-    //   );
-    // }
-
     // Get comprehensive analytics data
     const [
       userPoints,
@@ -42,7 +26,7 @@ export async function GET() {
       recentActivity,
       userBadges,
       allBadges,
-      dbUser,
+      userLevelData,
     ] = await Promise.all([
       // Points
       prisma.userPoints.findUnique({
@@ -325,8 +309,8 @@ export async function GET() {
     }));
 
     // Level progression
-    const currentLevel = dbUser?.currentLevel || 1;
-    const maxUnlockedLevel = dbUser?.maxUnlockedLevel || 1;
+    const currentLevel = userLevelData?.currentLevel || 1;
+    const maxUnlockedLevel = userLevelData?.maxUnlockedLevel || 1;
     const levelsPassed = levelProgress.filter((lp) => lp.status === "PASSED").length;
     const nextLevel = maxUnlockedLevel + 1;
     const isNextLevelBoss = [10, 20, 30, 40].includes(nextLevel);
