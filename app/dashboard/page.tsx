@@ -153,7 +153,7 @@ export default async function DashboardPage({
                 <p className="text-3xl font-bold text-card-foreground">{totalPoints.toLocaleString()}</p>
               </div>
               <Tooltip
-                content="Total points earned from completing concept cards, passing exams, and achieving milestones. Points reflect your overall progress and engagement with the platform."
+                content="Points earned from completing concept cards, passing exams, and achieving milestones."
                 position="left"
               >
                 <div className="bg-status-warning/10 rounded-lg p-3 cursor-help">
@@ -175,7 +175,7 @@ export default async function DashboardPage({
                 <p className="text-xs text-muted-foreground mt-1">Best: {longestStreak} days</p>
               </div>
               <Tooltip
-                content={`Your current learning streak is ${currentStreak} day${currentStreak !== 1 ? 's' : ''}. Maintain your streak by completing concept cards or exams daily. Your best streak was ${longestStreak} day${longestStreak !== 1 ? 's' : ''}.`}
+                content={`Current streak: ${currentStreak} day${currentStreak !== 1 ? 's' : ''}. Best: ${longestStreak} day${longestStreak !== 1 ? 's' : ''}. Complete cards or exams daily to maintain it.`}
                 position="left"
               >
                 <div className="bg-status-success/10 rounded-lg p-3 cursor-help">
@@ -197,7 +197,7 @@ export default async function DashboardPage({
                 <p className="text-xs text-muted-foreground mt-1">of 360</p>
               </div>
               <Tooltip
-                content={`You've mastered ${cardsCompleted} out of 360 concept cards. Concept cards are interactive learning modules covering AI governance topics. Complete cards by reading and understanding the content to track your learning progress.`}
+                content={`${cardsCompleted} of 360 concept cards mastered. Interactive learning modules covering AI governance topics.`}
                 position="left"
               >
                 <div className="bg-accent/10 rounded-lg p-3 cursor-help">
@@ -218,7 +218,7 @@ export default async function DashboardPage({
                 <p className="text-3xl font-bold text-card-foreground">{badgesCount}</p>
               </div>
               <Tooltip
-                content={`You've earned ${badgesCount} badge${badgesCount !== 1 ? 's' : ''}. Badges are achievements unlocked by reaching milestones, completing challenges, and demonstrating mastery. View all badges in your collection to see your progress.`}
+                content={`${badgesCount} badge${badgesCount !== 1 ? 's' : ''} earned. Achievements unlocked by reaching milestones and demonstrating mastery.`}
                 position="left"
               >
                 <div className="bg-brand-teal/10 rounded-lg p-3 cursor-help">
