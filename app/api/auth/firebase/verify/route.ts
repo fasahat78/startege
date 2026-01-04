@@ -304,36 +304,42 @@ export async function POST(request: Request) {
     let baseUrl: string;
     
     // Try NEXT_PUBLIC_APP_URL first (set at build time)
+    // Allow localhost in development - it's needed for local testing
     const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    if (appUrl && !appUrl.includes('0.0.0.0') && !appUrl.includes('localhost')) {
+    if (appUrl && !appUrl.includes('0.0.0.0')) {
       baseUrl = appUrl.endsWith('/') ? appUrl.slice(0, -1) : appUrl;
       console.log("[VERIFY ROUTE] Using NEXT_PUBLIC_APP_URL:", baseUrl);
     } else {
-      // Fallback: Use request headers (Cloud Run provides correct host)
-      const forwardedHost = request.headers.get('x-forwarded-host');
-      const host = request.headers.get('host');
+      // Fallback: Use request headers
+      // For form POSTs, origin header is most reliable
       const origin = request.headers.get('origin');
+      const host = request.headers.get('host');
+      const forwardedHost = request.headers.get('x-forwarded-host');
       const referer = request.headers.get('referer');
       
-      // Determine host
+      // Determine host - prioritize origin for form POSTs
       let finalHost: string | null = null;
-      if (forwardedHost && !forwardedHost.includes('0.0.0.0')) {
-        finalHost = forwardedHost;
-      } else if (host && !host.includes('0.0.0.0') && host !== 'localhost:8080') {
-        finalHost = host;
-      } else if (origin) {
+      if (origin) {
         try {
           const originUrl = new URL(origin);
           finalHost = originUrl.host;
+          console.log("[VERIFY ROUTE] Using origin header:", finalHost);
         } catch (e) {
-          // Invalid origin URL
+          console.log("[VERIFY ROUTE] Invalid origin URL:", origin);
         }
+      } else if (host && !host.includes('0.0.0.0') && host !== 'localhost:8080') {
+        finalHost = host;
+        console.log("[VERIFY ROUTE] Using host header:", finalHost);
+      } else if (forwardedHost && !forwardedHost.includes('0.0.0.0')) {
+        finalHost = forwardedHost;
+        console.log("[VERIFY ROUTE] Using x-forwarded-host:", finalHost);
       } else if (referer) {
         try {
           const refererUrl = new URL(referer);
           finalHost = refererUrl.host;
+          console.log("[VERIFY ROUTE] Using referer header:", finalHost);
         } catch (e) {
-          // Invalid referer URL
+          console.log("[VERIFY ROUTE] Invalid referer URL:", referer);
         }
       }
       
@@ -345,9 +351,14 @@ export async function POST(request: Request) {
         baseUrl = `${protocol}://${finalHost}`;
         console.log("[VERIFY ROUTE] Using headers - baseUrl:", baseUrl);
       } else {
-        // Last resort: use a default (shouldn't happen in production)
-        baseUrl = 'https://startege-785373873454.us-central1.run.app';
-        console.warn("[VERIFY ROUTE] Could not determine baseUrl, using default:", baseUrl);
+        // Last resort: use localhost:3000 for development, Cloud Run URL for production
+        if (process.env.NODE_ENV === 'development') {
+          baseUrl = 'http://localhost:3000';
+          console.warn("[VERIFY ROUTE] Could not determine baseUrl, using localhost:3000 for development");
+        } else {
+          baseUrl = 'https://startege-785373873454.us-central1.run.app';
+          console.warn("[VERIFY ROUTE] Could not determine baseUrl, using default Cloud Run URL");
+        }
       }
     }
     
