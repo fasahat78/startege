@@ -18,9 +18,22 @@ steps:
     args:
       - '-c'
       - |
+        echo "Waiting for Cloud SQL Proxy to be ready..."
+        for i in 1 2 3 4 5; do
+          if nc -z 127.0.0.1 5432 2>/dev/null; then
+            echo "Cloud SQL Proxy is ready!"
+            break
+          fi
+          echo "Waiting... ($i/5)"
+          sleep 2
+        done
+        echo "Installing dependencies..."
         npm install
+        echo "Generating Prisma client..."
         npx prisma generate
+        echo "Running migrations..."
         npx prisma migrate deploy
+        echo "✅ Migrations completed successfully!"
     env:
       - 'DATABASE_URL=${_DATABASE_URL}'
     id: 'run-migrations'
