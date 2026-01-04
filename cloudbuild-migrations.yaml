@@ -5,18 +5,24 @@ steps:
   # Install dependencies and run migrations
   # Start Cloud SQL Proxy in background, then run migrations
   # Cloud Build doesn't have Unix sockets, so we use TCP via Cloud SQL Proxy
-  - name: 'gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0'
+  - name: 'node:20-alpine'
     id: 'run-migrations'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
+        # Install Cloud SQL Proxy
+        echo "Installing Cloud SQL Proxy..."
+        wget -q https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.0/cloud-sql-proxy.alpine -O /tmp/cloud-sql-proxy
+        chmod +x /tmp/cloud-sql-proxy
+        
         # Start Cloud SQL Proxy in background
-        /cloud-sql-proxy --port=5432 $${_CLOUD_SQL_CONNECTION_NAME} &
+        /tmp/cloud-sql-proxy --port=5432 $${_CLOUD_SQL_CONNECTION_NAME} &
         PROXY_PID=$$!
         
         # Wait for proxy to be ready
         echo "Waiting for Cloud SQL Proxy to start..."
+        apk add --no-cache netcat-openbsd
         for i in 1 2 3 4 5 6 7 8 9 10; do
           if nc -z 127.0.0.1 5432 2>/dev/null; then
             echo "Cloud SQL Proxy is ready!"
@@ -28,7 +34,6 @@ steps:
         
         # Install dependencies and run migrations
         echo "Installing dependencies..."
-        apk add --no-cache nodejs npm postgresql-client
         npm install
         echo "Generating Prisma client..."
         npx prisma generate
