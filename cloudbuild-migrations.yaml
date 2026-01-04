@@ -1,0 +1,41 @@
+# Cloud Build configuration to run Prisma migrations
+# This can be triggered manually or as part of deployment pipeline
+
+steps:
+  # Start Cloud SQL Proxy in background
+  - name: 'gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0'
+    id: 'cloud-sql-proxy'
+    entrypoint: 'cloud-sql-proxy'
+    args:
+      - '--port=5432'
+      - '${_CLOUD_SQL_CONNECTION_NAME}'
+    waitFor: ['-']
+
+  # Install dependencies and run migrations
+  # Note: Source code is already uploaded by gcloud builds submit
+  - name: 'node:20-alpine'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        npm install
+        npx prisma generate
+        npx prisma migrate deploy
+    env:
+      - 'DATABASE_URL=${_DATABASE_URL}'
+    id: 'run-migrations'
+    waitFor: ['cloud-sql-proxy']
+
+# Substitution variables
+substitutions:
+  _CLOUD_SQL_CONNECTION_NAME: 'startege:us-central1:startege-db'
+  _DATABASE_URL: 'postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5432/startege'
+
+# Options
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+# Timeout
+timeout: '600s'
+
+
