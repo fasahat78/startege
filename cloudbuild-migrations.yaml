@@ -32,27 +32,17 @@ steps:
           sleep 2
         done
         
-        # Install dependencies and run migrations
+        # Install dependencies and apply schema
         echo "Installing dependencies..."
         npm install
         echo "Generating Prisma client..."
         npx prisma generate
         
-        # Check current database state
-        echo "Checking database connection..."
-        npx prisma db execute --stdin <<< "SELECT 1;" || echo "Connection test failed"
+        # Apply schema directly (more reliable than migrate deploy for initial setup)
+        echo "Applying database schema..."
+        npx prisma db push --accept-data-loss --skip-generate
         
-        echo "Running migrations..."
-        npx prisma migrate deploy || {
-          echo "❌ migrate deploy failed, trying db push..."
-          npx prisma db push --accept-data-loss --skip-generate
-        }
-        
-        # Verify tables were created
-        echo "Verifying tables..."
-        npx prisma db execute --stdin <<< "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE';" || true
-        
-        echo "✅ Migrations completed!"
+        echo "✅ Schema applied successfully!"
         
         # Stop the proxy
         kill $$PROXY_PID 2>/dev/null || true
