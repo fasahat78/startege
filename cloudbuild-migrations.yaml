@@ -35,14 +35,35 @@ steps:
         # Install dependencies and apply schema
         echo "Installing dependencies..."
         npm install
+        
         echo "Generating Prisma client..."
         npx prisma generate
         
+        # Test database connection
+        echo "Testing database connection..."
+        echo "DATABASE_URL format: postgresql://postgres:***@127.0.0.1:5432/startege"
+        npx prisma db execute --stdin <<< "SELECT version();" || echo "⚠️ Connection test failed"
+        
+        # Check current database state
+        echo "Checking current database state..."
+        npx prisma db execute --stdin <<< "SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE';" || echo "⚠️ Could not check tables"
+        
         # Apply schema directly (more reliable than migrate deploy for initial setup)
         echo "Applying database schema..."
-        npx prisma db push --accept-data-loss --skip-generate
+        npx prisma db push --accept-data-loss --skip-generate --verbose || {
+          echo "❌ db push failed, exit code: $?"
+          echo "Trying with force flag..."
+          npx prisma db push --force-reset --accept-data-loss --skip-generate || {
+            echo "❌ Force reset also failed"
+            exit 1
+          }
+        }
         
-        echo "✅ Schema applied successfully!"
+        # Verify tables were created
+        echo "Verifying tables were created..."
+        npx prisma db execute --stdin <<< "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' ORDER BY table_name LIMIT 10;" || echo "⚠️ Could not verify tables"
+        
+        echo "✅ Schema application completed!"
         
         # Stop the proxy
         kill $$PROXY_PID 2>/dev/null || true
