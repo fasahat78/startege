@@ -300,21 +300,55 @@ export async function POST(request: Request) {
     // Use server-side redirect (303) for POST → redirect
     // 303 is the correct status for POST redirects (browsers treat it as GET)
     // Build absolute URL for redirect - NextResponse.redirect requires absolute URL
-    // Use NEXT_PUBLIC_APP_URL if available, otherwise use request headers
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    // Priority: NEXT_PUBLIC_APP_URL > x-forwarded-host > host header > origin > referer
     let baseUrl: string;
     
-    if (appUrl) {
-      // Use configured app URL (preferred)
+    // Try NEXT_PUBLIC_APP_URL first (set at build time)
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (appUrl && !appUrl.includes('0.0.0.0') && !appUrl.includes('localhost')) {
       baseUrl = appUrl.endsWith('/') ? appUrl.slice(0, -1) : appUrl;
+      console.log("[VERIFY ROUTE] Using NEXT_PUBLIC_APP_URL:", baseUrl);
     } else {
       // Fallback: Use request headers (Cloud Run provides correct host)
-      const host = request.headers.get('x-forwarded-host') || 
-                   request.headers.get('host') || 
-                   'localhost:3000';
+      const forwardedHost = request.headers.get('x-forwarded-host');
+      const host = request.headers.get('host');
+      const origin = request.headers.get('origin');
+      const referer = request.headers.get('referer');
+      
+      // Determine host
+      let finalHost: string | null = null;
+      if (forwardedHost && !forwardedHost.includes('0.0.0.0')) {
+        finalHost = forwardedHost;
+      } else if (host && !host.includes('0.0.0.0') && host !== 'localhost:8080') {
+        finalHost = host;
+      } else if (origin) {
+        try {
+          const originUrl = new URL(origin);
+          finalHost = originUrl.host;
+        } catch (e) {
+          // Invalid origin URL
+        }
+      } else if (referer) {
+        try {
+          const refererUrl = new URL(referer);
+          finalHost = refererUrl.host;
+        } catch (e) {
+          // Invalid referer URL
+        }
+      }
+      
+      // Determine protocol
       const protocol = request.headers.get('x-forwarded-proto') || 
-                       (host.includes('localhost') ? 'http' : 'https');
-      baseUrl = `${protocol}://${host}`;
+                       (finalHost?.includes('localhost') ? 'http' : 'https');
+      
+      if (finalHost) {
+        baseUrl = `${protocol}://${finalHost}`;
+        console.log("[VERIFY ROUTE] Using headers - baseUrl:", baseUrl);
+      } else {
+        // Last resort: use a default (shouldn't happen in production)
+        baseUrl = 'https://startege-785373873454.us-central1.run.app';
+        console.warn("[VERIFY ROUTE] Could not determine baseUrl, using default:", baseUrl);
+      }
     }
     
     const redirectUrlFull = redirectUrl.startsWith("http") 
