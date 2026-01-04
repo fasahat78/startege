@@ -162,8 +162,10 @@ export default function KnowledgeAssessmentClient({ scenarios }: KnowledgeAssess
         return;
       }
 
-      // Redirect to interests
-      router.push("/onboarding/interests");
+      // Redirect to interests (preserve edit mode if in URL)
+      const urlParams = new URLSearchParams(window.location.search);
+      const editParam = urlParams.get("edit");
+      router.push(editParam === "true" ? "/onboarding/interests?edit=true" : "/onboarding/interests");
     } catch (error) {
       setError("Something went wrong. Please try again.");
       setLoading(false);
