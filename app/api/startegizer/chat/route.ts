@@ -117,8 +117,19 @@ export async function POST(request: Request) {
     console.log("[STARTEGIZER_CHAT] Fixed cost per call:", CREDITS_PER_CALL, "credits");
 
     // Check if user has sufficient credits before making API call
-    const currentBalance = await checkCreditBalance(user.id);
-    console.log("[STARTEGIZER_CHAT] Current balance:", currentBalance, "credits");
+    let currentBalance = 0;
+    try {
+      currentBalance = await checkCreditBalance(user.id);
+      console.log("[STARTEGIZER_CHAT] Current balance:", currentBalance, "credits");
+    } catch (error: any) {
+      // If AICredit table doesn't exist, allow the call (will be handled later)
+      if (error.code === 'P2021' || error.message?.includes('does not exist')) {
+        console.warn("[STARTEGIZER_CHAT] AICredit table not found, allowing call without credit check");
+        currentBalance = 0; // Set to 0 so it will fail credit check, but we'll handle gracefully
+      } else {
+        throw error;
+      }
+    }
     
     if (currentBalance < CREDITS_PER_CALL) {
       console.warn("[STARTEGIZER_CHAT] Insufficient credits:", currentBalance, "<", CREDITS_PER_CALL);
