@@ -376,7 +376,7 @@ export async function POST(request: Request) {
     // sameSite: "lax" allows cookies to be sent on top-level navigations (like Stripe redirects)
     // But we need to ensure domain is set correctly for cross-subdomain redirects
     const isProduction = process.env.NODE_ENV === "production";
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    // Reuse appUrl from above (line 308) - don't redeclare
     const domain = isProduction && appUrl 
       ? new URL(appUrl).hostname.replace(/^www\./, '') // Remove www. prefix if present
       : undefined;
