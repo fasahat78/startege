@@ -49,6 +49,12 @@ export default async function PersonaSelectionPage({
 
     return <PersonaSelectionClient personas={personas} />;
   } catch (error: any) {
+    // redirect() throws a NEXT_REDIRECT error - this is expected behavior, don't log it
+    if (error?.digest === 'NEXT_REDIRECT' || error?.message === 'NEXT_REDIRECT') {
+      throw error; // Re-throw redirect errors without logging
+    }
+    
+    // Only log actual errors, not redirects
     console.error("[ONBOARDING PERSONA PAGE] ❌ Fatal error:", error.message);
     console.error("[ONBOARDING PERSONA PAGE] Error stack:", error.stack);
     // Re-throw to show error page (better than silent failure)
