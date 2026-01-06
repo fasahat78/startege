@@ -423,15 +423,19 @@ export async function POST(request: Request) {
       sameSite: "lax", // Allows cookies on top-level navigations (Stripe redirects)
       httpOnly: true, // Server components CAN read httpOnly cookies (this is correct!)
       secure: isProduction, // HTTPS only in production
-      ...(domain && { domain: domain }), // Only set domain for custom domains
+      // Don't set domain for Cloud Run - let browser use exact hostname
+      // Only set domain for simple custom domains (like example.com)
+      ...(domain && { domain: domain }),
     });
     
     console.log("[VERIFY ROUTE] Cookie set in response:", {
       name: "firebase-session",
       maxAge: expiresInSeconds,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      domain: domain || "not set",
+      secure: isProduction,
+      sameSite: "lax",
+      domain: domain || "not set (using exact hostname)",
+      path: "/",
     });
     
     console.log("[VERIFY ROUTE] ===== SUCCESS =====");

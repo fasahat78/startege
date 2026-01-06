@@ -3,6 +3,7 @@ import "./globals.css";
 import SessionProvider from "@/components/providers/SessionProvider";
 import Header from "@/components/layout/Header";
 import SessionRefresh from "@/components/auth/SessionRefresh";
+import StripeRedirectHandler from "@/components/auth/StripeRedirectHandler";
 import ToastProvider from "@/components/providers/ToastProvider";
 
 export const metadata: Metadata = {
@@ -49,6 +50,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <SessionProvider>
           <SessionRefresh />
+          <StripeRedirectHandler />
           <Header />
           {children}
           <ToastProvider />
