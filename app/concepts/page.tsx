@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
@@ -191,14 +192,23 @@ export default async function ConceptsPage({
   const groupedConcepts = groupConceptsByDomain(concepts);
 
   return (
-    <ConceptsClient
-      concepts={concepts}
-      groupedConcepts={groupedConcepts}
-      domains={domains}
-      categories={categories}
-      progressMap={progressMap}
-      domainProgress={domainProgress}
-      searchParams={{ domain, difficulty, search, view }}
-    />
+    <Suspense fallback={
+      <div className="min-h-screen bg-muted flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading concepts...</p>
+        </div>
+      </div>
+    }>
+      <ConceptsClient
+        concepts={concepts}
+        groupedConcepts={groupedConcepts}
+        domains={domains}
+        categories={categories}
+        progressMap={progressMap}
+        domainProgress={domainProgress}
+        searchParams={{ domain, difficulty, search, view }}
+      />
+    </Suspense>
   );
 }
