@@ -373,12 +373,21 @@ export async function POST(request: Request) {
     
     // Set session cookie with proper attributes
     // httpOnly: true is correct - server components CAN read httpOnly cookies
+    // sameSite: "lax" allows cookies to be sent on top-level navigations (like Stripe redirects)
+    // But we need to ensure domain is set correctly for cross-subdomain redirects
+    const isProduction = process.env.NODE_ENV === "production";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    const domain = isProduction && appUrl 
+      ? new URL(appUrl).hostname.replace(/^www\./, '') // Remove www. prefix if present
+      : undefined;
+    
     redirectResponse.cookies.set("firebase-session", sessionCookie, {
       maxAge: expiresInSeconds, // Already in seconds
       path: "/",
-      sameSite: "lax",
+      sameSite: "lax", // Allows cookies on top-level navigations (Stripe redirects)
       httpOnly: true, // Server components CAN read httpOnly cookies (this is correct!)
-      secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      secure: isProduction, // HTTPS only in production
+      ...(domain && { domain: domain }), // Set domain in production for cookie persistence
     });
     
     console.log("[VERIFY ROUTE] Cookie set in response:", {
