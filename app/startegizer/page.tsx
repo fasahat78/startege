@@ -116,6 +116,12 @@ export default async function StartegizerPage() {
       />
     );
   } catch (error: any) {
+    // redirect() throws a NEXT_REDIRECT error - this is expected behavior, don't log it
+    if (error?.digest === 'NEXT_REDIRECT' || error?.message === 'NEXT_REDIRECT') {
+      throw error; // Re-throw redirect errors without logging
+    }
+    
+    // Only log actual errors, not redirects
     console.error("[STARTEGIZER] Fatal error:", error);
     console.error("[STARTEGIZER] Error code:", error?.code);
     console.error("[STARTEGIZER] Error message:", error?.message);
