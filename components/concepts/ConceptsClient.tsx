@@ -117,7 +117,12 @@ export default function ConceptsClient({
 
   const handleClear = () => {
     setSearchQuery("");
-    router.push("/concepts", { scroll: false });
+    // Clear all filters (search, domain, difficulty) but keep view preference
+    const params = new URLSearchParams();
+    if (view && view !== "grouped") {
+      params.set("view", view);
+    }
+    router.push(`/concepts?${params.toString()}`, { scroll: false });
   };
 
   const toggleDomain = (domain: string) => {
