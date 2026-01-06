@@ -103,6 +103,16 @@ export default function Header() {
               >
                 AIGP Exams
               </Link>
+              <Link
+                href="/pricing"
+                className={`px-2 md:px-3 py-2 rounded-md text-xs md:text-sm font-medium transition whitespace-nowrap ${
+                  pathname === "/pricing"
+                    ? "bg-primary/10 text-primary"
+                    : "text-card-foreground hover:bg-muted"
+                }`}
+              >
+                Pricing
+              </Link>
             </nav>
           </div>
           <div className="flex items-center ml-2">
