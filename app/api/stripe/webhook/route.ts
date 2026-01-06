@@ -223,9 +223,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         await allocateMonthlyCredits(userId, dbSubscription.id);
         console.log(`✅ Allocated monthly credits for user ${userId}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ Error allocating credits:`, error);
-      // Don't fail the webhook if credit allocation fails
+      console.error(`❌ Error details:`, error.message, error.code, error.stack);
+      // Don't fail the webhook if credit allocation fails, but log detailed error
+      if (error.code === 'P2021' || error.message?.includes('does not exist')) {
+        console.error(`❌ CRITICAL: AICredit table doesn't exist! Run scripts/create-aicredit-tables.sql in Cloud SQL Studio.`);
+      }
     }
   }
 
