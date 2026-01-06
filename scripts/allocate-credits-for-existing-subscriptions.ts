@@ -29,11 +29,11 @@ async function allocateCreditsForSubscriptions() {
       return;
     }
 
-    // Find their subscriptions
+    // Find their subscriptions (include all statuses, not just "active")
     const subscriptions = await prisma.subscription.findMany({
       where: {
         userId: { in: premiumUsers.map((u) => u.id) },
-        status: "active",
+        // Include active, incomplete, trialing, etc. - any subscription record
       },
       select: {
         id: true,
