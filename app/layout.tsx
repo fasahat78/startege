@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import SessionProvider from "@/components/providers/SessionProvider";
 import Header from "@/components/layout/Header";
@@ -50,7 +51,9 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <SessionProvider>
           <SessionRefresh />
-          <StripeRedirectHandler />
+          <Suspense fallback={null}>
+            <StripeRedirectHandler />
+          </Suspense>
           <Header />
           {children}
           <ToastProvider />

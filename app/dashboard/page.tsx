@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
@@ -104,7 +105,9 @@ export default async function DashboardPage({
 
   return (
     <div className="min-h-screen bg-muted">
-      <SubscriptionRefresh />
+      <Suspense fallback={null}>
+        <SubscriptionRefresh />
+      </Suspense>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Upgrade Success Message */}
         {showUpgradeSuccess && (
