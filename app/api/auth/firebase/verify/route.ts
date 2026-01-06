@@ -374,12 +374,48 @@ export async function POST(request: Request) {
     // Set session cookie with proper attributes
     // httpOnly: true is correct - server components CAN read httpOnly cookies
     // sameSite: "lax" allows cookies to be sent on top-level navigations (like Stripe redirects)
-    // But we need to ensure domain is set correctly for cross-subdomain redirects
+    // Domain attribute: Only set for custom domains, NOT for Cloud Run (each service has unique subdomain)
     const isProduction = process.env.NODE_ENV === "production";
     // Reuse appUrl from above (line 308) - don't redeclare
-    const domain = isProduction && appUrl 
-      ? new URL(appUrl).hostname.replace(/^www\./, '') // Remove www. prefix if present
-      : undefined;
+    let domain: string | undefined = undefined;
+    
+    if (isProduction && appUrl) {
+      try {
+        const url = new URL(appUrl);
+        const hostname = url.hostname;
+        
+        // Only set domain for custom domains (not Cloud Run or other platform subdomains)
+        // Cloud Run URLs are like: startege-785373873454.us-central1.run.app
+        // Custom domains would be like: app.example.com or example.com
+        const isCloudRun = hostname.includes('.run.app') || hostname.includes('.cloudfunctions.net');
+        const isPlatformSubdomain = hostname.includes('.vercel.app') || hostname.includes('.netlify.app');
+        
+        if (!isCloudRun && !isPlatformSubdomain) {
+          // Custom domain - extract base domain (remove www. prefix)
+          domain = hostname.replace(/^www\./, '');
+          // For custom domains, we might want to set domain to the base domain
+          // But for now, let's not set it to avoid cookie sharing issues
+          // Only set domain if it's a clear custom domain pattern
+          if (hostname.split('.').length <= 3) {
+            // Simple domain like example.com or app.example.com
+            const parts = hostname.split('.');
+            if (parts.length === 2) {
+              // example.com - set domain to the base domain
+              domain = hostname;
+            } else if (parts.length === 3 && parts[0] !== 'www') {
+              // app.example.com - don't set domain (cookie should be scoped to exact hostname)
+              domain = undefined;
+            }
+          } else {
+            // Complex subdomain - don't set domain
+            domain = undefined;
+          }
+        }
+      } catch (e) {
+        console.warn("[VERIFY ROUTE] Failed to parse appUrl for domain extraction:", e);
+        domain = undefined;
+      }
+    }
     
     redirectResponse.cookies.set("firebase-session", sessionCookie, {
       maxAge: expiresInSeconds, // Already in seconds
@@ -387,7 +423,7 @@ export async function POST(request: Request) {
       sameSite: "lax", // Allows cookies on top-level navigations (Stripe redirects)
       httpOnly: true, // Server components CAN read httpOnly cookies (this is correct!)
       secure: isProduction, // HTTPS only in production
-      ...(domain && { domain: domain }), // Set domain in production for cookie persistence
+      ...(domain && { domain: domain }), // Only set domain for custom domains
     });
     
     console.log("[VERIFY ROUTE] Cookie set in response:", {
@@ -395,6 +431,7 @@ export async function POST(request: Request) {
       maxAge: expiresInSeconds,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      domain: domain || "not set",
     });
     
     console.log("[VERIFY ROUTE] ===== SUCCESS =====");
