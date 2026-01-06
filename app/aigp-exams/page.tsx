@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/lib/firebase-auth-helpers';
 import { redirect } from 'next/navigation';
 import AIGPExamsClient from '@/components/aigp-exams/AIGPExamsClient';
 import { prisma } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 
 // Mark as dynamic since it uses cookies
 export const dynamic = 'force-dynamic';
@@ -25,7 +26,21 @@ export default async function AIGPExamsPage() {
     }
     
     // Fetch exams - wrap in try-catch to handle missing table gracefully
-    let exams = [];
+    type ExamWithAttempts = Prisma.AIGPExamGetPayload<{
+      include: {
+        attempts: {
+          select: {
+            id: true;
+            attemptNumber: true;
+            status: true;
+            score: true;
+            submittedAt: true;
+          };
+        };
+      };
+    }>;
+    
+    let exams: ExamWithAttempts[] = [];
     try {
       exams = await prisma.aIGPExam.findMany({
         where: { isActive: true, status: 'PUBLISHED' },
