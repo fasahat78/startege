@@ -10,6 +10,7 @@ import SubscriptionRefresh from "@/components/dashboard/SubscriptionRefresh";
 import CreditBalance from "@/components/dashboard/CreditBalance";
 import Tooltip from "@/components/ui/Tooltip";
 import EarlyAdopterBadge from "@/components/admin/EarlyAdopterBadge";
+import ReferralCode from "@/components/dashboard/ReferralCode";
 
 // Mark as dynamic since it uses cookies
 export const dynamic = 'force-dynamic';
@@ -145,28 +146,10 @@ export default async function DashboardPage({
                   Continue your journey to AI Governance mastery
                 </p>
                 {userData?.referralCode && (
-                  <div className="mt-3 p-3 bg-card/50 rounded-lg border border-border">
-                    <p className="text-sm text-muted-foreground mb-1">Your Referral Code:</p>
-                    <div className="flex items-center gap-2">
-                      <code className="px-3 py-1 bg-background rounded font-mono font-semibold text-foreground">
-                        {userData.referralCode}
-                      </code>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${window.location.origin}/auth/signup-firebase?ref=${userData.referralCode}`);
-                          alert("Referral link copied to clipboard!");
-                        }}
-                        className="text-sm text-accent hover:text-accent/80"
-                      >
-                        Copy Link
-                      </button>
-                    </div>
-                    {userData.referralCount > 0 && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        {userData.referralCount} referral{userData.referralCount !== 1 ? "s" : ""} • Earn 1 month free per referral!
-                      </p>
-                    )}
-                  </div>
+                  <ReferralCode
+                    referralCode={userData.referralCode}
+                    referralCount={userData.referralCount || 0}
+                  />
                 )}
               </div>
             </div>
