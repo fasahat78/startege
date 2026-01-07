@@ -555,6 +555,13 @@ export default function ExamSimulator({ attemptId, examId }: ExamSimulatorProps)
                   </span>
                 )}
               </p>
+              {answeredQuestions.size < totalQuestions && (
+                <div className="mt-4 p-3 bg-status-warning/10 border border-status-warning/30 rounded-lg">
+                  <p className="text-sm text-status-warning font-medium">
+                    ⚠️ Warning: You have not answered all questions. Unanswered questions will be counted as incorrect.
+                  </p>
+                </div>
+              )}
               <p className="text-sm text-muted-foreground mt-4">
                 Are you sure you want to submit? You won't be able to change your answers after submission.
               </p>

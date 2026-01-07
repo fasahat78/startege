@@ -39,6 +39,9 @@ export async function POST(
     return NextResponse.json({ error: 'Attempt already submitted' }, { status: 400 });
   }
   
+  // Get total number of questions in the exam
+  const totalQuestions = attempt.exam.questions.length;
+  
   // Calculate scores
   let correctCount = 0;
   let totalAnswered = 0;
@@ -91,8 +94,9 @@ export async function POST(
     }
   }
   
-  // Calculate percentage score
-  const score = totalAnswered > 0 ? (correctCount / totalAnswered) * 100 : 0;
+  // Calculate percentage score based on TOTAL questions, not just answered ones
+  // This ensures that unanswered questions count as incorrect
+  const score = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
   const pass = score >= (attempt.exam.passMark || 70);
   
   // Convert stats to JSON
@@ -137,7 +141,7 @@ export async function POST(
       evaluatedAt: new Date(),
       score,
       rawScore: correctCount,
-      totalQuestions: totalAnswered,
+      totalQuestions: totalQuestions, // Store actual total questions, not just answered
       pass,
       domainScores,
       difficultyScores,
@@ -150,7 +154,8 @@ export async function POST(
     success: true,
     score,
     rawScore: correctCount,
-    totalQuestions: totalAnswered,
+    totalQuestions: totalQuestions, // Return actual total questions
+    totalAnswered: totalAnswered, // Also return answered count for reference
     pass,
     domainScores,
     difficultyScores,
