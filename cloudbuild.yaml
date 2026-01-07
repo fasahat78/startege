@@ -19,25 +19,25 @@ steps:
       - |
         # Extract components from DATABASE_URL
         # Handle format: postgresql://user:password@host:port/db or postgresql://user:password@/db?host=...
-        DB_URL="${DATABASE_URL#postgresql://}"
+        db_url="${DATABASE_URL#postgresql://}"
         
         # Extract user:password
-        CREDENTIALS="${DB_URL%%@*}"
-        USER="${CREDENTIALS%%:*}"
-        PASSWORD="${CREDENTIALS#*:}"
+        credentials="${db_url%%@*}"
+        db_user="${credentials%%:*}"
+        db_password="${credentials#*:}"
         
         # Extract rest after @
-        REST="${DB_URL#*@}"
+        rest_part="${db_url#*@}"
         
         # Handle Unix socket format (postgresql://user:pass@/db?host=...)
-        if echo "$REST" | grep -q "^/"; then
+        if echo "$rest_part" | grep -q "^/"; then
           # Format: /db?host=...
-          DB_NAME="${REST%%\?*}"
-          DB_NAME="${DB_NAME#/}"
+          db_name="${rest_part%%\?*}"
+          db_name="${db_name#/}"
         else
           # Format: host:port/db or host:port/db?params
-          DB_NAME="${REST#*/}"
-          DB_NAME="${DB_NAME%%\?*}"
+          db_name="${rest_part#*/}"
+          db_name="${db_name%%\?*}"
         fi
         
         # URL decode password (%40 = @, %25 = %)
