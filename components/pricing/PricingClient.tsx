@@ -14,11 +14,54 @@ export default function PricingClient({ isPremium, planType, currentPlanType }: 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showAnnualWarning, setShowAnnualWarning] = useState(false);
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountCodeError, setDiscountCodeError] = useState("");
+  const [discountApplied, setDiscountApplied] = useState<any>(null);
 
   // Debug logging
   if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
     console.log("[PRICING CLIENT] Props:", { isPremium, planType, currentPlanType });
   }
+
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) {
+      setDiscountCodeError("Please enter a discount code");
+      return;
+    }
+
+    // Only validate for subscription plans
+    if (!planType.startsWith("credits-")) {
+      const planTypeForValidation = planType === "annual" ? "annual" : "monthly";
+      const baseAmount = planType === "annual" ? 19900 : 1900; // $199 or $19 in cents
+
+      try {
+        const response = await fetch("/api/discount-codes/validate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            code: discountCode.toUpperCase(),
+            planType: planTypeForValidation,
+            amount: baseAmount,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.valid && result.discount) {
+          setDiscountApplied(result.discount);
+          setDiscountCodeError("");
+        } else {
+          setDiscountApplied(null);
+          setDiscountCodeError(result.error || "Invalid discount code");
+        }
+      } catch (error) {
+        console.error("Error validating discount code:", error);
+        setDiscountCodeError("Failed to validate discount code");
+      }
+    }
+  };
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -48,6 +91,7 @@ export default function PricingClient({ isPremium, planType, currentPlanType }: 
           body: JSON.stringify({
             planType: planType === "annual" ? "annual" : "monthly",
             returnUrl: window.location.origin + "/pricing",
+            ...(discountCode && discountApplied && { discountCode: discountCode.toUpperCase() }),
           }),
         });
       }
@@ -175,6 +219,9 @@ export default function PricingClient({ isPremium, planType, currentPlanType }: 
     }
   };
 
+  // Only show discount code for subscription plans
+  const showDiscountCode = !planType.startsWith("credits-");
+
   return (
     <>
       <AnnualUpgradeWarning
@@ -182,6 +229,42 @@ export default function PricingClient({ isPremium, planType, currentPlanType }: 
         onConfirm={confirmAnnualUpgrade}
         onCancel={() => setShowAnnualWarning(false)}
       />
+      
+      {showDiscountCode && (
+        <div className="mb-4 space-y-2">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={discountCode}
+              onChange={(e) => {
+                setDiscountCode(e.target.value.toUpperCase());
+                setDiscountCodeError("");
+                setDiscountApplied(null);
+              }}
+              placeholder="Discount code"
+              className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm"
+            />
+            <button
+              type="button"
+              onClick={handleApplyDiscount}
+              className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition text-sm font-medium"
+            >
+              Apply
+            </button>
+          </div>
+          {discountCodeError && (
+            <p className="text-xs text-status-error">{discountCodeError}</p>
+          )}
+          {discountApplied && (
+            <div className="p-2 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-xs text-green-800 font-medium">
+                ✓ Discount applied! Save {discountApplied.percentageOff ? `${discountApplied.percentageOff}%` : `$${(discountApplied.amountOff / 100).toFixed(2)}`}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
       <button
         onClick={handleButtonClick}
         disabled={loading}

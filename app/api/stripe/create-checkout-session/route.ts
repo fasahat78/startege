@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 import { stripe, STRIPE_PRICE_IDS, STRIPE_URLS } from "@/lib/stripe";
 import { prisma } from "@/lib/db";
+import { validateDiscountCode, applyDiscountCode } from "@/lib/discount-codes";
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { priceId, planType, returnUrl } = body;
+    const { priceId, planType, returnUrl, discountCode } = body;
 
     // If priceId not provided, use planType to get from env
     let finalPriceId = priceId;
@@ -79,8 +80,77 @@ export async function POST(request: Request) {
       });
     }
 
+    // Validate and apply discount code if provided
+    let discountCouponId: string | undefined;
+    let discountAmount = 0;
+    let discountCodeId: string | undefined;
+
+    if (discountCode) {
+      // Get price amount from Stripe to validate discount
+      const price = await stripe.prices.retrieve(finalPriceId);
+      const amount = price.unit_amount || 0;
+
+      const validation = await validateDiscountCode(
+        discountCode,
+        planType || "monthly",
+        amount
+      );
+
+      if (validation.valid && validation.discount) {
+        // Check if user has already used this code
+        const hasUsed = await prisma.discountCodeUsage.findFirst({
+          where: {
+            discountCodeId: validation.discount.id,
+            userId: user.id,
+          },
+        });
+
+        if (hasUsed) {
+          return NextResponse.json(
+            { error: "You have already used this discount code" },
+            { status: 400 }
+          );
+        }
+
+        // Create Stripe coupon for percentage discounts
+        if (validation.discount.type === "PERCENTAGE" && validation.discount.percentageOff) {
+          const coupon = await stripe.coupons.create({
+            percent_off: validation.discount.percentageOff,
+            name: `Discount: ${discountCode}`,
+            duration: "once", // For one-time discounts, use "forever" for lifetime
+            metadata: {
+              discountCodeId: validation.discount.id,
+              userId: user.id,
+            },
+          });
+          discountCouponId = coupon.id;
+        } else if (validation.discount.type === "FIXED_AMOUNT") {
+          // For fixed amount, we'll need to create a coupon with amount_off
+          const coupon = await stripe.coupons.create({
+            amount_off: validation.discount.amountOff,
+            currency: "usd",
+            name: `Discount: ${discountCode}`,
+            duration: "once",
+            metadata: {
+              discountCodeId: validation.discount.id,
+              userId: user.id,
+            },
+          });
+          discountCouponId = coupon.id;
+        }
+
+        discountAmount = validation.discount.amountOff;
+        discountCodeId = validation.discount.id;
+      } else {
+        return NextResponse.json(
+          { error: validation.error || "Invalid discount code" },
+          { status: 400 }
+        );
+      }
+    }
+
     // Create checkout session
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const sessionData: any = {
       customer: customerId,
       mode: planType === "lifetime" ? "payment" : "subscription",
       payment_method_types: ["card"],
@@ -95,8 +165,16 @@ export async function POST(request: Request) {
       metadata: {
         userId: user.id,
         planType: planType || (finalPriceId === STRIPE_PRICE_IDS.annual ? "annual" : finalPriceId === STRIPE_PRICE_IDS.lifetime ? "lifetime" : "monthly"),
+        ...(discountCodeId && { discountCodeId }),
       },
-    });
+    };
+
+    // Add discount coupon if available
+    if (discountCouponId) {
+      sessionData.discounts = [{ coupon: discountCouponId }];
+    }
+
+    const checkoutSession = await stripe.checkout.sessions.create(sessionData);
 
     return NextResponse.json({
       sessionId: checkoutSession.id,

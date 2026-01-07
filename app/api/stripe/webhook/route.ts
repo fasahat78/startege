@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/db";
+import { applyDiscountCode } from "@/lib/discount-codes";
 import Stripe from "stripe";
 
 export async function POST(request: Request) {
@@ -91,8 +92,36 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const userId = session.metadata?.userId;
   const planType = session.metadata?.planType || "monthly";
   const purchaseType = session.metadata?.purchaseType;
+  const discountCodeId = session.metadata?.discountCodeId;
 
-  console.log(`[WEBHOOK] Session metadata:`, { userId, planType, purchaseType });
+  console.log(`[WEBHOOK] Session metadata:`, { userId, planType, purchaseType, discountCodeId });
+
+  // Record discount code usage if applicable
+  if (discountCodeId && userId && session.amount_total) {
+    try {
+      const amountTotal = session.amount_total;
+      const amountSubtotal = session.amount_subtotal || amountTotal;
+      const amountSaved = amountSubtotal - amountTotal;
+
+      if (amountSaved > 0) {
+        // Get subscription ID if this is a subscription
+        const subscriptionId = session.subscription as string | undefined;
+
+        await applyDiscountCode(
+          discountCodeId,
+          userId,
+          subscriptionId,
+          session.payment_intent as string | undefined,
+          amountSaved
+        );
+
+        console.log(`[WEBHOOK] ✅ Recorded discount code usage: ${discountCodeId}, saved: $${(amountSaved / 100).toFixed(2)}`);
+      }
+    } catch (error: any) {
+      console.error(`[WEBHOOK] ❌ Error recording discount code usage:`, error);
+      // Don't fail the webhook if discount tracking fails
+    }
+  }
 
   if (!userId) {
     console.error("[WEBHOOK] No userId in checkout session metadata");
