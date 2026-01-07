@@ -112,12 +112,21 @@ export async function POST(request: Request) {
           );
         }
 
+        // Get discount code details to determine duration
+        const codeDetails = await prisma.discountCode.findUnique({
+          where: { id: validation.discount.id },
+          select: { earlyAdopterTier: true },
+        });
+
+        // Determine duration: "forever" for founding members (lifetime discount), "once" for others
+        const duration = codeDetails?.earlyAdopterTier === "FOUNDING_MEMBER" ? "forever" : "once";
+
         // Create Stripe coupon for percentage discounts
         if (validation.discount.type === "PERCENTAGE" && validation.discount.percentageOff) {
           const coupon = await stripe.coupons.create({
             percent_off: validation.discount.percentageOff,
             name: `Discount: ${discountCode}`,
-            duration: "once", // For one-time discounts, use "forever" for lifetime
+            duration: duration,
             metadata: {
               discountCodeId: validation.discount.id,
               userId: user.id,
@@ -130,7 +139,7 @@ export async function POST(request: Request) {
             amount_off: validation.discount.amountOff,
             currency: "usd",
             name: `Discount: ${discountCode}`,
-            duration: "once",
+            duration: duration,
             metadata: {
               discountCodeId: validation.discount.id,
               userId: user.id,
