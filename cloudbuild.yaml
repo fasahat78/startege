@@ -18,22 +18,34 @@ steps:
       - '-c'
       - |
         # Extract components from DATABASE_URL
-        DB_URL="${DATABASE_URL}"
-        DB_URL="${DB_URL#postgresql://}"
+        # Handle format: postgresql://user:password@host:port/db or postgresql://user:password@/db?host=...
+        DB_URL="${DATABASE_URL#postgresql://}"
+        
+        # Extract user:password
         CREDENTIALS="${DB_URL%%@*}"
         USER="${CREDENTIALS%%:*}"
         PASSWORD="${CREDENTIALS#*:}"
+        
+        # Extract rest after @
         REST="${DB_URL#*@}"
-        if echo "$REST" | grep -q "host="; then
+        
+        # Handle Unix socket format (postgresql://user:pass@/db?host=...)
+        if echo "$REST" | grep -q "^/"; then
+          # Format: /db?host=...
           DB_NAME="${REST%%\?*}"
-          DB_NAME="${DB_NAME#*/}"
+          DB_NAME="${DB_NAME#/}"
         else
+          # Format: host:port/db or host:port/db?params
           DB_NAME="${REST#*/}"
           DB_NAME="${DB_NAME%%\?*}"
         fi
+        
+        # URL decode password (%40 = @, %25 = %)
         PASSWORD=$(echo "$PASSWORD" | sed 's/%40/@/g' | sed 's/%25/%/g')
+        
         export PGPASSWORD="$PASSWORD"
         echo "Waiting for Cloud SQL Proxy to be ready..."
+        echo "Connecting as user: $USER to database: $DB_NAME"
         for i in 1 2 3 4 5 6 7 8 9 10; do
           if psql -h 127.0.0.1 -p 5432 -U "$USER" -d "$DB_NAME" -c "SELECT 1;" > /dev/null 2>&1; then
             echo "Cloud SQL Proxy is ready!"
