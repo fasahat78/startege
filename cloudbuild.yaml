@@ -13,13 +13,29 @@ steps:
   - name: 'postgres:20-alpine'
     entrypoint: 'sh'
     env:
-      - 'PGPASSWORD=${_DB_PASSWORD}'
+      - 'DATABASE_URL=${_DATABASE_URL}'
     args:
       - '-c'
       - |
+        # Extract components from DATABASE_URL
+        DB_URL="${DATABASE_URL}"
+        DB_URL="${DB_URL#postgresql://}"
+        CREDENTIALS="${DB_URL%%@*}"
+        USER="${CREDENTIALS%%:*}"
+        PASSWORD="${CREDENTIALS#*:}"
+        REST="${DB_URL#*@}"
+        if echo "$REST" | grep -q "host="; then
+          DB_NAME="${REST%%\?*}"
+          DB_NAME="${DB_NAME#*/}"
+        else
+          DB_NAME="${REST#*/}"
+          DB_NAME="${DB_NAME%%\?*}"
+        fi
+        PASSWORD=$(echo "$PASSWORD" | sed 's/%40/@/g' | sed 's/%25/%/g')
+        export PGPASSWORD="$PASSWORD"
         echo "Waiting for Cloud SQL Proxy to be ready..."
         for i in 1 2 3 4 5 6 7 8 9 10; do
-          if psql -h 127.0.0.1 -p 5432 -U ${_DB_USER} -d ${_DB_NAME} -c "SELECT 1;" > /dev/null 2>&1; then
+          if psql -h 127.0.0.1 -p 5432 -U "$USER" -d "$DB_NAME" -c "SELECT 1;" > /dev/null 2>&1; then
             echo "Cloud SQL Proxy is ready!"
             exit 0
           fi
@@ -32,14 +48,41 @@ steps:
     waitFor: ['start-cloud-sql-proxy']
 
   # Run SQL script to create AIGP tables
+  # Parse DATABASE_URL to extract connection details
   - name: 'postgres:20-alpine'
-    entrypoint: 'psql'
+    entrypoint: 'sh'
     env:
-      - 'PGPASSWORD=${_DB_PASSWORD}'
+      - 'DATABASE_URL=${_DATABASE_URL}'
     args:
-      - 'postgresql://${_DB_USER}@127.0.0.1:5432/${_DB_NAME}'
-      - '-f'
-      - 'scripts/create-aigp-tables.sql'
+      - '-c'
+      - |
+        # Extract components from DATABASE_URL
+        # Format: postgresql://user:password@host:port/database?params
+        DB_URL="${DATABASE_URL}"
+        # Remove postgresql:// prefix
+        DB_URL="${DB_URL#postgresql://}"
+        # Extract user:password@host:port/database
+        CREDENTIALS="${DB_URL%%@*}"
+        USER="${CREDENTIALS%%:*}"
+        PASSWORD="${CREDENTIALS#*:}"
+        # Extract host:port/database
+        REST="${DB_URL#*@}"
+        # Handle ?host= parameter (Unix socket)
+        if echo "$REST" | grep -q "host="; then
+          # For Unix socket: postgresql://user:pass@/db?host=/cloudsql/...
+          DB_NAME="${REST%%\?*}"
+          DB_NAME="${DB_NAME#*/}"
+        else
+          # For TCP: postgresql://user:pass@host:port/db
+          HOST_PORT="${REST%%/*}"
+          DB_NAME="${REST#*/}"
+          DB_NAME="${DB_NAME%%\?*}"
+        fi
+        # URL decode password (%40 = @, etc.)
+        PASSWORD=$(echo "$PASSWORD" | sed 's/%40/@/g' | sed 's/%25/%/g')
+        echo "Connecting to database: $DB_NAME as user: $USER"
+        export PGPASSWORD="$PASSWORD"
+        psql -h 127.0.0.1 -p 5432 -U "$USER" -d "$DB_NAME" -f scripts/create-aigp-tables.sql
     id: 'create-aigp-tables'
     waitFor: ['wait-for-proxy']
 
@@ -119,9 +162,8 @@ substitutions:
   _SERVICE_NAME: 'startege'
   _REGION: 'us-central1'
   _CLOUD_SQL_INSTANCE: 'startege-db'
-  _DB_USER: 'postgres'
-  _DB_PASSWORD: 'Zoya%4057Bruce'
-  _DB_NAME: 'startege'
+  # _DATABASE_URL should be set in Cloud Build trigger
+  # Format: postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5432/startege
 
 # Build options
 options:
