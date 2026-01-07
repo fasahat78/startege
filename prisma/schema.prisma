@@ -119,6 +119,47 @@ enum CreditTransactionType {
   REFUND // Refund for failed API call
 }
 
+enum DiscountCodeType {
+  PERCENTAGE // Percentage off (e.g., 50%)
+  FIXED_AMOUNT // Fixed amount off (e.g., $10)
+  FREE_TRIAL // Free trial period
+}
+
+enum DiscountCodeStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  USED_UP // Max uses reached
+}
+
+enum EarlyAdopterTier {
+  FOUNDING_MEMBER // First 100 users - 50% off forever
+  EARLY_ADOPTER // Next 400 users - 40% off first year
+  LAUNCH_USER // Next 500+ users - 20% off first year
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum FeedbackType {
+  BUG
+  FEATURE_REQUEST
+  UX_ISSUE
+  CONTENT_FEEDBACK
+  GENERAL
+}
+
+enum FeedbackStatus {
+  PENDING
+  REVIEWED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
 // ============================================
 // USER & AUTHENTICATION
 // ============================================
@@ -136,8 +177,26 @@ model User {
   currentLevel             Int       @default(1)
   maxUnlockedLevel         Int       @default(1) // Free users max at 10
   totalChallengesCompleted Int       @default(0)
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime  @updatedAt
+
+  // Admin & Roles
+  role    UserRole @default(USER)
+  isAdmin Boolean  @default(false) // Quick check for admin access
+
+  // Early Adopter Tracking
+  isEarlyAdopter        Boolean           @default(false)
+  earlyAdopterTier      EarlyAdopterTier?
+  earlyAdopterStartDate DateTime?
+  earlyAdopterEndDate   DateTime? // For time-limited benefits
+  discountCodeUsed      String? // Code they used to sign up
+
+  // Referral Tracking
+  referralCode         String? @unique // Their unique referral code
+  referredByUserId     String? // Who referred them
+  referralCount        Int     @default(0) // How many they've referred
+  totalReferralCredits Int     @default(0) // Total credits earned from referrals
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // NextAuth relations
   accounts Account[]
@@ -172,6 +231,12 @@ model User {
 
   // Remediation
   remediationSessions RemediationSession[]
+
+  // Early Adopter & Referrals
+  referralsGiven     Referral[]          @relation("Referrer")
+  referralReceived   Referral?           @relation("Referee")
+  discountCodeUsages DiscountCodeUsage[]
+  feedback           Feedback[]
 }
 
 // NextAuth required models
@@ -1210,4 +1275,146 @@ model CreditTransaction {
   @@index([createdAt])
   @@index([service])
   @@index([stripePaymentId])
+}
+
+// ============================================
+// DISCOUNT CODES & PROMOTIONS
+// ============================================
+
+model DiscountCode {
+  id          String             @id @default(cuid())
+  code        String             @unique // e.g., "FOUNDING100"
+  description String?            @db.Text
+  type        DiscountCodeType   @default(PERCENTAGE)
+  value       Float // Percentage (0-100) or fixed amount in cents
+  status      DiscountCodeStatus @default(ACTIVE)
+
+  // Usage Limits
+  maxUses        Int? // null = unlimited
+  currentUses    Int  @default(0)
+  maxUsesPerUser Int  @default(1) // How many times one user can use it
+
+  // Applicability
+  applicableToPlanTypes String[] // ["monthly", "annual", "both"]
+  minAmount             Int? // Minimum purchase amount in cents (for fixed amount discounts)
+
+  // Validity
+  validFrom  DateTime  @default(now())
+  validUntil DateTime?
+
+  // Early Adopter Tiers
+  earlyAdopterTier EarlyAdopterTier? // If tied to early adopter program
+
+  // Admin
+  createdBy String? // Admin user ID
+  notes     String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  usages DiscountCodeUsage[]
+
+  @@index([code])
+  @@index([status])
+  @@index([earlyAdopterTier])
+  @@index([validFrom])
+  @@index([validUntil])
+}
+
+model DiscountCodeUsage {
+  id             String   @id @default(cuid())
+  discountCodeId String
+  userId         String
+  subscriptionId String? // If used for subscription
+  paymentId      String? // If used for one-time payment
+  amountSaved    Int // Amount saved in cents
+  createdAt      DateTime @default(now())
+
+  // Relations
+  discountCode DiscountCode @relation(fields: [discountCodeId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([discountCodeId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ============================================
+// REFERRAL SYSTEM
+// ============================================
+
+model Referral {
+  id               String    @id @default(cuid())
+  referrerId       String // User who made the referral
+  refereeId        String    @unique // User who was referred
+  referralCode     String // Code that was used
+  status           String    @default("pending") // pending, completed, rewarded
+  referrerRewarded Boolean   @default(false)
+  refereeRewarded  Boolean   @default(false)
+  rewardCredits    Int       @default(0) // Credits given as reward
+  createdAt        DateTime  @default(now())
+  completedAt      DateTime? // When referee became a paid user
+
+  // Relations
+  referrer User @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referee  User @relation("Referee", fields: [refereeId], references: [id], onDelete: Cascade)
+
+  @@index([referrerId])
+  @@index([refereeId])
+  @@index([referralCode])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ============================================
+// FEEDBACK SYSTEM (Admin Managed)
+// ============================================
+
+model Feedback {
+  id       String         @id @default(cuid())
+  userId   String
+  type     FeedbackType
+  status   FeedbackStatus @default(PENDING)
+  title    String?
+  message  String         @db.Text
+  pageUrl  String? // Where feedback was submitted from
+  metadata Json? // Additional data (browser, device, etc.)
+
+  // Admin Management
+  assignedTo String? // Admin user ID
+  priority   String? // low, medium, high, critical
+  adminNotes String?   @db.Text
+  resolvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@index([priority])
+}
+
+// ============================================
+// ADMIN ANALYTICS & TRACKING
+// ============================================
+
+model UserEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  eventType String // signup, login, exam_completed, subscription_started, etc.
+  eventData Json? // Additional event data
+  pageUrl   String?
+  userAgent String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
 }
