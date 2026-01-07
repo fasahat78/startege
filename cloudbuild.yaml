@@ -1,4 +1,48 @@
 steps:
+  # Create AIGP tables if they don't exist
+  # Start Cloud SQL Proxy in background
+  - name: 'gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0'
+    entrypoint: '/cloud-sql-proxy'
+    args:
+      - '${PROJECT_ID}:${_REGION}:${_CLOUD_SQL_INSTANCE}'
+      - '--port=5432'
+    id: 'start-cloud-sql-proxy'
+    waitFor: ['-']
+
+  # Wait for Cloud SQL Proxy to be ready
+  - name: 'postgres:20-alpine'
+    entrypoint: 'sh'
+    env:
+      - 'PGPASSWORD=${_DB_PASSWORD}'
+    args:
+      - '-c'
+      - |
+        echo "Waiting for Cloud SQL Proxy to be ready..."
+        for i in 1 2 3 4 5 6 7 8 9 10; do
+          if psql -h 127.0.0.1 -p 5432 -U ${_DB_USER} -d ${_DB_NAME} -c "SELECT 1;" > /dev/null 2>&1; then
+            echo "Cloud SQL Proxy is ready!"
+            exit 0
+          fi
+          echo "Waiting... ($i/10)"
+          sleep 2
+        done
+        echo "Cloud SQL Proxy failed to start"
+        exit 1
+    id: 'wait-for-proxy'
+    waitFor: ['start-cloud-sql-proxy']
+
+  # Run SQL script to create AIGP tables
+  - name: 'postgres:20-alpine'
+    entrypoint: 'psql'
+    env:
+      - 'PGPASSWORD=${_DB_PASSWORD}'
+    args:
+      - 'postgresql://${_DB_USER}@127.0.0.1:5432/${_DB_NAME}'
+      - '-f'
+      - 'scripts/create-aigp-tables.sql'
+    id: 'create-aigp-tables'
+    waitFor: ['wait-for-proxy']
+
   # Build the container image
   # Pass NEXT_PUBLIC_* variables as build args (required at build time)
   - name: 'gcr.io/cloud-builders/docker'
@@ -74,6 +118,10 @@ steps:
 substitutions:
   _SERVICE_NAME: 'startege'
   _REGION: 'us-central1'
+  _CLOUD_SQL_INSTANCE: 'startege-db'
+  _DB_USER: 'postgres'
+  _DB_PASSWORD: 'Zoya%4057Bruce'
+  _DB_NAME: 'startege'
 
 # Build options
 options:
