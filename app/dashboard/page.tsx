@@ -9,6 +9,7 @@ import FeatureBlocks from "@/components/dashboard/FeatureBlocks";
 import SubscriptionRefresh from "@/components/dashboard/SubscriptionRefresh";
 import CreditBalance from "@/components/dashboard/CreditBalance";
 import Tooltip from "@/components/ui/Tooltip";
+import EarlyAdopterBadge from "@/components/admin/EarlyAdopterBadge";
 
 // Mark as dynamic since it uses cookies
 export const dynamic = 'force-dynamic';
@@ -49,6 +50,10 @@ export default async function DashboardPage({
         maxUnlockedLevel: true, 
         totalChallengesCompleted: true,
         subscriptionTier: true,
+        isEarlyAdopter: true,
+        earlyAdopterTier: true,
+        referralCode: true,
+        referralCount: true,
       },
     }),
     prisma.userPoints.findUnique({
@@ -126,12 +131,45 @@ export default async function DashboardPage({
         {/* Welcome Message */}
         <div className="mb-8">
           <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-brand-teal/10 rounded-xl p-6 md:p-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-              Welcome back, {user.name || user.email?.split("@")[0]}! 👋
-            </h1>
-            <p className="text-muted-foreground">
-              Continue your journey to AI Governance mastery
-            </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                    Welcome back, {user.name || user.email?.split("@")[0]}! 👋
+                  </h1>
+                  {userData?.isEarlyAdopter && userData?.earlyAdopterTier && (
+                    <EarlyAdopterBadge tier={userData.earlyAdopterTier as any} />
+                  )}
+                </div>
+                <p className="text-muted-foreground">
+                  Continue your journey to AI Governance mastery
+                </p>
+                {userData?.referralCode && (
+                  <div className="mt-3 p-3 bg-card/50 rounded-lg border border-border">
+                    <p className="text-sm text-muted-foreground mb-1">Your Referral Code:</p>
+                    <div className="flex items-center gap-2">
+                      <code className="px-3 py-1 bg-background rounded font-mono font-semibold text-foreground">
+                        {userData.referralCode}
+                      </code>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/auth/signup-firebase?ref=${userData.referralCode}`);
+                          alert("Referral link copied to clipboard!");
+                        }}
+                        className="text-sm text-accent hover:text-accent/80"
+                      >
+                        Copy Link
+                      </button>
+                    </div>
+                    {userData.referralCount > 0 && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {userData.referralCount} referral{userData.referralCount !== 1 ? "s" : ""} • Earn 1 month free per referral!
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 

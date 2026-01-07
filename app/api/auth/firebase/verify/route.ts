@@ -204,6 +204,34 @@ export async function POST(request: Request) {
       // Get name from various sources (OAuth providers may provide displayName)
       const userName = name || decodedToken.name || decodedToken.display_name || email.split("@")[0];
       
+      // Determine early adopter tier based on user count
+      const userCount = await prisma.user.count();
+      let earlyAdopterTier: "FOUNDING_MEMBER" | "EARLY_ADOPTER" | "LAUNCH_USER" | null = null;
+      let isEarlyAdopter = false;
+
+      if (userCount < 100) {
+        earlyAdopterTier = "FOUNDING_MEMBER";
+        isEarlyAdopter = true;
+      } else if (userCount < 500) {
+        earlyAdopterTier = "EARLY_ADOPTER";
+        isEarlyAdopter = true;
+      } else if (userCount < 1000) {
+        earlyAdopterTier = "LAUNCH_USER";
+        isEarlyAdopter = true;
+      }
+
+      // Generate referral code
+      const base = firebaseUser.email?.split("@")[0].toUpperCase().slice(0, 6) || 
+        firebaseUser.uid.slice(0, 6).toUpperCase();
+      let referralCode = base;
+      let counter = 1;
+
+      // Ensure uniqueness
+      while (await prisma.user.findUnique({ where: { referralCode } })) {
+        referralCode = `${base}${counter}`;
+        counter++;
+      }
+
       // Create new user
       user = await prisma.user.create({
         data: {
@@ -213,6 +241,10 @@ export async function POST(request: Request) {
           emailVerified: email_verified || false,
           emailVerifiedAt: email_verified ? new Date() : null,
           subscriptionTier: subscriptionTier as "free" | "premium",
+          isEarlyAdopter,
+          earlyAdopterTier,
+          earlyAdopterStartDate: isEarlyAdopter ? new Date() : null,
+          referralCode,
         },
         include: {
           subscription: true,
