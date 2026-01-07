@@ -1,15 +1,6 @@
 steps:
   # Create AIGP tables if they don't exist
-  # Start Cloud SQL Proxy in background
-  - name: 'gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0'
-    entrypoint: '/cloud-sql-proxy'
-    args:
-      - '${PROJECT_ID}:${_REGION}:${_CLOUD_SQL_INSTANCE}'
-      - '--port=5432'
-    id: 'start-cloud-sql-proxy'
-    waitFor: ['-']
-
-  # Wait for Cloud SQL Proxy to be ready
+  # Start Cloud SQL Proxy in background and run SQL script in the same step
   - name: 'postgres:20-alpine'
     entrypoint: 'sh'
     env:
@@ -17,90 +8,68 @@ steps:
     args:
       - '-c'
       - |
-        # Extract components from DATABASE_URL
-        # Handle format: postgresql://user:password@host:port/db or postgresql://user:password@/db?host=...
-        db_url="${DATABASE_URL#postgresql://}"
+        # Install cloud-sql-proxy
+        apk add --no-cache wget
+        wget -q https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.0/cloud-sql-proxy.linux.amd64 -O /tmp/cloud-sql-proxy
+        chmod +x /tmp/cloud-sql-proxy
         
-        # Extract user:password
+        # Extract components from DATABASE_URL
+        db_url="${DATABASE_URL#postgresql://}"
         credentials="${db_url%%@*}"
         db_user="${credentials%%:*}"
         db_password="${credentials#*:}"
-        
-        # Extract rest after @
         rest_part="${db_url#*@}"
         
-        # Handle Unix socket format (postgresql://user:pass@/db?host=...)
         if echo "$rest_part" | grep -q "^/"; then
-          # Format: /db?host=...
           db_name="${rest_part%%\?*}"
           db_name="${db_name#/}"
         else
-          # Format: host:port/db or host:port/db?params
           db_name="${rest_part#*/}"
           db_name="${db_name%%\?*}"
         fi
         
-        # URL decode password (%40 = @, %25 = %)
+        # URL decode password
         db_password=$(echo "$db_password" | sed 's/%40/@/g' | sed 's/%25/%/g')
         
-        export PGPASSWORD="$db_password"
+        # Start Cloud SQL Proxy in background
+        echo "Starting Cloud SQL Proxy..."
+        /tmp/cloud-sql-proxy ${PROJECT_ID}:${_REGION}:${_CLOUD_SQL_INSTANCE} --port=5432 &
+        proxy_pid=$!
+        
+        # Wait for proxy to be ready
         echo "Waiting for Cloud SQL Proxy to be ready..."
-        echo "Connecting as user: $db_user to database: $db_name"
-        for i in 1 2 3 4 5 6 7 8 9 10; do
+        export PGPASSWORD="$db_password"
+        for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
           if psql -h 127.0.0.1 -p 5432 -U "$db_user" -d "$db_name" -c "SELECT 1;" > /dev/null 2>&1; then
-            echo "Cloud SQL Proxy is ready!"
-            exit 0
+            echo "✅ Cloud SQL Proxy is ready!"
+            break
           fi
-          echo "Waiting... ($i/10)"
+          if [ $i -eq 15 ]; then
+            echo "❌ Cloud SQL Proxy failed to start"
+            kill $proxy_pid 2>/dev/null || true
+            exit 1
+          fi
+          echo "Waiting... ($i/15)"
           sleep 2
         done
-        echo "Cloud SQL Proxy failed to start"
-        exit 1
-    id: 'wait-for-proxy'
-    waitFor: ['start-cloud-sql-proxy']
-
-  # Run SQL script to create AIGP tables
-  # Parse DATABASE_URL to extract connection details
-  - name: 'postgres:20-alpine'
-    entrypoint: 'sh'
-    env:
-      - 'DATABASE_URL=${_DATABASE_URL}'
-    args:
-      - '-c'
-      - |
-        # Extract components from DATABASE_URL
-        # Handle format: postgresql://user:password@host:port/db or postgresql://user:password@/db?host=...
-        db_url="${DATABASE_URL#postgresql://}"
         
-        # Extract user:password
-        credentials="${db_url%%@*}"
-        db_user="${credentials%%:*}"
-        db_password="${credentials#*:}"
-        
-        # Extract rest after @
-        rest_part="${db_url#*@}"
-        
-        # Handle Unix socket format (postgresql://user:pass@/db?host=...)
-        if echo "$rest_part" | grep -q "^/"; then
-          # Format: /db?host=...
-          db_name="${rest_part%%\?*}"
-          db_name="${db_name#/}"
-        else
-          # Format: host:port/db or host:port/db?params
-          db_name="${rest_part#*/}"
-          db_name="${db_name%%\?*}"
-        fi
-        
-        # URL decode password (%40 = @, %25 = %)
-        db_password=$(echo "$db_password" | sed 's/%40/@/g' | sed 's/%25/%/g')
-        
+        # Run SQL script
         echo "Creating AIGP tables..."
-        echo "Connecting to database: $db_name as user: $db_user"
-        export PGPASSWORD="$db_password"
         psql -h 127.0.0.1 -p 5432 -U "$db_user" -d "$db_name" -f scripts/create-aigp-tables.sql
-        echo "✅ AIGP tables created successfully!"
+        sql_exit=$?
+        
+        # Stop proxy
+        kill $proxy_pid 2>/dev/null || true
+        wait $proxy_pid 2>/dev/null || true
+        
+        if [ $sql_exit -eq 0 ]; then
+          echo "✅ AIGP tables created successfully!"
+          exit 0
+        else
+          echo "❌ Failed to create AIGP tables"
+          exit 1
+        fi
     id: 'create-aigp-tables'
-    waitFor: ['wait-for-proxy']
 
   # Build the container image
   # Pass NEXT_PUBLIC_* variables as build args (required at build time)
