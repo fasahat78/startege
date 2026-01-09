@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "next lint",
     "import-flashcards": "tsx scripts/import-flashcards.ts",
+    "import-flashcards:prod": "tsx scripts/import-flashcards-prod.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
