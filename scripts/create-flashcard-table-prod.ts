@@ -4,7 +4,7 @@ import { join } from "path";
 
 // Production credentials
 const PROD_PASSWORD = "Zoya@57Bruce";
-const PROD_USER = "postgres";
+const PROD_USER = "startege-db";
 const PROD_DB = "startege";
 const PROXY_PORT = process.env.PROXY_PORT || "5436";
 
