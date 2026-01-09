@@ -40,7 +40,7 @@ export async function requireAdmin() {
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { isAdmin: true, role: true },
+    select: { id: true, isAdmin: true, role: true },
   });
 
   if (!dbUser || (dbUser.isAdmin !== true && dbUser.role !== UserRole.ADMIN && dbUser.role !== UserRole.SUPER_ADMIN)) {
