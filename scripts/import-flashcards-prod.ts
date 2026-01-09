@@ -8,7 +8,7 @@ import { join } from "path";
 const PROD_PASSWORD = "Zoya@57Bruce";
 const PROD_USER = "postgres";
 const PROD_DB = "startege";
-const PROXY_PORT = process.env.PROXY_PORT || "5434"; // Default to 5434
+const PROXY_PORT = process.env.PROXY_PORT || "5435"; // Default to 5435 (5432-5434 are used by local PostgreSQL instances)
 
 // Create connection string for Cloud SQL Proxy
 const PROD_DATABASE_URL = `postgresql://${PROD_USER}:${encodeURIComponent(PROD_PASSWORD)}@127.0.0.1:${PROXY_PORT}/${PROD_DB}`;
