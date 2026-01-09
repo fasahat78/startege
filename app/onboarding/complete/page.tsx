@@ -50,9 +50,9 @@ export default async function OnboardingCompletePage() {
   return (
     <OnboardingCompleteClient
       profile={{
-        personaType: profile.personaType,
+        personaType: profile.personaType as any,
         customPersona: profile.customPersona,
-        knowledgeLevel: profile.knowledgeLevel,
+        knowledgeLevel: profile.knowledgeLevel as any,
         interests: profile.interests.map((i) => i.interest),
         goals: profile.goals.map((g) => g.goal),
       }}

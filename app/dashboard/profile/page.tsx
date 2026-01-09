@@ -136,7 +136,7 @@ export default async function ProfilePage() {
         <div className="bg-card rounded-lg shadow-card p-6 border border-border mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-card-foreground">Onboarding Status</h2>
-            {getOnboardingStatusBadge(profile?.onboardingStatus || null)}
+            {getOnboardingStatusBadge((profile?.onboardingStatus as OnboardingStatus) || null)}
           </div>
 
           {profile?.onboardingStatus === "COMPLETED" ? (
@@ -149,11 +149,11 @@ export default async function ProfilePage() {
                   </label>
                   <div className="p-3 bg-muted/50 rounded-lg">
                     <p className="font-medium text-card-foreground">
-                      {getPersonaDisplayName(profile.personaType)}
+                      {getPersonaDisplayName(profile.personaType as PersonaType)}
                     </p>
-                    {profile.personaType !== PersonaType.OTHER && (
+                    {(profile.personaType as PersonaType) !== PersonaType.OTHER && (
                       <p className="text-sm text-muted-foreground mt-1">
-                        {getPersonaDescription(profile.personaType)}
+                        {getPersonaDescription(profile.personaType as PersonaType)}
                       </p>
                     )}
                     {profile.customPersona && (
@@ -172,7 +172,7 @@ export default async function ProfilePage() {
                 </label>
                 <div className="p-3 bg-muted/50 rounded-lg">
                   <p className="font-medium text-card-foreground">
-                    {getKnowledgeLevelDisplay(profile.knowledgeLevel)}
+                    {getKnowledgeLevelDisplay((profile.knowledgeLevel as KnowledgeLevel) || null)}
                   </p>
                 </div>
               </div>

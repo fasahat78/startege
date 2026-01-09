@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     // Get scenarios for this persona
     // @ts-ignore - Prisma types not fully recognized by TypeScript yet
     const scenarios = await prisma.onboardingScenario.findMany({
-      where: { personaType: userProfile.personaType },
+      where: { personaType: userProfile.personaType as any },
     });
 
     // Process answers and calculate knowledge level
