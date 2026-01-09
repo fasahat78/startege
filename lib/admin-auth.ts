@@ -10,14 +10,21 @@ export async function isAdmin(): Promise<boolean> {
     const user = await getCurrentUser();
     if (!user) return false;
 
+    console.log("[ADMIN-AUTH] Checking admin status for user:", user.id);
+    console.log("[ADMIN-AUTH] Current DATABASE_URL:", process.env.DATABASE_URL?.substring(0, 50) + "...");
+
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { isAdmin: true, role: true },
     });
 
+    console.log("[ADMIN-AUTH] User admin status:", { isAdmin: dbUser?.isAdmin, role: dbUser?.role });
+
     return dbUser?.isAdmin === true || dbUser?.role === UserRole.ADMIN || dbUser?.role === UserRole.SUPER_ADMIN;
-  } catch (error) {
-    console.error("Error checking admin status:", error);
+  } catch (error: any) {
+    console.error("[ADMIN-AUTH] Error checking admin status:", error.message);
+    console.error("[ADMIN-AUTH] Error code:", error.code);
+    console.error("[ADMIN-AUTH] DATABASE_URL in error context:", process.env.DATABASE_URL?.substring(0, 50));
     return false;
   }
 }

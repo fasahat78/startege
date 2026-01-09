@@ -10,7 +10,8 @@ import SubscriptionRefresh from "@/components/dashboard/SubscriptionRefresh";
 import CreditBalance from "@/components/dashboard/CreditBalance";
 import Tooltip from "@/components/ui/Tooltip";
 import EarlyAdopterBadge from "@/components/admin/EarlyAdopterBadge";
-import ReferralCode from "@/components/dashboard/ReferralCode";
+// PARKED: Referral system - hidden until premium requirement is clarified
+// import ReferralCode from "@/components/dashboard/ReferralCode";
 
 // Mark as dynamic since it uses cookies
 export const dynamic = 'force-dynamic';
@@ -145,12 +146,14 @@ export default async function DashboardPage({
                 <p className="text-muted-foreground">
                   Continue your journey to AI Governance mastery
                 </p>
+                {/* PARKED: Referral system - hidden until premium requirement is clarified
                 {userData?.referralCode && (
                   <ReferralCode
                     referralCode={userData.referralCode}
                     referralCount={userData.referralCount || 0}
                   />
                 )}
+                */}
               </div>
             </div>
           </div>

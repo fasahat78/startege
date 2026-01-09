@@ -94,7 +94,20 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const purchaseType = session.metadata?.purchaseType;
   const discountCodeId = session.metadata?.discountCodeId;
 
-  console.log(`[WEBHOOK] Session metadata:`, { userId, planType, purchaseType, discountCodeId });
+  console.log(`[WEBHOOK] Session metadata:`, { 
+    userId, 
+    planType, 
+    purchaseType, 
+    discountCodeId,
+    allMetadata: session.metadata 
+  });
+  
+  console.log(`[WEBHOOK] Session amounts:`, {
+    amount_total: session.amount_total,
+    amount_subtotal: session.amount_subtotal,
+    total_details: session.total_details,
+    discounts: session.total_details?.amount_discount,
+  });
 
   // Record discount code usage if applicable
   if (discountCodeId && userId && session.amount_total) {
@@ -103,7 +116,17 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       const amountSubtotal = session.amount_subtotal || amountTotal;
       const amountSaved = amountSubtotal - amountTotal;
 
-      if (amountSaved > 0) {
+      console.log(`[WEBHOOK] Discount calculation:`, {
+        amountTotal,
+        amountSubtotal,
+        amountSaved,
+        discountFromStripe: session.total_details?.amount_discount,
+      });
+
+      // Use Stripe's discount amount if available, otherwise calculate
+      const finalAmountSaved = session.total_details?.amount_discount || amountSaved;
+
+      if (finalAmountSaved > 0) {
         // Get subscription ID if this is a subscription
         const subscriptionId = session.subscription as string | undefined;
 
@@ -112,14 +135,27 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           userId,
           subscriptionId,
           session.payment_intent as string | undefined,
-          amountSaved
+          finalAmountSaved
         );
 
-        console.log(`[WEBHOOK] ✅ Recorded discount code usage: ${discountCodeId}, saved: $${(amountSaved / 100).toFixed(2)}`);
+        console.log(`[WEBHOOK] ✅ Recorded discount code usage: ${discountCodeId}, saved: $${(finalAmountSaved / 100).toFixed(2)}`);
+      } else {
+        console.log(`[WEBHOOK] ⚠️ No discount amount detected (saved: ${finalAmountSaved})`);
       }
     } catch (error: any) {
       console.error(`[WEBHOOK] ❌ Error recording discount code usage:`, error);
+      console.error(`[WEBHOOK] Error stack:`, error.stack);
       // Don't fail the webhook if discount tracking fails
+    }
+  } else {
+    if (!discountCodeId) {
+      console.log(`[WEBHOOK] ⚠️ No discountCodeId in session metadata`);
+    }
+    if (!userId) {
+      console.log(`[WEBHOOK] ⚠️ No userId in session metadata`);
+    }
+    if (!session.amount_total) {
+      console.log(`[WEBHOOK] ⚠️ No amount_total in session`);
     }
   }
 

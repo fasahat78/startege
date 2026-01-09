@@ -6,6 +6,7 @@ import Link from "next/link";
 import PricingClient from "@/components/pricing/PricingClient";
 import CreditBalance from "@/components/dashboard/CreditBalance";
 import SubscriptionRefresh from "@/components/dashboard/SubscriptionRefresh";
+import DiscountVerification from "@/components/pricing/DiscountVerification";
 
 // Mark as dynamic since it uses cookies
 export const dynamic = 'force-dynamic';
@@ -53,6 +54,7 @@ export default async function PricingPage() {
     <div className="min-h-screen bg-muted">
       <Suspense fallback={null}>
         <SubscriptionRefresh />
+        <DiscountVerification />
       </Suspense>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Credit Balance - Show for Premium Users */}

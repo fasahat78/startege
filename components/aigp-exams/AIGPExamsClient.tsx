@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "@/components/ui/Toast";
+import FlashcardsTab from "./FlashcardsTab";
 
 interface Exam {
   id: string;
@@ -31,6 +32,7 @@ interface AIGPExamsClientProps {
 
 export default function AIGPExamsClient({ exams }: AIGPExamsClientProps) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<"exams" | "flashcards">("exams");
 
   const handleStartExam = async (examId: string) => {
     try {
@@ -71,12 +73,61 @@ export default function AIGPExamsClient({ exams }: AIGPExamsClientProps) {
             Back to Dashboard
           </Link>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-            AIGP Prep Exams
+            AIGP Exam Preparation
           </h1>
           <p className="text-muted-foreground">
-            Full-length practice exams aligned with AIGP certification blueprint. Each exam contains 100 questions covering all domains.
+            Master the AIGP certification with full-length practice exams and interactive flashcards. Each exam contains 100 questions covering all domains.
           </p>
         </div>
+
+        {/* Tabs - Flashcards Prominent */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 rounded-lg p-1 border border-border/50">
+            <nav className="flex space-x-2">
+              <button
+                onClick={() => setActiveTab("exams")}
+                className={`flex-1 py-3 px-4 rounded-md font-semibold text-sm transition-all ${
+                  activeTab === "exams"
+                    ? "bg-card text-primary shadow-sm border border-border"
+                    : "text-muted-foreground hover:text-card-foreground"
+                }`}
+              >
+                Practice Exams
+              </button>
+              <button
+                onClick={() => setActiveTab("flashcards")}
+                className={`flex-1 py-3 px-4 rounded-md font-semibold text-sm transition-all relative ${
+                  activeTab === "flashcards"
+                    ? "bg-primary text-primary-foreground shadow-lg border border-primary/20"
+                    : "bg-card/50 text-card-foreground hover:bg-card border border-border hover:shadow-sm"
+                }`}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                  Flashcards
+                  {activeTab === "flashcards" && (
+                    <span className="ml-1 px-2 py-0.5 text-xs bg-primary-foreground/20 rounded-full">
+                      Study Mode
+                    </span>
+                  )}
+                </span>
+              </button>
+            </nav>
+          </div>
+          {activeTab === "flashcards" && (
+            <p className="mt-3 text-sm text-muted-foreground text-center">
+              📚 Master all 132 AIGP concepts with interactive flashcards • Flip to reveal answers • Track your progress
+            </p>
+          )}
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === "flashcards" ? (
+          <FlashcardsTab />
+        ) : (
+          <>
 
         {/* Exams Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -242,6 +293,8 @@ export default function AIGPExamsClient({ exams }: AIGPExamsClientProps) {
             </li>
           </ul>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

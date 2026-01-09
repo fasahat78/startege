@@ -55,9 +55,8 @@ function SignInFirebaseContent() {
       // This ensures the cookie is properly set and persists across navigations
       console.log("[CLIENT] Skipping client-side cookie set - will be set by verify route");
 
-      // Use form POST to handle redirect naturally (browser follows redirect automatically)
-      // This avoids opaqueredirect issues
-      console.log("[CLIENT] Creating form to submit to verify route...");
+      // Use fetch to handle redirect and errors better
+      console.log("[CLIENT] Submitting to verify route...");
       const targetRedirect = redirect || "/dashboard";
       
       PersistentLogger.log("===== STARTING VERIFY =====");
@@ -67,50 +66,35 @@ function SignInFirebaseContent() {
       console.log("[CLIENT] ===== STARTING VERIFY =====");
       console.log("[CLIENT] Target redirect:", targetRedirect);
       console.log("[CLIENT] ID Token length:", idToken.length);
-      console.log("[CLIENT] Using form POST to handle redirect naturally");
       
-      // Create a form and submit it - browser will follow redirect automatically
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = "/api/auth/firebase/verify";
-      form.style.display = "none";
-      
-      const idTokenInput = document.createElement("input");
-      idTokenInput.type = "hidden";
-      idTokenInput.name = "idToken";
-      idTokenInput.value = idToken;
-      form.appendChild(idTokenInput);
-      
-      const redirectInput = document.createElement("input");
-      redirectInput.type = "hidden";
-      redirectInput.name = "redirect";
-      redirectInput.value = targetRedirect;
-      form.appendChild(redirectInput);
-      
-      document.body.appendChild(form);
-      
-      PersistentLogger.log("Form created, submitting...");
-      console.log("[CLIENT] Form created, submitting...");
-      console.log("[CLIENT] Form action:", form.action);
-      console.log("[CLIENT] Form method:", form.method);
-      console.log("[CLIENT] Form inputs:", Array.from(form.elements).map((el: any) => ({ name: el.name, value: el.value?.substring(0, 20) + "..." })));
-      
-      // Add a small delay to ensure form is in DOM
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      setLoading(false); // Let the form handle the navigation
+      const formData = new FormData();
+      formData.append("idToken", idToken);
+      formData.append("redirect", targetRedirect);
       
       try {
-        console.log("[CLIENT] About to call form.submit()...");
-        form.submit();
-        console.log("[CLIENT] form.submit() called (this might not execute if redirect happens)");
-      } catch (submitError: any) {
-        PersistentLogger.error("Form submit error", submitError);
-        console.error("[CLIENT] Form submit error:", submitError);
-        throw submitError;
+        console.log("[CLIENT] Submitting to verify route via fetch...");
+        const response = await fetch("/api/auth/firebase/verify", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        });
+
+        if (response.ok || response.status === 303) {
+          // Success - redirect manually
+          const redirectUrl = response.headers.get("Location") || targetRedirect;
+          console.log("[CLIENT] Verify successful, redirecting to:", redirectUrl);
+          window.location.href = redirectUrl;
+          return;
+        } else {
+          // Error - show to user
+          const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+          throw new Error(errorData.error || "Failed to verify session");
+        }
+      } catch (fetchError: any) {
+        PersistentLogger.error("Fetch error", fetchError);
+        console.error("[CLIENT] Fetch error:", fetchError);
+        throw fetchError;
       }
-      
-      return; // Exit early - form submission will navigate
     } catch (error: any) {
       console.error("Sign in error:", error);
       
@@ -152,14 +136,18 @@ function SignInFirebaseContent() {
         throw new Error("Unsupported provider");
       }
 
-      // Get ID token
-      const idToken = await getIdToken();
+      // Get ID token from the userCredential (more reliable than getIdToken())
+      if (!userCredential?.user) {
+        throw new Error("Failed to get user from OAuth sign-in");
+      }
+
+      const idToken = await userCredential.user.getIdToken();
 
       if (!idToken) {
         throw new Error("Failed to get ID token");
       }
 
-      // Use form POST to handle redirect naturally
+      // Use fetch to handle redirect and errors better
       const targetRedirect = redirect || "/dashboard";
       
       PersistentLogger.log("===== STARTING OAUTH VERIFY =====");
@@ -172,42 +160,39 @@ function SignInFirebaseContent() {
       console.log("[CLIENT] Target redirect:", targetRedirect);
       console.log("[CLIENT] ID Token length:", idToken.length);
       
-      // Create a form and submit it - browser will follow redirect automatically
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = "/api/auth/firebase/verify";
-      form.style.display = "none";
-      
-      const idTokenInput = document.createElement("input");
-      idTokenInput.type = "hidden";
-      idTokenInput.name = "idToken";
-      idTokenInput.value = idToken;
-      form.appendChild(idTokenInput);
-      
-      const redirectInput = document.createElement("input");
-      redirectInput.type = "hidden";
-      redirectInput.name = "redirect";
-      redirectInput.value = targetRedirect;
-      form.appendChild(redirectInput);
+      const formData = new FormData();
+      formData.append("idToken", idToken);
+      formData.append("redirect", targetRedirect);
       
       // Add name if available from OAuth provider
       if (userCredential.user?.displayName) {
-        const nameInput = document.createElement("input");
-        nameInput.type = "hidden";
-        nameInput.name = "name";
-        nameInput.value = userCredential.user.displayName;
-        form.appendChild(nameInput);
+        formData.append("name", userCredential.user.displayName);
       }
       
-      document.body.appendChild(form);
-      
-      PersistentLogger.log("Form created, submitting...");
-      console.log("[CLIENT] Form created, submitting...");
-      
-      setOauthLoading(null); // Let the form handle the navigation
-      form.submit();
-      
-      return; // Exit early - form submission will navigate
+      try {
+        console.log("[CLIENT] Submitting OAuth verify via fetch...");
+        const response = await fetch("/api/auth/firebase/verify", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        });
+
+        if (response.ok || response.status === 303) {
+          // Success - redirect manually
+          const redirectUrl = response.headers.get("Location") || targetRedirect;
+          console.log("[CLIENT] OAuth verify successful, redirecting to:", redirectUrl);
+          window.location.href = redirectUrl;
+          return;
+        } else {
+          // Error - show to user
+          const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+          throw new Error(errorData.error || "Failed to verify session");
+        }
+      } catch (fetchError: any) {
+        PersistentLogger.error("OAuth fetch error", fetchError);
+        console.error("[CLIENT] OAuth fetch error:", fetchError);
+        throw fetchError;
+      }
     } catch (error: any) {
       console.error("OAuth sign in error:", error);
       

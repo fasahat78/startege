@@ -76,10 +76,23 @@ export async function POST() {
     const stripeInterval = stripeSub.items.data[0]?.price.recurring?.interval || "month";
     
     // Extract period timestamps using bracket notation to bypass type checking
-    const periodStartTimestamp = (stripeSub as any).current_period_start as number;
-    const periodEndTimestamp = (stripeSub as any).current_period_end as number;
-    const periodStart = new Date(periodStartTimestamp * 1000);
-    const periodEnd = new Date(periodEndTimestamp * 1000);
+    const periodStartTimestamp = (stripeSub as any).current_period_start as number | undefined;
+    const periodEndTimestamp = (stripeSub as any).current_period_end as number | undefined;
+    
+    // Only create Date objects if timestamps are valid numbers
+    const periodStart = periodStartTimestamp ? new Date(periodStartTimestamp * 1000) : new Date();
+    const periodEnd = periodEndTimestamp ? new Date(periodEndTimestamp * 1000) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // Default to 30 days from now
+    
+    console.log(`[MANUAL UPGRADE] Subscription details:`, {
+      status,
+      subscriptionId,
+      customerId,
+      stripeInterval,
+      periodStartTimestamp,
+      periodEndTimestamp,
+      periodStart: periodStart.toISOString(),
+      periodEnd: periodEnd.toISOString(),
+    });
 
     // Check if subscription is active in Stripe
     const isActive = status === "active" || status === "trialing";

@@ -85,6 +85,12 @@ export async function POST(request: Request) {
     let discountAmount = 0;
     let discountCodeId: string | undefined;
 
+    console.log(`[CHECKOUT SESSION] Discount code check:`, {
+      discountCodeProvided: !!discountCode,
+      discountCode: discountCode,
+      planType,
+    });
+
     if (discountCode) {
       // Get price amount from Stripe to validate discount
       const price = await stripe.prices.retrieve(finalPriceId);
@@ -97,19 +103,73 @@ export async function POST(request: Request) {
       );
 
       if (validation.valid && validation.discount) {
-        // Check if user has already used this code
-        const hasUsed = await prisma.discountCodeUsage.findFirst({
+        // Check if user has already used this code with a completed payment/subscription
+        const existingUsage = await prisma.discountCodeUsage.findFirst({
           where: {
             discountCodeId: validation.discount.id,
             userId: user.id,
           },
+          include: {
+            discountCode: {
+              select: {
+                maxUsesPerUser: true,
+              },
+            },
+          },
         });
 
-        if (hasUsed) {
-          return NextResponse.json(
-            { error: "You have already used this discount code" },
-            { status: 400 }
-          );
+        if (existingUsage) {
+          // Check if there's an active subscription or completed payment associated with this usage
+          if (existingUsage.subscriptionId) {
+            const subscription = await prisma.subscription.findUnique({
+              where: { id: existingUsage.subscriptionId },
+              select: { status: true },
+            });
+            
+            // If subscription is active, user has already used the code successfully
+            if (subscription?.status === "active" || subscription?.status === "trialing") {
+              return NextResponse.json(
+                { error: "You have already used this discount code" },
+                { status: 400 }
+              );
+            }
+            // If subscription is incomplete/cancelled, allow reuse
+            console.log(`[CHECKOUT SESSION] Previous discount usage found but subscription is ${subscription?.status}, allowing reuse`);
+          } else if (existingUsage.paymentId) {
+            // Check if payment was successful
+            // For now, if there's a paymentId but no subscription, assume it's a one-time payment that completed
+            // Allow reuse only if maxUsesPerUser > 1
+            const maxUsesPerUser = existingUsage.discountCode?.maxUsesPerUser || 1;
+            if (maxUsesPerUser <= 1) {
+              return NextResponse.json(
+                { error: "You have already used this discount code" },
+                { status: 400 }
+              );
+            }
+            console.log(`[CHECKOUT SESSION] Previous discount usage found but maxUsesPerUser=${maxUsesPerUser}, allowing reuse`);
+          } else {
+            // No subscription or payment ID - this might be an incomplete usage
+            // Check maxUsesPerUser
+            const maxUsesPerUser = existingUsage.discountCode?.maxUsesPerUser || 1;
+            if (maxUsesPerUser <= 1) {
+              // Check if user has an active subscription (they might have used the code successfully)
+              const userSubscription = await prisma.subscription.findUnique({
+                where: { userId: user.id },
+                select: { status: true },
+              });
+              
+              if (userSubscription?.status === "active" || userSubscription?.status === "trialing") {
+                return NextResponse.json(
+                  { error: "You have already used this discount code" },
+                  { status: 400 }
+                );
+              }
+              // No active subscription, allow reuse
+              console.log(`[CHECKOUT SESSION] Previous discount usage found but no active subscription, allowing reuse`);
+            } else {
+              console.log(`[CHECKOUT SESSION] Previous discount usage found but maxUsesPerUser=${maxUsesPerUser}, allowing reuse`);
+            }
+          }
         }
 
         // Get discount code details to determine duration
@@ -150,12 +210,22 @@ export async function POST(request: Request) {
 
         discountAmount = validation.discount.amountOff;
         discountCodeId = validation.discount.id;
+        
+        console.log(`[CHECKOUT SESSION] ✅ Discount code validated:`, {
+          discountCodeId,
+          discountCouponId,
+          discountAmount,
+          percentageOff: validation.discount.percentageOff,
+        });
       } else {
+        console.log(`[CHECKOUT SESSION] ❌ Discount code validation failed:`, validation.error);
         return NextResponse.json(
           { error: validation.error || "Invalid discount code" },
           { status: 400 }
         );
       }
+    } else {
+      console.log(`[CHECKOUT SESSION] ⚠️ No discount code provided`);
     }
 
     // Create checkout session
@@ -184,6 +254,15 @@ export async function POST(request: Request) {
     }
 
     const checkoutSession = await stripe.checkout.sessions.create(sessionData);
+
+    console.log(`[CHECKOUT SESSION] Created session ${checkoutSession.id}`, {
+      hasDiscountCoupon: !!discountCouponId,
+      discountCouponId,
+      discountCodeId,
+      metadata: checkoutSession.metadata,
+      metadataKeys: checkoutSession.metadata ? Object.keys(checkoutSession.metadata) : [],
+      sessionDataMetadata: sessionData.metadata,
+    });
 
     return NextResponse.json({
       sessionId: checkoutSession.id,

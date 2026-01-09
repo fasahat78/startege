@@ -83,16 +83,67 @@ export default function PricingClient({ isPremium, planType, currentPlanType }: 
         });
       } else {
         // Subscription purchase
+        // Auto-validate discount code if entered but not yet applied
+        let finalDiscountCode = discountCode && discountApplied ? discountCode.toUpperCase() : null;
+        
+        if (discountCode && !discountApplied && !planType.startsWith("credits-")) {
+          console.log("[PRICING CLIENT] Auto-validating discount code before checkout...");
+          const planTypeForValidation = planType === "annual" ? "annual" : "monthly";
+          const baseAmount = planType === "annual" ? 19900 : 1900;
+          
+          try {
+            const validationResponse = await fetch("/api/discount-codes/validate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                code: discountCode.toUpperCase(),
+                planType: planTypeForValidation,
+                amount: baseAmount,
+              }),
+            });
+
+            const validationResult = await validationResponse.json();
+
+            if (validationResult.valid && validationResult.discount) {
+              console.log("[PRICING CLIENT] ✅ Auto-validation successful, applying discount");
+              setDiscountApplied(validationResult.discount);
+              setDiscountCodeError("");
+              finalDiscountCode = discountCode.toUpperCase();
+            } else {
+              console.log("[PRICING CLIENT] ❌ Auto-validation failed:", validationResult.error);
+              setDiscountCodeError(validationResult.error || "Invalid discount code");
+              setLoading(false);
+              return; // Don't proceed with checkout if discount is invalid
+            }
+          } catch (error) {
+            console.error("[PRICING CLIENT] Error auto-validating discount code:", error);
+            // Continue without discount if validation fails
+          }
+        }
+        
+        const requestBody = {
+          planType: planType === "annual" ? "annual" : "monthly",
+          returnUrl: window.location.origin + "/pricing",
+          ...(finalDiscountCode && { discountCode: finalDiscountCode }),
+        };
+        
+        console.log("[PRICING CLIENT] Creating checkout session with:", {
+          planType: requestBody.planType,
+          hasDiscountCode: !!requestBody.discountCode,
+          discountCode: requestBody.discountCode,
+          discountCodeRaw: discountCode,
+          discountApplied: !!discountApplied,
+          finalDiscountCode,
+        });
+        
         response = await fetch("/api/stripe/create-checkout-session", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            planType: planType === "annual" ? "annual" : "monthly",
-            returnUrl: window.location.origin + "/pricing",
-            ...(discountCode && discountApplied && { discountCode: discountCode.toUpperCase() }),
-          }),
+          body: JSON.stringify(requestBody),
         });
       }
 
@@ -106,6 +157,10 @@ export default function PricingClient({ isPremium, planType, currentPlanType }: 
       if (data.url) {
         // Store that we're coming from pricing page
         sessionStorage.setItem("checkoutFrom", "pricing");
+        // Store session ID for discount verification on return
+        if (data.sessionId) {
+          sessionStorage.setItem("stripeCheckoutSessionId", data.sessionId);
+        }
         window.location.href = data.url;
       } else {
         throw new Error("No checkout URL returned");

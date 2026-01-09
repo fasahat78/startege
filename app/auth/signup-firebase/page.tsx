@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signUp, getIdToken, signInWithGoogle, signInWithApple } from "@/lib/firebase-auth";
 import { updateProfile } from "firebase/auth";
@@ -15,6 +15,7 @@ if (typeof window !== "undefined") {
 
 export default function SignUpFirebasePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +23,9 @@ export default function SignUpFirebasePage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
+  
+  // Capture referral code from URL
+  const referralCode = searchParams?.get("ref") || null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +92,16 @@ export default function SignUpFirebasePage() {
       nameInput.name = "name";
       nameInput.value = name;
       form.appendChild(nameInput);
+      
+      // Pass referral code if present in URL
+      if (referralCode) {
+        const referralInput = document.createElement("input");
+        referralInput.type = "hidden";
+        referralInput.name = "referralCode";
+        referralInput.value = referralCode.toUpperCase();
+        form.appendChild(referralInput);
+        console.log("[CLIENT] Including referral code from URL:", referralCode.toUpperCase());
+      }
       
       const redirectInput = document.createElement("input");
       redirectInput.type = "hidden";
@@ -179,6 +193,16 @@ export default function SignUpFirebasePage() {
         nameInput.name = "name";
         nameInput.value = displayName;
         form.appendChild(nameInput);
+      }
+      
+      // Pass referral code if present in URL
+      if (referralCode) {
+        const referralInput = document.createElement("input");
+        referralInput.type = "hidden";
+        referralInput.name = "referralCode";
+        referralInput.value = referralCode.toUpperCase();
+        form.appendChild(referralInput);
+        console.log("[CLIENT] Including referral code from URL (OAuth):", referralCode.toUpperCase());
       }
       
       const redirectInput = document.createElement("input");

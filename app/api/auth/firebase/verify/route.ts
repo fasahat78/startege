@@ -139,8 +139,8 @@ export async function POST(request: Request) {
       );
     }
     
-    const { idToken, name, redirect } = body;
-    console.log("[VERIFY ROUTE] idToken present:", !!idToken, "name:", name || "not provided", "redirect:", redirect || "not provided");
+    const { idToken, name, redirect, referralCode: referralCodeFromRequest } = body;
+    console.log("[VERIFY ROUTE] idToken present:", !!idToken, "name:", name || "not provided", "redirect:", redirect || "not provided", "referralCode:", referralCodeFromRequest || "none");
 
     if (!idToken) {
       console.log("[VERIFY ROUTE] Missing idToken");
@@ -220,16 +220,56 @@ export async function POST(request: Request) {
         isEarlyAdopter = true;
       }
 
-      // Generate referral code
-      const base = firebaseUser.email?.split("@")[0].toUpperCase().slice(0, 6) || 
-        firebaseUser.uid.slice(0, 6).toUpperCase();
+      // Generate referral code - prefer name over email for better UX
+      // Try name first, then email, then fallback to UID
+      let base: string;
+      if (userName) {
+        // Use name: "Fasahat Feroze" -> "FASAHA"
+        base = userName.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+      } else if (email) {
+        // Use email prefix: "info@konfidence.ai" -> "INFO"
+        base = email.split("@")[0].toUpperCase().slice(0, 6);
+      } else {
+        // Fallback to UID
+        base = uid.slice(0, 6).toUpperCase();
+      }
+      
+      // Ensure base is at least 3 characters
+      if (base.length < 3) {
+        base = (email?.split("@")[0] || uid).toUpperCase().slice(0, 6);
+      }
+      
       let referralCode = base;
       let counter = 1;
 
       // Ensure uniqueness
-      while (await prisma.user.findUnique({ where: { referralCode } })) {
+      while (await prisma.user.findFirst({ where: { referralCode } })) {
         referralCode = `${base}${counter}`;
         counter++;
+      }
+
+      // Process referral code if provided
+      let referredByUserId: string | null = null;
+      if (referralCodeFromRequest) {
+        try {
+          // Find the referrer by their referral code
+          const referrer = await prisma.user.findUnique({
+            where: { referralCode: referralCodeFromRequest.toUpperCase() },
+            select: { id: true, email: true },
+          });
+          
+          if (referrer && referrer.id !== uid) { // Don't refer yourself
+            referredByUserId = referrer.id;
+            console.log(`[VERIFY ROUTE] ✅ Referral code found! Referrer: ${referrer.email} (${referrer.id})`);
+          } else if (referrer) {
+            console.log(`[VERIFY ROUTE] ⚠️ Cannot refer yourself, ignoring referral code`);
+          } else {
+            console.log(`[VERIFY ROUTE] ⚠️ Referral code "${referralCodeFromRequest}" not found, ignoring`);
+          }
+        } catch (error: any) {
+          console.error(`[VERIFY ROUTE] Error processing referral code:`, error.message);
+          // Don't fail user creation if referral processing fails
+        }
       }
 
       // Create new user
@@ -245,12 +285,42 @@ export async function POST(request: Request) {
           earlyAdopterTier,
           earlyAdopterStartDate: isEarlyAdopter ? new Date() : null,
           referralCode,
+          referredByUserId,
         },
         include: {
           subscription: true,
         },
       });
       console.log("[VERIFY ROUTE] User created successfully, ID:", user.id);
+      
+      // Create referral record and update referrer stats if referral was processed
+      if (referredByUserId && referralCodeFromRequest) {
+        try {
+          await prisma.referral.create({
+            data: {
+              referrerId: referredByUserId,
+              refereeId: user.id,
+              referralCode: referralCodeFromRequest.toUpperCase(),
+              status: "pending",
+            },
+          });
+          
+          // Increment referrer's referral count
+          await prisma.user.update({
+            where: { id: referredByUserId },
+            data: {
+              referralCount: {
+                increment: 1,
+              },
+            },
+          });
+          
+          console.log(`[VERIFY ROUTE] ✅ Referral record created and referrer count updated for user ${referredByUserId}`);
+        } catch (error: any) {
+          console.error(`[VERIFY ROUTE] Error creating referral record:`, error.message);
+          // Don't fail if referral record creation fails
+        }
+      }
     } else {
       console.log("[VERIFY ROUTE] User found, updating...");
       // Get name from various sources for update

@@ -37,8 +37,33 @@ export async function refreshSessionCookie(redirect?: string): Promise<boolean> 
       console.log("[SESSION REFRESH] ✅ Session cookie refreshed successfully");
       return true;
     } else {
-      const error = await response.json().catch(() => ({ error: "Unknown error" }));
-      console.error("[SESSION REFRESH] ❌ Failed to refresh session:", error);
+      // Try to get error details
+      const contentType = response.headers.get("content-type");
+      let error: any = { error: "Unknown error" };
+      
+      if (contentType?.includes("application/json")) {
+        try {
+          error = await response.json();
+        } catch (e) {
+          console.error("[SESSION REFRESH] Failed to parse JSON error:", e);
+          error = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
+      } else {
+        // Try to read as text if not JSON
+        try {
+          const text = await response.text();
+          error = { error: text || `HTTP ${response.status}: ${response.statusText}` };
+        } catch (e) {
+          error = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
+      }
+      
+      console.error("[SESSION REFRESH] ❌ Failed to refresh session:", {
+        status: response.status,
+        statusText: response.statusText,
+        contentType,
+        error,
+      });
       return false;
     }
   } catch (error: any) {

@@ -8,16 +8,24 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-  
-  if (!user) {
-    redirect("/auth/signin-firebase?redirect=/admin");
-  }
+  try {
+    const user = await getCurrentUser();
+    
+    if (!user) {
+      redirect("/auth/signin-firebase?redirect=/admin");
+    }
 
-  const hasAdminAccess = await isAdmin();
-  
-  if (!hasAdminAccess) {
-    redirect("/dashboard");
+    const hasAdminAccess = await isAdmin();
+    
+    if (!hasAdminAccess) {
+      redirect("/dashboard");
+    }
+  } catch (error: any) {
+    console.error("[ADMIN LAYOUT] Error:", error.message);
+    console.error("[ADMIN LAYOUT] Stack:", error.stack);
+    console.error("[ADMIN LAYOUT] DATABASE_URL:", process.env.DATABASE_URL?.substring(0, 50));
+    // Don't redirect on error - let it show the error page
+    throw error;
   }
 
   return (

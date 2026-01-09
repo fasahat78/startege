@@ -49,3 +49,5 @@ next-env.d.ts
 # Note: Migrations SHOULD be tracked in Git for CI/CD
 # /prisma/migrations
 
+.env.backup
+.env.local.backup
