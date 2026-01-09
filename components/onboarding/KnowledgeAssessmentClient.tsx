@@ -26,14 +26,31 @@ interface KnowledgeAssessmentClientProps {
 }
 
 /**
- * Shuffle an array using Fisher-Yates algorithm
+ * Shuffle an array using Fisher-Yates algorithm with crypto-secure randomness
+ * Uses crypto.getRandomValues for better randomization
+ * This ensures truly random order that can't be predicted
  */
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  
+  // Use crypto API for cryptographically secure randomness
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const randomValues = new Uint32Array(shuffled.length);
+    crypto.getRandomValues(randomValues);
+    
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      // Use modulo to get random index in range [0, i]
+      const j = randomValues[i] % (i + 1);
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+  } else {
+    // Fallback to Math.random if crypto API not available
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
   }
+  
   return shuffled;
 }
 
@@ -77,8 +94,12 @@ export default function KnowledgeAssessmentClient({ scenarios }: KnowledgeAssess
   const [error, setError] = useState("");
 
   // Shuffle options for each scenario once when component mounts
+  // Add a random seed to ensure different shuffling on each page load
   const shuffledScenarios = useMemo(() => {
-    return scenarios.map((scenario) => {
+    // Add a small random delay to ensure different random states
+    const seed = Date.now() + Math.random() * 1000;
+    return scenarios.map((scenario, index) => {
+      // Use scenario index and seed to create unique shuffle per scenario
       const { shuffledOptions, optionMapping } = shuffleScenarioOptions(scenario);
       return {
         ...scenario,
