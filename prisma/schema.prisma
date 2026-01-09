@@ -474,6 +474,34 @@ model AIGPExamAnswer {
   @@index([isCorrect])
 }
 
+model AIGPFlashcard {
+  id            String                  @id @default(cuid())
+  flashcardId   String                  @unique // Original ID from JSON (e.g., "fc_a1_accountability_missing_owner_v1")
+  status        String                  @default("ACTIVE") // ACTIVE, INACTIVE
+  cardType      String                  // TRIGGER, DIFFERENTIATION, PROCESS, DEFINITION
+  domain        String                  // A, B, C, D, E, F
+  subDomain     String
+  topics        String[]                // Array of topic strings
+  priority      String                  // HIGH, MEDIUM, LOW
+  frontPrompt   String                  @db.Text
+  backAnswer    String                  @db.Text
+  examCue       String                  @db.Text
+  commonTrap    String                  @db.Text
+  sourceFramework String?
+  sourcePointer  String?
+  batchId       String?                 // Which batch file it came from
+  version       String?                 // Version from batch
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  progress      AIGPFlashcardProgress[]
+
+  @@index([domain])
+  @@index([subDomain])
+  @@index([cardType])
+  @@index([priority])
+  @@index([status])
+}
+
 model AIGPFlashcardProgress {
   id            String          @id @default(cuid())
   userId        String
@@ -486,6 +514,7 @@ model AIGPFlashcardProgress {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcard     AIGPFlashcard?  @relation(fields: [flashcardId], references: [flashcardId], onDelete: Cascade)
 
   @@unique([userId, flashcardId])
   @@index([userId])

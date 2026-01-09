@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
@@ -26,19 +27,64 @@ interface Flashcard {
   };
 }
 
-interface FlashcardBatch {
-  batchId: string;
-  version: string;
-  updatedAt: string;
-  cards: Flashcard[];
-}
-
 export async function GET() {
   try {
-    // Use 'flashcards' directory in production (Docker), fallback to original name for local dev
+    // Try to load from database first
+    try {
+      const dbFlashcards = await prisma.aIGPFlashcard.findMany({
+        where: {
+          status: "ACTIVE",
+        },
+        orderBy: [
+          { domain: "asc" },
+          { subDomain: "asc" },
+          { priority: "desc" },
+        ],
+      });
+
+      if (dbFlashcards.length > 0) {
+        console.log(`[FLASHCARDS API] Loaded ${dbFlashcards.length} flashcards from database`);
+        
+        // Transform database format to API format
+        const flashcards: Flashcard[] = dbFlashcards.map((card) => ({
+          id: card.flashcardId,
+          status: card.status,
+          cardType: card.cardType as Flashcard["cardType"],
+          domain: card.domain as Flashcard["domain"],
+          subDomain: card.subDomain,
+          topics: card.topics,
+          priority: card.priority as Flashcard["priority"],
+          front: {
+            prompt: card.frontPrompt,
+          },
+          back: {
+            answer: card.backAnswer,
+            examCue: card.examCue,
+            commonTrap: card.commonTrap,
+          },
+          source: {
+            framework: card.sourceFramework || "",
+            pointer: card.sourcePointer || "",
+          },
+        }));
+
+        return NextResponse.json({
+          success: true,
+          count: flashcards.length,
+          flashcards,
+          source: "database",
+        });
+      }
+    } catch (dbError: any) {
+      console.warn("[FLASHCARDS API] Database query failed, falling back to JSON files:", dbError.message);
+    }
+
+    // Fallback to JSON files if database is empty or fails
+    console.log("[FLASHCARDS API] Loading from JSON files (fallback)...");
     const flashcardsDir = process.env.NODE_ENV === 'production' 
       ? join(process.cwd(), "flashcards")
       : join(process.cwd(), "AIGP Flash Cards");
+    
     const batchFiles = [
       "batch01.json",
       "batch02.json",
@@ -59,10 +105,10 @@ export async function GET() {
       try {
         const filePath = join(flashcardsDir, batchFile);
         const fileContent = await readFile(filePath, "utf-8");
-        const batch: FlashcardBatch = JSON.parse(fileContent);
+        const batch = JSON.parse(fileContent);
         
         // Only include ACTIVE cards
-        const activeCards = batch.cards.filter(card => card.status === "ACTIVE");
+        const activeCards = batch.cards.filter((card: Flashcard) => card.status === "ACTIVE");
         allCards.push(...activeCards);
       } catch (error: any) {
         console.error(`[FLASHCARDS API] Error loading ${batchFile}:`, error.message);
@@ -74,6 +120,7 @@ export async function GET() {
       success: true,
       count: allCards.length,
       flashcards: allCards,
+      source: "json",
     });
   } catch (error: any) {
     console.error("[FLASHCARDS API] Error loading flashcards:", error);
