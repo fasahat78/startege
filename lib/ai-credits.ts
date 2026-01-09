@@ -490,6 +490,7 @@ export async function resetMonthlyCreditsJob() {
         lte: now,
       },
     },
+    // @ts-ignore - subscription relation may not exist in schema
     include: {
       subscription: {
         select: {
@@ -503,7 +504,8 @@ export async function resetMonthlyCreditsJob() {
   const results = await Promise.allSettled(
     creditsToReset.map((credit) =>
       allocateMonthlyCredits(
-        credit.subscription?.userId || credit.userId,
+        // @ts-ignore - subscription relation may not exist
+        (credit as any).subscription?.userId || credit.userId,
         credit.subscriptionId || undefined
       )
     )

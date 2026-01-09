@@ -102,9 +102,9 @@ export async function validateDiscountCode(
 export async function applyDiscountCode(
   codeId: string,
   userId: string,
+  amountSaved: number,
   subscriptionId?: string,
-  paymentId?: string,
-  amountSaved: number
+  paymentId?: string
 ): Promise<void> {
   await prisma.$transaction(async (tx) => {
     // Record usage

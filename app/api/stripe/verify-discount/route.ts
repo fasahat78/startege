@@ -114,13 +114,13 @@ export async function POST(request: Request) {
 
     if (finalAmountSaved > 0) {
       // Record discount code usage
-      await applyDiscountCode(
-        discountCodeId,
-        user.id,
-        session.subscription as string | undefined,
-        session.payment_intent as string | undefined,
-        finalAmountSaved
-      );
+          await applyDiscountCode(
+            discountCodeId,
+            user.id,
+            finalAmountSaved,
+            session.subscription as string | undefined,
+            session.payment_intent as string | undefined
+          );
 
       console.log(`[VERIFY DISCOUNT] ✅ Recorded discount code usage: ${discountCodeId}, saved: $${(finalAmountSaved / 100).toFixed(2)}`);
 

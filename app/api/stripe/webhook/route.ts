@@ -133,9 +133,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         await applyDiscountCode(
           discountCodeId,
           userId,
+          finalAmountSaved,
           subscriptionId,
-          session.payment_intent as string | undefined,
-          finalAmountSaved
+          session.payment_intent as string | undefined
         );
 
         console.log(`[WEBHOOK] ✅ Recorded discount code usage: ${discountCodeId}, saved: $${(finalAmountSaved / 100).toFixed(2)}`);
