@@ -18,6 +18,7 @@
     "db:studio": "prisma studio",
     "import:concepts": "tsx scripts/import-concepts.ts",
     "import:level-mapping": "tsx scripts/import-level-mapping.ts",
+    "import-flashcards:prod": "tsx scripts/import-flashcards-prod-direct.ts",
     "seed:domains-categories": "tsx scripts/seed-domains-categories.ts",
     "seed:challenges": "tsx scripts/seed-challenges.ts",
     "seed:coverage": "tsx scripts/seed-level-category-coverage.ts",
