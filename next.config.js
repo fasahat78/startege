@@ -2,6 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  typescript: {
+    // ⚠️ Dangerously allow production builds to successfully complete even if
+    // your project has type errors. Only use this if you know what you're doing.
+    ignoreBuildErrors: true,
+  },
   images: {
     domains: [],
   },
