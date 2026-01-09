@@ -505,7 +505,7 @@ model AIGPFlashcard {
 model AIGPFlashcardProgress {
   id            String          @id @default(cuid())
   userId        String
-  flashcardId   String
+  flashcardId   String          // References AIGPFlashcard.flashcardId (not id)
   status        FlashcardStatus @default(NOT_STARTED)
   timesViewed   Int             @default(0)
   timesCorrect  Int             @default(0)
