@@ -76,7 +76,26 @@ export async function GET() {
         });
       }
     } catch (dbError: any) {
-      console.warn("[FLASHCARDS API] Database query failed, falling back to JSON files:", dbError.message);
+      console.error("[FLASHCARDS API] Database query failed:", dbError);
+      console.error("[FLASHCARDS API] Error details:", {
+        message: dbError.message,
+        code: dbError.code,
+        meta: dbError.meta,
+      });
+      // Don't fall back silently - return error details in development
+      if (process.env.NODE_ENV !== 'production') {
+        return NextResponse.json(
+          { 
+            error: "Database query failed", 
+            details: dbError.message,
+            code: dbError.code,
+            fallback: "Attempting JSON files..."
+          },
+          { status: 500 }
+        );
+      }
+      // In production, continue to fallback but log the error
+      console.warn("[FLASHCARDS API] Falling back to JSON files due to database error");
     }
 
     // Fallback to JSON files if database is empty or fails
