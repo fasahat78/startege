@@ -669,6 +669,9 @@ const scenarios: ScenarioData[] = [
   },
 ];
 
+// Export scenarios for use in production seed script
+export { scenarios };
+
 async function seedOnboardingScenarios() {
   console.log("🌱 Seeding Onboarding Scenarios (Balanced Version)...\n");
 

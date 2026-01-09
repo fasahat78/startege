@@ -36,7 +36,9 @@
     "check:operations": "tsx scripts/check-index-operations.ts",
     "wait:operations": "tsx scripts/check-index-operations.ts --poll",
     "test:semantic": "tsx scripts/test-semantic-search.ts",
-    "get:deployment-id": "tsx scripts/get-deployment-id.ts"
+    "get:deployment-id": "tsx scripts/get-deployment-id.ts",
+    "seed-onboarding-scenarios": "tsx scripts/seed-onboarding-scenarios.ts",
+    "seed-onboarding-scenarios:prod": "tsx scripts/seed-onboarding-scenarios-prod.ts"
   },
   "keywords": [],
   "author": "",
