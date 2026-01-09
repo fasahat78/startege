@@ -64,7 +64,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Risk assessments, compliance records, governance policies, technical documentation, and evidence of ongoing monitoring`,
     optionC: `Marketing materials showing the benefits of AI systems and user testimonials demonstrating positive outcomes`,
     optionD: `Only the governance policies, as technical details are proprietary and may not be relevant for compliance verification`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Comprehensive audit readiness requires risk assessments, compliance documentation, governance policies, technical documentation, and evidence of monitoring. This demonstrates a complete governance program.`,
   },
   {
@@ -76,7 +76,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Ensure appropriate safeguards for data transfer (e.g., Standard Contractual Clauses), conduct DPIA, and document lawful basis for processing`,
     optionC: `Only GDPR applies, AI Act doesn't matter for cross-border scenarios since the model deployment is within the EU`,
     optionD: `Move all training to EU infrastructure to avoid any compliance issues, even if this increases costs significantly`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Cross-border data transfers require appropriate safeguards (SCCs, adequacy decisions, etc.). Both GDPR (for data transfer) and AI Act (for AI system compliance) apply. A DPIA should assess risks, and lawful basis must be documented.`,
   },
   {
@@ -116,7 +116,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Equalized odds (equal true positive and false positive rates) combined with calibration (accurate probability estimates)`,
     optionC: `Only individual fairness (similar individuals receive similar treatment), focusing on case-by-case consistency`,
     optionD: `No fairness metrics needed if the model maximizes overall health outcomes, as efficiency benefits everyone`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Healthcare scenarios require both equalized odds (fair treatment) and calibration (accurate risk assessment). Multiple metrics provide a more complete fairness picture than a single metric.`,
   },
   {
@@ -128,7 +128,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Engage stakeholders, consider multiple ethical perspectives, document ethical choices transparently, and ensure human oversight for critical decisions`,
     optionC: `Avoid making ethical choices and let the system learn from data alone, allowing natural patterns to emerge`,
     optionD: `Defer all ethical decisions to the vehicle manufacturer's legal team, as they understand regulatory requirements`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Ethical AI development requires stakeholder engagement, consideration of multiple perspectives, transparency, and human oversight. No single framework captures all ethical considerations.`,
   },
   {
@@ -140,7 +140,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Conduct comprehensive impact assessments considering democratic health, information quality, social cohesion, and long-term consequences, even if it reduces short-term engagement`,
     optionC: `Only consider immediate user feedback and engagement metrics, as these directly reflect user preferences`,
     optionD: `Defer societal impact evaluation to regulators and policymakers, who are responsible for setting standards`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Long-term societal impact requires comprehensive assessment beyond immediate metrics. Organizations deploying AI systems have responsibility to consider broader consequences, even if they reduce short-term engagement.`,
   },
   {
@@ -180,7 +180,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Implement data versioning, model versioning, logging, monitoring, explainability features, and audit trails`,
     optionC: `Only implement monitoring for model performance, tracking accuracy and error rates`,
     optionD: `Technical measures are not required if the model is accurate, as good performance demonstrates compliance`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Technical governance requires comprehensive measures including versioning, logging, monitoring, explainability, and audit trails. Performance alone is insufficient for compliance.`,
   },
   {
@@ -192,7 +192,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Implement efficient explainability methods (e.g., feature importance, simplified models) that can run in real-time, with detailed explanations available on-demand`,
     optionC: `Only provide explanations after the fact, as real-time explanation would slow down the system`,
     optionD: `Make the system slower to accommodate full explainability, ensuring comprehensive explanations are always available`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Balancing performance and explainability requires efficient methods that provide basic explanations in real-time, with detailed explanations available on-demand. This meets both performance and compliance requirements.`,
   },
   {
@@ -204,7 +204,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Implement version control, change detection, rollback capabilities, performance monitoring, and approval workflows for model updates`,
     optionC: `Only monitor performance metrics, ensuring the model continues to meet accuracy thresholds`,
     optionD: `Disable continuous learning and retrain manually, maintaining full control over model updates`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Continuous learning systems require robust governance including version control, change detection, rollback capabilities, monitoring, and approval workflows to ensure controlled, auditable updates.`,
   },
   {
@@ -244,7 +244,7 @@ const scenarios: ScenarioData[] = [
     optionB: `The organization must bring the system into compliance with AI Act requirements, including risk management, data governance, and documentation, within the transition period`,
     optionC: `Only new systems need to comply, and existing systems can continue operating without changes`,
     optionD: `The organization can continue using it indefinitely, as retroactive compliance requirements don't apply`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Existing AI systems classified as high-risk must be brought into compliance with the AI Act within the transition period. Grandfathering typically doesn't apply to high-risk systems affecting fundamental rights.`,
   },
   {
@@ -256,7 +256,7 @@ const scenarios: ScenarioData[] = [
     optionB: `The company must stop processing the objecting individual's data for marketing purposes, unless it can demonstrate compelling legitimate grounds that override the individual's interests`,
     optionC: `Only honor objections if the customer provides a reason, as unfounded objections don't need to be respected`,
     optionD: `Continue processing but inform the customer, as the right to object doesn't require immediate cessation`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `GDPR Article 21 provides individuals with the right to object to processing for direct marketing. For other purposes, processing must stop unless compelling legitimate grounds override the individual's interests.`,
   },
   {
@@ -268,7 +268,7 @@ const scenarios: ScenarioData[] = [
     optionB: `The organization must provide meaningful information about the logic involved, significance, and consequences, and allow the individual to obtain human intervention and contest the decision`,
     optionC: `Only provide a simple explanation that the AI denied the application, without technical details`,
     optionD: `The right to explanation doesn't apply to loan decisions, as these are business decisions`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `GDPR Article 22 and related provisions require meaningful information about automated decision-making logic, significance, and consequences. Individuals have the right to human intervention and to contest decisions. Technical complexity doesn't exempt this obligation.`,
   },
   {
@@ -308,7 +308,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Establish a centralized AI governance framework with clear policies, standards, and oversight, while allowing departments flexibility within the framework`,
     optionC: `Only govern high-risk systems, leaving other systems to departmental discretion`,
     optionD: `Wait until problems arise before implementing governance, avoiding premature standardization`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Centralized governance frameworks provide consistency, efficiency, and comprehensive risk management while allowing operational flexibility. This prevents compliance gaps and reduces duplicate efforts.`,
   },
   {
@@ -320,7 +320,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Implement essential governance measures upfront (risk assessment, basic compliance), plan for comprehensive governance post-launch, and ensure no high-risk violations`,
     optionC: `Delay until full governance is complete regardless of market impact, ensuring comprehensive compliance`,
     optionD: `Copy the competitor's approach without governance, assuming they've addressed compliance requirements`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Balancing speed and governance requires implementing essential measures upfront to prevent high-risk violations, while planning comprehensive governance post-launch. This manages risk without excessive delay.`,
   },
   {
@@ -332,7 +332,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Quantify avoided costs (fines, litigation, reputation damage), demonstrate compliance value, show competitive advantage, and align with strategic objectives`,
     optionC: `Only justify if regulators require it, as voluntary governance may not be necessary`,
     optionD: `Minimize governance to reduce costs, focusing only on mandatory requirements`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Governance ROI should be demonstrated through avoided costs (fines, litigation, reputation damage), compliance value, competitive advantage, and strategic alignment. Quantifying these benefits helps justify investment.`,
   },
   {
@@ -372,7 +372,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Provide information about the data being processed, purposes, recipients, retention periods, data subject rights, and meaningful information about automated decision-making logic`,
     optionC: `Only provide the data itself, as access rights focus on data rather than processing methods`,
     optionD: `The right to access doesn't apply to AI processing, as automated systems operate differently`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `GDPR Article 15 requires comprehensive information including data being processed, purposes, recipients, retention, rights, and meaningful information about automated decision-making logic. This enables individuals to understand and exercise their rights.`,
   },
   {
@@ -384,7 +384,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Ensure appropriate safeguards for transfers (SCCs/adequacy), conduct DPIA, implement data subject rights, provide transparency, and ensure security measures`,
     optionC: `Only ensure the cloud provider is secure, as provider security addresses transfer concerns`,
     optionD: `Third-country processing is not allowed, requiring all processing to occur within the EU`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Cross-border data transfers require appropriate safeguards (SCCs, adequacy decisions). Automated decision-making triggers additional requirements including DPIA, data subject rights, transparency, and security measures.`,
   },
   {
@@ -396,7 +396,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Notify the supervisory authority within 72 hours if the breach is likely to result in a risk to individuals' rights, and notify affected individuals without undue delay if high risk`,
     optionC: `Only notify if individuals complain, as proactive notification may cause unnecessary concern`,
     optionD: `Notification is optional, and organizations can decide based on the severity of the breach`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `GDPR Article 33 requires supervisory authority notification within 72 hours if the breach is likely to result in a risk. Article 34 requires individual notification without undue delay if the breach is likely to result in a high risk to their rights.`,
   },
   {
@@ -436,7 +436,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Conduct thorough risk assessment, consult with regulatory experts, document the analysis, and err on the side of higher-risk classification if uncertain`,
     optionC: `Let the client decide, as they understand their system best`,
     optionD: `Classification doesn't matter, as governance requirements are similar across risk levels`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Unclear classifications require thorough risk assessment, expert consultation, and documented analysis. Erring on the side of higher-risk classification ensures compliance and avoids penalties. Proper documentation supports the decision.`,
   },
   {
@@ -448,7 +448,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Focus on change management, integrate governance into workflows, provide training and tools, demonstrate value, and establish accountability mechanisms`,
     optionC: `Enforce policies more strictly, ensuring compliance through mandatory requirements`,
     optionD: `Simplify governance to reduce burden, removing non-essential requirements`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Effective implementation requires change management, workflow integration, training, tools, value demonstration, and accountability. Policies alone are insufficient without organizational buy-in and practical implementation support.`,
   },
   {
@@ -460,7 +460,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Prioritize based on risk level, impact on individuals, regulatory requirements, business criticality, and resource availability, focusing on high-risk/high-impact systems first`,
     optionC: `Only govern systems that are already compliant, building on existing strengths`,
     optionD: `Govern randomly selected systems, ensuring unbiased coverage`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Prioritization should consider multiple factors: risk level, individual impact, regulatory requirements, business criticality, and resources. High-risk systems affecting individuals should be prioritized to manage the most significant risks first.`,
   },
   {
@@ -500,7 +500,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Provide clear explanations of decisions, enable users to understand and contest decisions, implement appeal processes, and ensure human review for significant decisions`,
     optionC: `Only explain if users request it, avoiding unnecessary complexity for most users`,
     optionD: `Remove automated decision-making, ensuring all decisions are made by humans`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Automated decision-making requires transparency, explanations, contestation rights, appeal processes, and human review for significant decisions. This improves user trust, reduces support burden, and ensures compliance.`,
   },
   {
@@ -512,7 +512,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Implement versioning, testing, gradual rollout, monitoring, user notification for significant changes, and rollback capabilities`,
     optionC: `Never update models to avoid errors, maintaining stable but potentially outdated performance`,
     optionD: `Update without testing, as testing delays improvements and users benefit from faster updates`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Model updates require careful management including versioning, testing, gradual rollout, monitoring, user communication, and rollback capabilities. This ensures improvements while managing risk and maintaining user trust.`,
   },
   {
@@ -524,7 +524,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Provide granular privacy controls, allow users to choose data sharing levels, implement differential privacy where possible, and ensure core functionality works with minimal data`,
     optionC: `Only personalize for users who share all data, as partial data reduces personalization quality`,
     optionD: `Don't collect any data, ensuring full privacy but limiting personalization capabilities`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Accommodating diverse privacy preferences requires granular controls, choice in data sharing, privacy-preserving techniques, and ensuring core functionality with minimal data. This respects user autonomy while enabling personalization.`,
   },
   {
@@ -564,7 +564,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Analyze each framework's scope, requirements, and enforcement mechanisms, identify overlaps and differences, consider practical implementation, and discuss implications for organizations`,
     optionC: `Assume all frameworks are the same, as they address similar concerns`,
     optionD: `Only compare frameworks from the same region, as cross-regional comparison is not meaningful`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Comparative framework analysis requires examining scope, requirements, enforcement, overlaps, differences, practical implementation, and organizational implications. This provides comprehensive understanding of how frameworks relate and differ.`,
   },
   {
@@ -576,7 +576,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Combine theoretical analysis with empirical research (case studies, interviews, surveys), examine implementation challenges, identify best practices, and analyze factors affecting success`,
     optionC: `Only study successful implementations, as failures don't provide useful insights`,
     optionD: `Avoid studying failures, as they may reflect poorly on organizations`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Understanding implementation gaps requires combining theoretical analysis with empirical research including case studies, interviews, and surveys. Examining both successes and failures provides comprehensive insights into real-world implementation.`,
   },
   {
@@ -588,7 +588,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Consider patient safety, privacy, informed consent, data protection, potential harms, benefit-risk analysis, and ensure research serves legitimate healthcare purposes`,
     optionC: `Only consider technical accuracy, as accurate systems benefit patients regardless of other factors`,
     optionD: `Ethics don't apply to research, as research is separate from clinical practice`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Healthcare AI research requires special consideration of patient safety, privacy, informed consent, data protection, potential harms, benefit-risk analysis, and legitimate healthcare purposes. Healthcare contexts involve heightened ethical obligations.`,
   },
   {
@@ -628,7 +628,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Implement fairness assessments, provide transparency and explanations, enable contestation, ensure accountability, and involve stakeholders in governance`,
     optionC: `Only provide explanations if requested, as most users don't need detailed information`,
     optionD: `Fairness is not important for automated decisions, as AI systems are objective`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Addressing fairness and transparency concerns requires fairness assessments, transparency, explanations, contestation rights, accountability mechanisms, and stakeholder involvement. These measures build trust and ensure responsible AI use.`,
   },
   {
@@ -640,7 +640,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Conduct compliance assessment, identify applicable regulations, implement necessary measures (risk assessment, documentation, safeguards), and seek expert advice if needed`,
     optionC: `Only comply if regulators contact them, as proactive compliance may be unnecessary`,
     optionD: `Compliance is optional, and organizations can choose their level of governance`,
-    correctAnswer: "B",
+    correctAnswer: "D",
     explanation: `Ensuring compliance requires assessment, identification of applicable regulations, implementation of necessary measures, and expert advice when needed. Proactive compliance prevents violations and associated penalties.`,
   },
   {
@@ -652,7 +652,7 @@ const scenarios: ScenarioData[] = [
     optionB: `Investigate the concerns, conduct bias assessment, implement mitigation measures if bias is found, consider pausing use if high risk, and communicate transparently with stakeholders`,
     optionC: `Only address concerns if legally required, as voluntary bias mitigation may not be necessary`,
     optionD: `Bias is acceptable if the system is accurate, as accuracy is more important than fairness`,
-    correctAnswer: "B",
+    correctAnswer: "C",
     explanation: `Addressing bias concerns requires investigation, assessment, mitigation, risk-based decisions about continued use, and transparent communication. Ignoring bias concerns can lead to harm, legal violations, and loss of trust.`,
   },
   {
