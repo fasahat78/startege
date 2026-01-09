@@ -35,7 +35,10 @@ interface FlashcardBatch {
 
 export async function GET() {
   try {
-    const flashcardsDir = join(process.cwd(), "AIGP Flash Cards");
+    // Use 'flashcards' directory in production (Docker), fallback to original name for local dev
+    const flashcardsDir = process.env.NODE_ENV === 'production' 
+      ? join(process.cwd(), "flashcards")
+      : join(process.cwd(), "AIGP Flash Cards");
     const batchFiles = [
       "batch01.json",
       "batch02.json",

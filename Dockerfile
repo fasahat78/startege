@@ -64,7 +64,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
     COPY --from=builder /app/prisma ./prisma
     # Copy flashcard JSON files (required for flashcards API)
-    COPY --from=builder --chown=nextjs:nodejs /app/AIGP\ Flash\ Cards ./AIGP\ Flash\ Cards
+    # Copy to a simpler path name to avoid space issues
+    COPY --from=builder --chown=nextjs:nodejs "/app/AIGP Flash Cards" ./flashcards
 
 USER nextjs
 
