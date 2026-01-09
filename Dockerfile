@@ -20,6 +20,9 @@ COPY . .
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Rename flash cards directory to avoid space issues in Docker COPY
+RUN if [ -d "AIGP Flash Cards" ]; then mv "AIGP Flash Cards" flashcards; fi
+
 # Build the application
 # Accept build args for NEXT_PUBLIC_* variables (required at build time)
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
@@ -64,8 +67,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
     COPY --from=builder /app/prisma ./prisma
     # Copy flashcard JSON files (required for flashcards API)
-    # Copy to a simpler path name to avoid space issues
-    COPY --from=builder --chown=nextjs:nodejs "/app/AIGP Flash Cards" ./flashcards
+    # Directory was renamed to 'flashcards' in builder stage to avoid space issues
+    COPY --from=builder --chown=nextjs:nodejs /app/flashcards ./flashcards
 
 USER nextjs
 
