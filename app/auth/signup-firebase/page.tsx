@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signUp, getIdToken, signInWithGoogle, signInWithApple } from "@/lib/firebase-auth";
@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
   PersistentLogger.init();
 }
 
-export default function SignUpFirebasePage() {
+function SignUpFirebaseForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [name, setName] = useState("");
@@ -425,6 +425,25 @@ export default function SignUpFirebasePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignUpFirebasePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-muted px-4">
+        <div className="max-w-md w-full bg-card rounded-lg shadow-card p-8 border-2 border-border">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-card-foreground mb-2">
+              Create Account
+            </h1>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <SignUpFirebaseForm />
+    </Suspense>
   );
 }
 
