@@ -34,9 +34,30 @@ export const STRIPE_PRICE_IDS = {
   creditsLarge: process.env.STRIPE_PRICE_CREDITS_LARGE || "",    // $25
 };
 
-// App URLs
+// App URLs - Use NEXT_PUBLIC_APP_URL if available, otherwise fallback to localhost for development
+const getBaseUrl = () => {
+  // Check for explicit Stripe URLs first
+  if (process.env.STRIPE_SUCCESS_URL && process.env.STRIPE_CANCEL_URL) {
+    return {
+      base: process.env.STRIPE_SUCCESS_URL.replace('/dashboard?upgraded=true', ''),
+    };
+  }
+  // Use NEXT_PUBLIC_APP_URL if available (production)
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return {
+      base: process.env.NEXT_PUBLIC_APP_URL,
+    };
+  }
+  // Fallback to localhost for local development
+  return {
+    base: 'http://localhost:3000',
+  };
+};
+
+const baseUrl = getBaseUrl().base;
+
 export const STRIPE_URLS = {
-  success: process.env.STRIPE_SUCCESS_URL || "http://localhost:3000/dashboard?upgraded=true",
-  cancel: process.env.STRIPE_CANCEL_URL || "http://localhost:3000/dashboard?upgraded=false",
+  success: process.env.STRIPE_SUCCESS_URL || `${baseUrl}/dashboard?upgraded=true`,
+  cancel: process.env.STRIPE_CANCEL_URL || `${baseUrl}/dashboard?upgraded=false`,
 };
 
