@@ -98,10 +98,10 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-card shadow-sm border-b border-border">
+    <header className="bg-card shadow-sm border-b border-border relative z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center flex-1 min-w-0">
+          <div className="flex items-center flex-1 min-w-0 overflow-visible">
             <Link href="/dashboard" className="flex items-center space-x-2 md:space-x-3 group flex-shrink-0">
               <div className="h-8 md:h-10 w-auto flex items-center">
                 <Logo width={80} height={40} className="h-8 md:h-10 w-auto" priority />
@@ -115,7 +115,7 @@ export default function Header() {
                 </span>
               </div>
             </Link>
-            <nav className="ml-2 sm:ml-4 md:ml-8 flex items-center space-x-0.5 sm:space-x-1 md:space-x-2 overflow-x-auto scrollbar-hide">
+            <nav className="ml-2 sm:ml-4 md:ml-8 flex items-center space-x-0.5 sm:space-x-1 md:space-x-2 overflow-x-auto scrollbar-hide overflow-y-visible">
               {/* Primary Navigation - Always Visible */}
               <Link
                 href="/dashboard"
@@ -149,7 +149,7 @@ export default function Header() {
               </Link>
 
               {/* Premium Features Dropdown */}
-              <div className="relative" ref={premiumMenuRef}>
+              <div className="relative z-50" ref={premiumMenuRef}>
                 <button
                   type="button"
                   onClick={(e) => {
@@ -176,7 +176,7 @@ export default function Header() {
                   </svg>
                 </button>
                 {premiumMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-lg border border-border z-[100]">
+                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-lg border border-border z-[100] min-w-max">
                     <div className="py-1">
                       <Link
                         href="/startegizer"
@@ -226,7 +226,7 @@ export default function Header() {
               </div>
 
               {/* More Menu Dropdown */}
-              <div className="relative" ref={moreMenuRef}>
+              <div className="relative z-50" ref={moreMenuRef}>
                 <button
                   type="button"
                   onClick={(e) => {
@@ -253,7 +253,7 @@ export default function Header() {
                   </svg>
                 </button>
                 {moreMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-lg border border-border z-[100]">
+                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-lg border border-border z-[100] min-w-max">
                     <div className="py-1">
                       <Link
                         href="/dashboard/badges"
