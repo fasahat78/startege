@@ -196,6 +196,10 @@ function SignInFirebaseContent() {
         formData.append("name", userCredential.user.displayName);
       }
       
+      // Try fetch first, but fallback to form.submit() if it fails
+      // form.submit() is more reliable for redirects and avoids CORS issues
+      let useFormSubmit = false;
+      
       try {
         console.log("[CLIENT] Submitting OAuth verify via fetch...");
         console.log("[CLIENT] Current origin:", window.location.origin);
@@ -216,8 +220,16 @@ function SignInFirebaseContent() {
             message: fetchError.message,
             stack: fetchError.stack,
           });
-          throw new Error(`Network error: ${fetchError.message || "Failed to connect to server"}`);
+          // If fetch fails, fallback to form.submit()
+          console.warn("[CLIENT] Fetch failed, falling back to form.submit()");
+          useFormSubmit = true;
+          return null; // Will be handled below
         });
+        
+        // If fetch failed, use form.submit() fallback
+        if (!response) {
+          useFormSubmit = true;
+        } else {
 
         console.log("[CLIENT] Verify response status:", response.status);
         console.log("[CLIENT] Verify response ok:", response.ok);
