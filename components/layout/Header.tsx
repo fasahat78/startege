@@ -59,17 +59,27 @@ export default function Header() {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (premiumMenuRef.current && !premiumMenuRef.current.contains(event.target as Node)) {
+      // Only check if menus are open
+      if (premiumMenuOpen && premiumMenuRef.current && !premiumMenuRef.current.contains(event.target as Node)) {
         setPremiumMenuOpen(false);
       }
-      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+      if (moreMenuOpen && moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
         setMoreMenuOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    if (premiumMenuOpen || moreMenuOpen) {
+      // Use a small delay to avoid closing immediately when opening
+      const timeoutId = setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 10);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [premiumMenuOpen, moreMenuOpen]);
 
   const isAuthPage = pathname?.startsWith("/auth");
   const isLandingPage = pathname === "/";
@@ -141,7 +151,9 @@ export default function Header() {
               {/* Premium Features Dropdown */}
               <div className="relative" ref={premiumMenuRef}>
                 <button
-                  onClick={() => {
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setPremiumMenuOpen(!premiumMenuOpen);
                     setMoreMenuOpen(false);
                   }}
@@ -216,7 +228,9 @@ export default function Header() {
               {/* More Menu Dropdown */}
               <div className="relative" ref={moreMenuRef}>
                 <button
-                  onClick={() => {
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setMoreMenuOpen(!moreMenuOpen);
                     setPremiumMenuOpen(false);
                   }}
