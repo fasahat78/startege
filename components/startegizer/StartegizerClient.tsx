@@ -344,6 +344,10 @@ export default function StartegizerClient({
                       ? "bg-primary/10 text-primary font-medium"
                       : "hover:bg-muted text-card-foreground"
                   }`}
+                  onClick={() => {
+                    handleSelectConversation(conv.id);
+                    setShowSidebar(false); // Close sidebar on mobile after selection
+                  }}
                 >
                   <div className="truncate">{conv.title}</div>
                   <div className="text-xs text-muted-foreground mt-1">
@@ -361,7 +365,22 @@ export default function StartegizerClient({
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col w-full">
+        {/* Mobile Header with Menu Button */}
+        <div className="lg:hidden p-4 border-b border-border bg-card flex items-center justify-between">
+          <button
+            onClick={() => setShowSidebar(true)}
+            className="p-2 hover:bg-muted rounded-lg transition"
+            aria-label="Open sidebar"
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 className="text-lg font-semibold text-card-foreground">Startegizer</h1>
+          <div className="w-10" /> {/* Spacer for centering */}
+        </div>
+
         {/* Use Case Builder Overlay */}
         {showUseCaseBuilder && (
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-8 overflow-y-auto">
@@ -400,8 +419,8 @@ export default function StartegizerClient({
           </div>
         )}
 
-        {/* Chat Header */}
-        <div className="bg-card border-b border-border p-4">
+        {/* Chat Header - Hidden on mobile, shown on desktop */}
+        <div className="hidden lg:block bg-card border-b border-border p-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-card-foreground">Startegizer</h1>
