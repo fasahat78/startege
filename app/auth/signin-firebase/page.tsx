@@ -220,10 +220,23 @@ function SignInFirebaseContent() {
         });
 
         console.log("[CLIENT] Verify response status:", response.status);
+        console.log("[CLIENT] Verify response ok:", response.ok);
+        console.log("[CLIENT] Verify response type:", response.type);
         console.log("[CLIENT] Verify response headers:", {
           location: response.headers.get("Location"),
           contentType: response.headers.get("Content-Type"),
         });
+
+        // Check for HTTP 0 (network error)
+        if (response.status === 0) {
+          console.error("[CLIENT] ❌ HTTP 0 - Request failed before server response");
+          console.error("[CLIENT] This usually means:");
+          console.error("  - Network error or connection lost");
+          console.error("  - Request was cancelled/aborted");
+          console.error("  - CORS preflight failed (but OPTIONS works)");
+          console.error("  - Server not responding");
+          throw new Error("Network error: Request failed before server response. Please check your connection and try again.");
+        }
 
         // Handle redirect manually to avoid CORS issues
         if (response.status === 303 || response.status === 302 || response.status === 301) {
