@@ -19,6 +19,8 @@ const nextConfig = {
         headers: [
           {
             key: "Access-Control-Allow-Origin",
+            // Note: This is a static value for Next.js headers()
+            // Dynamic origin matching is handled in individual route handlers
             value: process.env.NODE_ENV === "production" 
               ? process.env.NEXT_PUBLIC_APP_URL || "https://startege.com"
               : "*", // Allow all origins in development

@@ -13,17 +13,34 @@ export const runtime = "nodejs";
 export async function OPTIONS(request: Request) {
   // Get origin from request to allow CORS for custom domain
   const origin = request.headers.get('origin');
-  const allowedOrigin = process.env.NODE_ENV === "production"
-    ? (origin && (origin.includes('startege.com') || origin.includes('localhost')) ? origin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
-    : "*";
+  
+  // Allow both www and non-www domains, plus localhost for development
+  let allowedOrigin = "*";
+  if (process.env.NODE_ENV === "production") {
+    if (origin) {
+      // Check if origin is one of our domains
+      if (origin.includes('startege.com') || origin.includes('localhost')) {
+        allowedOrigin = origin; // Echo back the exact origin (preserves www vs non-www)
+      } else {
+        // Fallback to default domain
+        allowedOrigin = process.env.NEXT_PUBLIC_APP_URL || "https://startege.com";
+      }
+    } else {
+      // No origin header - use default
+      allowedOrigin = process.env.NEXT_PUBLIC_APP_URL || "https://startege.com";
+    }
+  }
+  
+  console.log("[VERIFY OPTIONS] Origin:", origin, "Allowed:", allowedOrigin);
   
   return new NextResponse(null, {
     status: 200,
     headers: {
       "Access-Control-Allow-Origin": allowedOrigin,
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
       "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Max-Age": "86400", // Cache preflight for 24 hours
     },
   });
 }
