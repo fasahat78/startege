@@ -15,7 +15,6 @@ export async function isDuplicate(
 ): Promise<boolean> {
   // Check by URL first (fastest and most reliable)
   if (url) {
-    // @ts-ignore - marketScanArticle model removed from schema
     const existingByUrl = await prisma.marketScanArticle.findUnique({
       where: { sourceUrl: url },
     });
@@ -79,6 +78,7 @@ export async function isRecentDuplicate(
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - days);
 
+  // @ts-ignore - marketScanArticle model may not exist in schema
   const recent = await prisma.marketScanArticle.findFirst({
     where: {
       sourceUrl: url,

@@ -29,12 +29,10 @@ export default async function MarketScanPage() {
   }
 
   // Fetch recent articles
-  // Note: MarketScanArticle model may not exist in schema - handle gracefully
   let articles: any[] = [];
   let recentScans: any[] = [];
 
   try {
-    // @ts-ignore - marketScanArticle model may not exist in schema
     articles = await prisma.marketScanArticle.findMany({
       where: {},
       orderBy: { publishedAt: 'desc' },
@@ -82,7 +80,6 @@ export default async function MarketScanPage() {
 
   // Get scan job history
   try {
-    // @ts-ignore - scanJob model may not exist in schema
     recentScans = await prisma.scanJob.findMany({
       orderBy: { startedAt: 'desc' },
       take: 5,

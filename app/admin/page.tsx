@@ -168,6 +168,18 @@ export default async function AdminDashboard() {
             View refund history, process refunds, and track refund statistics.
           </p>
         </Link>
+
+        <Link
+          href="/admin/market-scan"
+          className="bg-card rounded-lg border border-border p-6 hover:border-accent transition"
+        >
+          <h3 className="text-lg font-semibold text-card-foreground mb-2">
+            Market Scan
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Trigger market scans, view scan history, and manage AI governance articles.
+          </p>
+        </Link>
       </div>
     </div>
   );

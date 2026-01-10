@@ -38,7 +38,8 @@
     "test:semantic": "tsx scripts/test-semantic-search.ts",
     "get:deployment-id": "tsx scripts/get-deployment-id.ts",
     "seed-onboarding-scenarios": "tsx scripts/seed-onboarding-scenarios.ts",
-    "seed-onboarding-scenarios:prod": "tsx scripts/seed-onboarding-scenarios-prod.ts"
+    "seed-onboarding-scenarios:prod": "tsx scripts/seed-onboarding-scenarios-prod.ts",
+    "market-scan:prod": "tsx scripts/run-market-scan-prod.ts"
   },
   "keywords": [],
   "author": "",

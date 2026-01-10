@@ -985,3 +985,117 @@ enum FeedbackStatus {
   RESOLVED
   REJECTED
 }
+
+enum ScanJobStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum ScanJobType {
+  DAILY_NEWS
+  MANUAL
+  SCHEDULED
+}
+
+enum ComplianceImpact {
+  High
+  Medium
+  Low
+}
+
+enum Sentiment {
+  positive
+  negative
+  neutral
+}
+
+enum Urgency {
+  breaking
+  high
+  medium
+  low
+}
+
+enum ImpactScope {
+  global
+  regional
+  local
+  industry_specific
+}
+
+enum ComplexityLevel {
+  beginner
+  intermediate
+  advanced
+  expert
+}
+
+model MarketScanArticle {
+  id                  String          @id @default(cuid())
+  title               String
+  content             String          @db.Text
+  summary             String?         @db.Text
+  source              String
+  sourceUrl           String          @unique
+  sourceType          SourceType
+  category            String
+  jurisdiction        String?
+  publishedAt         DateTime
+  scannedAt           DateTime        @default(now())
+  relevanceScore      Float           @default(0)
+  relevanceTags       String[]
+  keyTopics           String[]
+  affectedFrameworks  String[]
+  riskAreas           String[]
+  complianceImpact    ComplianceImpact?
+  
+  // Enhanced metadata
+  sentiment           Sentiment?
+  urgency             Urgency?
+  impactScope         ImpactScope?
+  affectedIndustries  String[]
+  regulatoryBodies    String[]
+  relatedRegulations   String[]
+  actionItems         String[]
+  timeline            String?         @db.Text
+  geographicRegions   String[]
+  mentionedEntities   String[]
+  enforcementActions  String[]
+  readingTimeMinutes  Int?
+  complexityLevel     ComplexityLevel?
+  language            String          @default("en")
+  author              String?
+  publisher           String?
+  embeddingId         String?
+  isActive            Boolean         @default(true)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([sourceUrl])
+  @@index([publishedAt])
+  @@index([scannedAt])
+  @@index([jurisdiction])
+  @@index([category])
+  @@index([relevanceScore])
+  @@index([isActive])
+}
+
+model ScanJob {
+  id                String        @id @default(cuid())
+  scanType         ScanJobType
+  status            ScanJobStatus
+  startedAt        DateTime      @default(now())
+  completedAt       DateTime?
+  articlesFound     Int?
+  articlesProcessed Int?
+  articlesAdded     Int?
+  errors            Json?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([status])
+  @@index([startedAt])
+  @@index([scanType])
+}

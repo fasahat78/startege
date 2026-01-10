@@ -172,7 +172,8 @@ export async function runDailyScan(): Promise<ScanResult> {
                   // Enhanced metadata (use verification data if available, otherwise null)
                   sentiment: metadata.sentiment as any,
                   urgency: metadata.urgency as any,
-                  impactScope: metadata.impactScope as any,
+                  // Normalize impactScope: convert 'industry-specific' to 'industry_specific' if needed
+                  impactScope: metadata.impactScope === 'industry-specific' ? 'industry_specific' : (metadata.impactScope as any),
                   affectedIndustries: metadata.affectedIndustries || [],
                   regulatoryBodies: metadata.regulatoryBodies || [],
                   relatedRegulations: metadata.relatedRegulations || [],

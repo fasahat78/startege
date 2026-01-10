@@ -5,37 +5,42 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/firebase-auth-helpers';
+import { isAdmin } from '@/lib/admin-auth';
 import { runDailyScan } from '@/lib/market-scan/scan';
 import { prisma } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('[MARKET_SCAN_API] Manual scan triggered');
+    console.log('[MARKET_SCAN_API] Scan triggered');
     
-    const user = await getCurrentUser();
-    console.log('[MARKET_SCAN_API] User:', user?.id, user?.email);
+    // Check if request is from Cloud Scheduler (has Authorization header with Bearer token)
+    const authHeader = request.headers.get('Authorization');
+    const isCloudScheduler = authHeader?.startsWith('Bearer ');
     
-    if (!user) {
-      console.log('[MARKET_SCAN_API] No user found');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!isCloudScheduler) {
+      // Manual trigger - require admin access
+      const user = await getCurrentUser();
+      console.log('[MARKET_SCAN_API] User:', user?.id, user?.email);
+      
+      if (!user) {
+        console.log('[MARKET_SCAN_API] No user found');
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+
+      // Check if user is admin
+      const hasAdminAccess = await isAdmin();
+      if (!hasAdminAccess) {
+        console.log('[MARKET_SCAN_API] User is not admin');
+        return NextResponse.json(
+          { error: 'Admin access required to trigger market scan' },
+          { status: 403 }
+        );
+      }
+      
+      console.log('[MARKET_SCAN_API] Admin user confirmed');
+    } else {
+      console.log('[MARKET_SCAN_API] Cloud Scheduler request detected');
     }
-
-    // Check subscription tier - temporarily allow all users for testing
-    // TODO: Re-enable premium check in production
-    const dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: { subscriptionTier: true },
-    });
-
-    console.log('[MARKET_SCAN_API] User subscription tier:', dbUser?.subscriptionTier);
-
-    // Temporarily disabled premium check for testing
-    // if (dbUser?.subscriptionTier !== 'premium') {
-    //   return NextResponse.json(
-    //     { error: 'Premium subscription required to trigger market scan' },
-    //     { status: 403 }
-    //   );
-    // }
 
     console.log('[MARKET_SCAN_API] Starting scan...');
     // Run scan (this is async and may take a while)
@@ -72,16 +77,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (user.subscriptionTier !== 'premium') {
+    // Allow admins or premium users to view scan history
+    const hasAdminAccess = await isAdmin();
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { subscriptionTier: true },
+    });
+
+    if (!hasAdminAccess && dbUser?.subscriptionTier !== 'premium') {
       return NextResponse.json(
-        { error: 'Premium subscription required' },
+        { error: 'Admin or premium subscription required' },
         { status: 403 }
       );
     }
 
     // Get recent scan jobs
     const { prisma } = await import('@/lib/db');
-    // @ts-ignore - scanJob model removed from schema
     const scanJobs = await prisma.scanJob.findMany({
       orderBy: { startedAt: 'desc' },
       take: 10,

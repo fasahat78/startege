@@ -81,12 +81,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch articles
-    // Note: MarketScanArticle model may not exist in schema - handle gracefully
     let articles: any[] = [];
     let totalCount = 0;
 
     try {
-      // @ts-ignore - marketScanArticle model may not exist in schema
       articles = await prisma.marketScanArticle.findMany({
         where,
         orderBy: { publishedAt: 'desc' },
@@ -128,7 +126,6 @@ export async function GET(request: NextRequest) {
       });
 
       // Get total count
-      // @ts-ignore - marketScanArticle model may not exist in schema
       totalCount = await prisma.marketScanArticle.count({ where });
     } catch (error: any) {
       console.error('[MARKET_SCAN_ARTICLES_API] Error fetching articles (model may not exist):', error.message);

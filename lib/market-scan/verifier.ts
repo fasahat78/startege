@@ -18,7 +18,7 @@ export interface VerificationResult {
   // Enhanced metadata
   sentiment?: 'positive' | 'negative' | 'neutral';
   urgency?: 'breaking' | 'high' | 'medium' | 'low';
-  impactScope?: 'global' | 'regional' | 'local' | 'industry-specific';
+  impactScope?: 'global' | 'regional' | 'local' | 'industry_specific';
   affectedIndustries?: string[];
   regulatoryBodies?: string[];
   relatedRegulations?: string[];
@@ -71,7 +71,7 @@ Provide a JSON response with the following structure:
   // Enhanced metadata fields:
   "sentiment": "positive" | "negative" | "neutral" | null, // Overall sentiment of the article
   "urgency": "breaking" | "high" | "medium" | "low" | null, // Urgency/priority level
-  "impactScope": "global" | "regional" | "local" | "industry-specific" | null, // Geographic/scope impact
+  "impactScope": "global" | "regional" | "local" | "industry_specific" | null, // Geographic/scope impact (use underscore, not hyphen)
   "affectedIndustries": string[], // Industries affected (e.g., ["Healthcare", "Finance", "Technology", "Education"])
   "regulatoryBodies": string[], // Specific regulatory bodies mentioned (e.g., ["EU Commission", "ICO", "FTC", "NIST"])
   "relatedRegulations": string[], // Specific regulations, laws, or standards mentioned (more detailed than affectedFrameworks)
