@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, ExternalLink, Calendar, DollarSign, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Download, ExternalLink, Calendar, DollarSign, CheckCircle, XCircle, Clock, RotateCcw } from "lucide-react";
 
 interface Invoice {
   id: string;
@@ -28,9 +28,23 @@ interface Charge {
   paymentMethod: string;
 }
 
+interface Refund {
+  id: string;
+  type: 'refund';
+  amount: number;
+  refundedAmount: number;
+  currency: string;
+  status: string;
+  description: string;
+  date: string;
+  refundReason?: string | null;
+  stripePaymentId: string;
+}
+
 interface BillingHistoryData {
   invoices: Invoice[];
   charges: Charge[];
+  refunds?: Refund[];
 }
 
 export default function BillingHistory() {
@@ -79,7 +93,15 @@ export default function BillingHistory() {
     }).format(amount);
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, isRefund?: boolean) => {
+    if (isRefund) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-status-warning/10 text-status-warning text-xs font-medium rounded">
+          <RotateCcw className="h-3 w-3" />
+          Refunded
+        </span>
+      );
+    }
     const statusLower = status.toLowerCase();
     if (statusLower === "paid" || statusLower === "succeeded") {
       return (
@@ -93,6 +115,13 @@ export default function BillingHistory() {
         <span className="inline-flex items-center gap-1 px-2 py-1 bg-status-warning/10 text-status-warning text-xs font-medium rounded">
           <Clock className="h-3 w-3" />
           Pending
+        </span>
+      );
+    } else if (statusLower === "refunded" || statusLower === "partially_refunded") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-status-warning/10 text-status-warning text-xs font-medium rounded">
+          <RotateCcw className="h-3 w-3" />
+          {statusLower === "partially_refunded" ? "Partially Refunded" : "Refunded"}
         </span>
       );
     } else {
@@ -129,7 +158,7 @@ export default function BillingHistory() {
     );
   }
 
-  if (!data || (data.invoices.length === 0 && data.charges.length === 0)) {
+  if (!data || (data.invoices.length === 0 && data.charges.length === 0 && (!data.refunds || data.refunds.length === 0))) {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">No billing history found.</p>
@@ -141,6 +170,7 @@ export default function BillingHistory() {
   const allItems = [
     ...data.invoices.map(inv => ({ ...inv, type: "invoice" as const })),
     ...data.charges.map(ch => ({ ...ch, type: "charge" as const })),
+    ...(data.refunds || []).map(ref => ({ ...ref, type: "refund" as const })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
@@ -156,6 +186,8 @@ export default function BillingHistory() {
                 <div className="p-2 bg-primary/10 rounded-lg">
                   {item.type === "invoice" ? (
                     <DollarSign className="h-5 w-5 text-primary" />
+                  ) : item.type === "refund" ? (
+                    <RotateCcw className="h-5 w-5 text-primary" />
                   ) : (
                     <Calendar className="h-5 w-5 text-primary" />
                   )}
@@ -175,10 +207,21 @@ export default function BillingHistory() {
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="font-semibold text-card-foreground">
-                  {formatCurrency(item.amount, item.currency)}
-                </p>
-                {getStatusBadge(item.status)}
+                {item.type === "refund" ? (
+                  <>
+                    <p className="font-semibold text-status-warning">
+                      -{formatCurrency((item as Refund).refundedAmount, item.currency)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      of {formatCurrency(item.amount, item.currency)}
+                    </p>
+                  </>
+                ) : (
+                  <p className="font-semibold text-card-foreground">
+                    {formatCurrency(item.amount, item.currency)}
+                  </p>
+                )}
+                {getStatusBadge(item.status, item.type === "refund")}
               </div>
               <div className="flex items-center gap-2">
                 {item.type === "invoice" && (item as Invoice).invoicePdf && (
@@ -220,6 +263,11 @@ export default function BillingHistory() {
           {item.type === "invoice" && (item as Invoice).periodStart && (
             <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
               Period: {formatDate((item as Invoice).periodStart!)} - {formatDate((item as Invoice).periodEnd!)}
+            </div>
+          )}
+          {item.type === "refund" && (item as Refund).refundReason && (
+            <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
+              Reason: {(item as Refund).refundReason}
             </div>
           )}
         </div>

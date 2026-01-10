@@ -72,11 +72,39 @@ export async function GET(request: NextRequest) {
         date: new Date(charge.created * 1000).toISOString(),
         receiptUrl: charge.receipt_url,
         paymentMethod: charge.payment_method_details?.type || 'card',
+        refundedAmount: charge.amount_refunded ? charge.amount_refunded / 100 : 0,
       }));
+
+    // Get refunded payments from database
+    const refundedPayments = await prisma.payment.findMany({
+      where: {
+        userId: user.id,
+        refundedAmount: { gt: 0 },
+      },
+      orderBy: {
+        refundedAt: 'desc',
+      },
+      take: 50,
+    });
+
+    // Format refunded payments
+    const formattedRefunds = refundedPayments.map(payment => ({
+      id: `refund-${payment.id}`,
+      type: 'refund' as const,
+      amount: payment.amount / 100,
+      refundedAmount: payment.refundedAmount / 100,
+      currency: payment.currency.toUpperCase(),
+      status: payment.status,
+      description: `Refund: ${payment.planType || 'Payment'}`,
+      date: payment.refundedAt?.toISOString() || payment.createdAt.toISOString(),
+      refundReason: payment.refundReason,
+      stripePaymentId: payment.stripePaymentId,
+    }));
 
     return NextResponse.json({
       invoices: formattedInvoices,
       charges: formattedCharges,
+      refunds: formattedRefunds,
     });
 
   } catch (error: any) {

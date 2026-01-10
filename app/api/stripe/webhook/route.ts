@@ -73,6 +73,19 @@ export async function POST(request: Request) {
         break;
       }
 
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        await handleRefund(charge);
+        break;
+      }
+
+      case "refund.created":
+      case "refund.updated": {
+        const refund = event.data.object as Stripe.Refund;
+        await handleRefundCreated(refund);
+        break;
+      }
+
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
@@ -539,5 +552,109 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
   }
 
   console.log(`⚠️ Payment failed for user ${dbSubscription.userId}`);
+}
+
+async function handleRefund(charge: Stripe.Charge) {
+  const paymentIntentId = charge.payment_intent as string | undefined;
+  const refundAmount = charge.amount_refunded || 0;
+  const chargeId = charge.id;
+
+  if (!paymentIntentId) {
+    console.error(`[WEBHOOK] No payment intent ID found in charge ${chargeId}`);
+    return;
+  }
+
+  // Find the payment record
+  const payment = await (prisma as any).payment.findUnique({
+    where: { stripePaymentId: paymentIntentId },
+    select: { id: true, userId: true, amount: true, refundedAmount: true },
+  });
+
+  if (!payment) {
+    console.error(`[WEBHOOK] No payment found for payment intent ${paymentIntentId}`);
+    return;
+  }
+
+  // Update payment with refund information
+  const newRefundedAmount = refundAmount;
+  const isFullyRefunded = newRefundedAmount >= payment.amount;
+
+  await (prisma as any).payment.update({
+    where: { id: payment.id },
+    data: {
+      refundedAmount: newRefundedAmount,
+      refundedAt: new Date(),
+      status: isFullyRefunded ? "refunded" : payment.status === "succeeded" ? "partially_refunded" : payment.status,
+    },
+  });
+
+  console.log(`[WEBHOOK] ✅ Refund processed for payment ${paymentIntentId}: ${newRefundedAmount / 100} ${isFullyRefunded ? "(fully refunded)" : "(partially refunded)"}`);
+
+  // If this is a subscription payment and fully refunded, handle subscription cancellation
+  // Note: This is optional - Stripe will also send subscription.deleted event if subscription is canceled
+  if (isFullyRefunded) {
+    const dbSubscription = await (prisma as any).subscription.findUnique({
+      where: { userId: payment.userId },
+      select: { stripeSubscriptionId: true, stripeCustomerId: true },
+    });
+
+    if (dbSubscription?.stripeSubscriptionId) {
+      try {
+        const stripeSubscription = await stripe.subscriptions.retrieve(dbSubscription.stripeSubscriptionId);
+        // Only cancel if subscription is still active
+        if (stripeSubscription.status === "active" || stripeSubscription.status === "trialing") {
+          console.log(`[WEBHOOK] ⚠️ Subscription ${dbSubscription.stripeSubscriptionId} is still active after full refund. Consider manual review.`);
+        }
+      } catch (error) {
+        // Subscription might already be canceled, ignore
+        console.log(`[WEBHOOK] Could not retrieve subscription (may already be canceled): ${error}`);
+      }
+    }
+  }
+}
+
+async function handleRefundCreated(refund: Stripe.Refund) {
+  const paymentIntentId = refund.payment_intent as string | undefined;
+  const chargeId = refund.charge as string | undefined;
+  const refundAmount = refund.amount || 0;
+
+  if (!paymentIntentId && !chargeId) {
+    console.error(`[WEBHOOK] No payment intent or charge ID found in refund ${refund.id}`);
+    return;
+  }
+
+  // Find payment by payment_intent ID (preferred) or charge ID
+  const payment = await (prisma as any).payment.findFirst({
+    where: {
+      OR: [
+        { stripePaymentId: paymentIntentId },
+        { stripePaymentId: chargeId },
+      ].filter(Boolean),
+    },
+    select: { id: true, userId: true, amount: true, refundedAmount: true },
+  });
+
+  if (!payment) {
+    console.error(`[WEBHOOK] No payment found for refund ${refund.id} (payment_intent: ${paymentIntentId}, charge: ${chargeId})`);
+    return;
+  }
+
+  // Update payment with refund information
+  // Note: For refund.created, this might be a partial refund, so we need to sum all refunds
+  // For now, we'll update based on this refund amount
+  const newRefundedAmount = payment.refundedAmount + refundAmount;
+  const isFullyRefunded = newRefundedAmount >= payment.amount;
+
+  await (prisma as any).payment.update({
+    where: { id: payment.id },
+    data: {
+      refundedAmount: newRefundedAmount,
+      refundedAt: new Date(refund.created * 1000),
+      refundReason: refund.reason || null,
+      status: isFullyRefunded ? "refunded" : payment.status === "succeeded" ? "partially_refunded" : payment.status,
+    },
+  });
+
+  console.log(`[WEBHOOK] ✅ Refund ${refund.id} processed for payment ${payment.id}: ${refundAmount / 100} (total refunded: ${newRefundedAmount / 100})`);
 }
 

@@ -156,6 +156,18 @@ export default async function AdminDashboard() {
             Review user feedback, prioritize issues, and track resolution status.
           </p>
         </Link>
+
+        <Link
+          href="/admin/refunds"
+          className="bg-card rounded-lg border border-border p-6 hover:border-accent transition"
+        >
+          <h3 className="text-lg font-semibold text-card-foreground mb-2">
+            Refunds
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            View refund history, process refunds, and track refund statistics.
+          </p>
+        </Link>
       </div>
     </div>
   );

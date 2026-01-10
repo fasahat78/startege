@@ -590,7 +590,11 @@ model Payment {
   currency        String   @default("usd")
   status          String
   planType        String?
+  refundedAmount  Int      @default(0)
+  refundedAt      DateTime?
+  refundReason    String?
   createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
