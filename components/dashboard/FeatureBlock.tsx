@@ -106,7 +106,7 @@ export default function FeatureBlock({
 
   return (
     <div
-      className={`bg-card rounded-lg shadow-card p-6 border-2 transition-all duration-200 flex flex-col h-full ${
+      className={`bg-card rounded-lg shadow-card p-6 border-2 transition-all duration-200 flex flex-col h-full overflow-hidden ${
         isUnlocked
           ? "border-accent hover:shadow-lg hover:scale-105 cursor-pointer"
           : isClickable
