@@ -238,13 +238,33 @@ function SignInFirebaseContent() {
           window.location.href = targetRedirect;
           return;
         } else {
-          // Error - show to user
-          const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
-          throw new Error(errorData.error || "Failed to verify session");
+          // Error - try to get error details
+          let errorMessage = "Failed to verify session";
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+            console.error("[CLIENT] Verify API error:", errorData);
+          } catch (jsonError) {
+            // If JSON parsing fails, try to get text
+            try {
+              const errorText = await response.text();
+              console.error("[CLIENT] Verify API error (text):", errorText);
+              errorMessage = errorText || `HTTP ${response.status}: ${response.statusText}`;
+            } catch (textError) {
+              console.error("[CLIENT] Could not parse error response:", textError);
+              errorMessage = `HTTP ${response.status}: ${response.statusText || "Unknown error"}`;
+            }
+          }
+          throw new Error(errorMessage);
         }
       } catch (fetchError: any) {
         PersistentLogger.error("OAuth fetch error", fetchError);
         console.error("[CLIENT] OAuth fetch error:", fetchError);
+        console.error("[CLIENT] OAuth fetch error details:", {
+          message: fetchError.message,
+          name: fetchError.name,
+          stack: fetchError.stack,
+        });
         throw fetchError;
       }
     } catch (error: any) {
