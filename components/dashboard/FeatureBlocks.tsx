@@ -162,38 +162,25 @@ export default function FeatureBlocks({
           <h3 className="text-lg font-semibold text-foreground mb-4">Premium Features</h3>
         )}
         
-        {/* Laptop Layout: 2 equal-sized cards with 3 rows each */}
-        {/* Row 1: Concept Cards, Mastery Exams, Market Scan */}
-        {/* Row 2: Startegizer, AIGP Exams, Analytics */}
-        <div className="hidden lg:grid lg:grid-cols-2 gap-6 mb-6">
-          {/* Left Column - Row 1 */}
-          <div className="space-y-6">
-            {freeFeatures[0]} {/* Concept Cards */}
-            {freeFeatures[1]} {/* Mastery Exams */}
-            {premiumFeatures[2]} {/* Market Scan */}
-          </div>
-          
-          {/* Right Column - Row 2 */}
-          <div className="space-y-6">
-            {premiumFeatures[0]} {/* Startegizer */}
-            {premiumFeatures[1]} {/* AIGP Exams */}
-            {premiumFeatures[3]} {/* Analytics */}
-          </div>
+        {/* Primary Premium Features - Large Hero Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {premiumFeatures.slice(0, 2)}
         </div>
 
-        {/* Mobile/Tablet Layout - Stack vertically */}
-        <div className="lg:hidden space-y-6">
-          {/* Free Features */}
-          {freeFeatures.map((feature) => feature)}
-          
-          {/* Premium Features */}
-          {premiumFeatures.map((feature) => feature)}
+        {/* Market Scan - Full Width */}
+        <div className="mb-6">
+          {premiumFeatures[2]}
+        </div>
+
+        {/* Secondary Premium Features */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+          {premiumFeatures.slice(3)}
         </div>
       </div>
 
-      {/* Free Features for Premium Users - Show at bottom (only on desktop) */}
+      {/* Free Features for Premium Users - Show at bottom */}
       {isPremium && (
-        <div className="mt-8 hidden lg:block">
+        <div className="mt-8">
           <h3 className="text-lg font-semibold text-foreground mb-4">Learning Resources</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
             {freeFeatures}
