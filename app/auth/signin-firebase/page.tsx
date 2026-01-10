@@ -113,7 +113,9 @@ function SignInFirebaseContent() {
             finalRedirectUrl = `${currentOrigin}${redirectUrl.startsWith("/") ? "" : "/"}${redirectUrl}`;
           }
           console.log("[CLIENT] Final redirect URL (using current origin):", finalRedirectUrl);
-          window.location.href = finalRedirectUrl;
+          // Clear loading state before redirect
+          setLoading(false);
+          window.location.replace(finalRedirectUrl);
           return;
         } else if (response.ok) {
           // Success but no redirect header - use target redirect
@@ -293,7 +295,9 @@ function SignInFirebaseContent() {
             finalRedirectUrl = `${currentOrigin}${redirectUrl.startsWith("/") ? "" : "/"}${redirectUrl}`;
           }
           console.log("[CLIENT] Final redirect URL (using current origin):", finalRedirectUrl);
-          window.location.href = finalRedirectUrl;
+          // Clear loading state before redirect
+          setOauthLoading(null);
+          window.location.replace(finalRedirectUrl);
           return;
         } else if (response.ok) {
           // Success but no redirect header - use target redirect
