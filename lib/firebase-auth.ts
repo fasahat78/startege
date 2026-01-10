@@ -90,11 +90,26 @@ export async function signInWithGoogle(): Promise<UserCredential> {
 
 /**
  * Sign in with Apple
+ * Uses popup on desktop, redirect on mobile for better compatibility
  */
 export async function signInWithApple(): Promise<UserCredential> {
   const provider = new OAuthProvider('apple.com');
   provider.addScope('email');
   provider.addScope('name');
+  
+  // Detect mobile devices - use redirect on mobile for better compatibility
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                   (window.innerWidth <= 768);
+  
+  if (isMobile) {
+    // On mobile, use redirect flow which is more reliable
+    await signInWithRedirect(auth, provider);
+    // This will navigate away, so we return null
+    // The redirect result will be handled by handleRedirectResult()
+    return null as any; // Type assertion needed, but this won't be reached
+  }
+  
+  // On desktop, use popup
   return signInWithPopup(auth, provider);
 }
 
