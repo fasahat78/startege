@@ -73,11 +73,19 @@ function SignInFirebaseContent() {
       
       try {
         console.log("[CLIENT] Submitting to verify route via fetch...");
+        
+        // Add timeout to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
         const response = await fetch("/api/auth/firebase/verify", {
           method: "POST",
           body: formData,
           credentials: "include",
-          redirect: "manual", // Don't follow redirects automatically - handle manually
+          redirect: "manual",
+          signal: controller.signal,
+        }).finally(() => {
+          clearTimeout(timeoutId);
         });
 
         // Handle redirect manually to avoid CORS issues
@@ -110,7 +118,10 @@ function SignInFirebaseContent() {
         } else if (response.ok) {
           // Success but no redirect header - use target redirect
           console.log("[CLIENT] Verify successful, redirecting to:", targetRedirect);
-          window.location.href = targetRedirect;
+          // Clear loading state before redirect
+          setLoading(false);
+          setOauthLoading(null);
+          window.location.replace(targetRedirect);
           return;
         } else {
           // Error - show to user
@@ -207,12 +218,18 @@ function SignInFirebaseContent() {
         
         // Don't set Content-Type header - browser will set it automatically for FormData
         // with the correct boundary
+        // Add timeout to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
         const response = await fetch("/api/auth/firebase/verify", {
           method: "POST",
           body: formData,
           credentials: "include",
-          redirect: "manual", // Don't follow redirects automatically - handle manually
-          // Note: Don't set Content-Type header - FormData sets it automatically with boundary
+          redirect: "manual",
+          signal: controller.signal,
+        }).finally(() => {
+          clearTimeout(timeoutId);
         }).catch((fetchError) => {
           console.error("[CLIENT] Fetch failed completely:", fetchError);
           console.error("[CLIENT] Fetch error details:", {
@@ -281,7 +298,9 @@ function SignInFirebaseContent() {
         } else if (response.ok) {
           // Success but no redirect header - use target redirect
           console.log("[CLIENT] OAuth verify successful, redirecting to:", targetRedirect);
-          window.location.href = targetRedirect;
+          // Clear loading state before redirect
+          setOauthLoading(null);
+          window.location.replace(targetRedirect);
           return;
         } else {
           // Error - try to get error details
@@ -312,8 +331,13 @@ function SignInFirebaseContent() {
           name: fetchError.name,
           stack: fetchError.stack,
         });
-        // If fetch fails, fallback to form.submit()
-        console.warn("[CLIENT] Fetch error, falling back to form.submit()");
+        
+        // Check if it's a timeout/abort error
+        if (fetchError.name === 'AbortError' || fetchError.message?.includes('timeout')) {
+          console.warn("[CLIENT] Request timed out, falling back to form.submit()");
+        } else {
+          console.warn("[CLIENT] Fetch error, falling back to form.submit()");
+        }
         useFormSubmit = true;
       }
       
@@ -347,8 +371,11 @@ function SignInFirebaseContent() {
         }
         
         document.body.appendChild(form);
-        setOauthLoading(null); // Let the form handle the navigation
-        form.submit();
+        setOauthLoading(null); // Clear loading state
+        // Small delay to ensure state is cleared before navigation
+        setTimeout(() => {
+          form.submit();
+        }, 100);
         return; // Exit early - form submission will navigate
       }
     } catch (error: any) {
