@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import Logo from "./Logo";
@@ -230,6 +231,7 @@ export default function Header() {
               {/* More Menu Dropdown */}
               <div className="relative z-50" ref={moreMenuRef}>
                 <button
+                  ref={moreButtonRef}
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -256,8 +258,14 @@ export default function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                {moreMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-xl border-2 border-primary/20 z-[9999] min-w-max" style={{ position: 'absolute', top: '100%', left: 0 }}>
+                {mounted && moreMenuOpen && moreButtonRef.current && createPortal(
+                  <div 
+                    className="fixed bg-card rounded-lg shadow-xl border-2 border-primary/20 z-[9999] w-48 sm:w-56"
+                    style={{
+                      top: moreButtonRef.current.getBoundingClientRect().bottom + 4,
+                      left: moreButtonRef.current.getBoundingClientRect().left,
+                    }}
+                  >
                     <div className="py-1">
                       <Link
                         href="/dashboard/badges"
@@ -288,7 +296,8 @@ export default function Header() {
                         Send Feedback
                       </Link>
                     </div>
-                  </div>
+                  </div>,
+                  document.body
                 )}
               </div>
 
