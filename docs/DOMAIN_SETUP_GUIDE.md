@@ -2,22 +2,54 @@
 
 This guide lists all places where you need to add your custom domains (`startege.com` and `www.startege.com`).
 
-## 🔴 Critical: Firebase Authorized Domains (Fixes the Error!)
+## 🔴 Critical: Firebase Authorized Domains (Fixes OAuth Errors!)
 
-**This is the most important one** - it fixes the `auth/unauthorized-domain` error you're seeing.
+**This is the most important one** - it fixes both `auth/unauthorized-domain` and `auth/network-request-failed` errors.
 
 ### Steps:
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Select your project: **startege**
 3. Navigate to: **Authentication** → **Settings** → **Authorized domains**
 4. Click **"Add domain"** and add:
-   - `startege.com`
-   - `www.startege.com`
+   - `startege.com` (without `https://`)
+   - `www.startege.com` (without `https://`)
    - `localhost` (for local development - should already be there)
 
 **Note:** Firebase automatically includes:
 - `startege.firebaseapp.com` (your Firebase project domain)
 - `startege.web.app` (Firebase hosting domain)
+
+### ⚠️ Troubleshooting `net::ERR_NETWORK_CHANGED` Error
+
+If you see `net::ERR_NETWORK_CHANGED` or `auth/network-request-failed` when signing in with OAuth:
+
+1. **Verify Authorized Domains** (most common fix):
+   - Go to Firebase Console → Authentication → Settings → Authorized domains
+   - Ensure both `startege.com` and `www.startege.com` are listed
+   - Remove and re-add if they're already there (sometimes helps)
+
+2. **Check API Key Restrictions**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Navigate to: **APIs & Services** → **Credentials**
+   - Find your Firebase API key (starts with `AIza...`)
+   - Click on it to edit
+   - Under **"Application restrictions"**, check:
+     - If set to "HTTP referrers", ensure your domains are listed:
+       - `https://startege.com/*`
+       - `https://www.startege.com/*`
+       - `http://localhost:3000/*` (for development)
+     - Or temporarily set to "None" to test (not recommended for production)
+
+3. **Network Issues**:
+   - Try refreshing the page and signing in again
+   - Check your internet connection
+   - Try from a different network/browser
+   - Clear browser cache and cookies
+
+4. **Browser Console Check**:
+   - Open browser DevTools → Console
+   - Look for any CORS errors or blocked requests
+   - Check Network tab for failed requests to `identitytoolkit.googleapis.com`
 
 ---
 
