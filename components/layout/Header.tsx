@@ -154,7 +154,9 @@ export default function Header() {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setPremiumMenuOpen(!premiumMenuOpen);
+                    const newState = !premiumMenuOpen;
+                    console.log("[HEADER] Premium menu toggle:", newState);
+                    setPremiumMenuOpen(newState);
                     setMoreMenuOpen(false);
                   }}
                   className={`px-1.5 sm:px-2 md:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition whitespace-nowrap flex items-center gap-0.5 sm:gap-1 ${
@@ -176,7 +178,7 @@ export default function Header() {
                   </svg>
                 </button>
                 {premiumMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-lg border border-border z-[100] min-w-max">
+                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-lg border-2 border-primary/20 z-[100] min-w-max">
                     <div className="py-1">
                       <Link
                         href="/startegizer"
@@ -231,7 +233,9 @@ export default function Header() {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setMoreMenuOpen(!moreMenuOpen);
+                    const newState = !moreMenuOpen;
+                    console.log("[HEADER] More menu toggle:", newState);
+                    setMoreMenuOpen(newState);
                     setPremiumMenuOpen(false);
                   }}
                   className={`px-1.5 sm:px-2 md:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition whitespace-nowrap flex items-center gap-0.5 sm:gap-1 ${
@@ -253,7 +257,7 @@ export default function Header() {
                   </svg>
                 </button>
                 {moreMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-lg border border-border z-[100] min-w-max">
+                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-lg border-2 border-primary/20 z-[100] min-w-max">
                     <div className="py-1">
                       <Link
                         href="/dashboard/badges"
