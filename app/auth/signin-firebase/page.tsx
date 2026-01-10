@@ -198,11 +198,22 @@ function SignInFirebaseContent() {
       
       try {
         console.log("[CLIENT] Submitting OAuth verify via fetch...");
+        console.log("[CLIENT] Current origin:", window.location.origin);
+        console.log("[CLIENT] Verify endpoint:", "/api/auth/firebase/verify");
+        
         const response = await fetch("/api/auth/firebase/verify", {
           method: "POST",
           body: formData,
           credentials: "include",
           redirect: "manual", // Don't follow redirects automatically - handle manually
+        }).catch((fetchError) => {
+          console.error("[CLIENT] Fetch failed completely:", fetchError);
+          console.error("[CLIENT] Fetch error details:", {
+            name: fetchError.name,
+            message: fetchError.message,
+            stack: fetchError.stack,
+          });
+          throw new Error(`Network error: ${fetchError.message || "Failed to connect to server"}`);
         });
 
         console.log("[CLIENT] Verify response status:", response.status);
