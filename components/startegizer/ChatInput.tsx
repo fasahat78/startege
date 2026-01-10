@@ -49,17 +49,17 @@ export default function ChatInput({ onSend, loading, disabled }: ChatInputProps)
           placeholder="Ask about AI governance, regulations, best practices..."
           disabled={loading || disabled}
           rows={1}
-          className="w-full px-3 py-2.5 pr-20 bg-muted border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-sm text-card-foreground placeholder:text-muted-foreground"
+          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-16 sm:pr-20 bg-muted border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base text-card-foreground placeholder:text-muted-foreground"
           style={{ minHeight: "44px", maxHeight: "200px" }}
         />
-        <div className="absolute right-2 bottom-2 text-[10px] text-muted-foreground/70">
+        <div className="absolute right-2 bottom-2 text-[10px] text-muted-foreground/70 hidden sm:block">
           Enter to send
         </div>
       </div>
       <button
         type="submit"
         disabled={!input.trim() || loading || disabled}
-        className="px-4 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm"
+        className="px-4 sm:px-5 py-2.5 sm:py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm sm:text-base min-h-[44px]"
       >
         {loading ? (
           <svg

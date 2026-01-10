@@ -301,16 +301,16 @@ export default function StartegizerClient({
         transform transition-transform duration-300 ease-in-out
         ${showSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="p-4 border-b border-border space-y-2">
+        <div className="p-3 sm:p-4 border-b border-border space-y-2">
           <button
             onClick={handleNewConversation}
-            className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition"
+            className="w-full px-4 py-2.5 sm:py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition text-sm sm:text-base min-h-[44px]"
           >
             + New Conversation
           </button>
           <button
             onClick={() => setShowUseCaseBuilder(!showUseCaseBuilder)}
-            className="w-full px-4 py-2 bg-accent/10 text-accent border border-accent/20 rounded-lg font-medium hover:bg-accent/20 transition flex items-center justify-center gap-2"
+            className="w-full px-4 py-2.5 sm:py-3 bg-accent/10 text-accent border border-accent/20 rounded-lg font-medium hover:bg-accent/20 transition flex items-center justify-center gap-2 text-sm sm:text-base min-h-[44px]"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -319,7 +319,7 @@ export default function StartegizerClient({
           </button>
           <button
             onClick={() => setShowPromptLibrary(!showPromptLibrary)}
-            className="w-full px-4 py-2 border border-border rounded-lg font-medium hover:bg-muted transition"
+            className="w-full px-4 py-2.5 sm:py-3 border border-border rounded-lg font-medium hover:bg-muted transition text-sm sm:text-base min-h-[44px]"
           >
             {showPromptLibrary ? "Hide" : "Show"} Prompt Library
           </button>
@@ -367,17 +367,17 @@ export default function StartegizerClient({
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col w-full">
         {/* Mobile Header with Menu Button */}
-        <div className="lg:hidden p-4 border-b border-border bg-card flex items-center justify-between">
+        <div className="lg:hidden p-3 sm:p-4 border-b border-border bg-card flex items-center justify-between">
           <button
             onClick={() => setShowSidebar(true)}
-            className="p-2 hover:bg-muted rounded-lg transition"
+            className="p-2 hover:bg-muted rounded-lg transition min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label="Open sidebar"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className="text-lg font-semibold text-card-foreground">Startegizer</h1>
+          <h1 className="text-base sm:text-lg font-semibold text-card-foreground">Startegizer</h1>
           <div className="w-10" /> {/* Spacer for centering */}
         </div>
 
@@ -465,7 +465,7 @@ export default function StartegizerClient({
         </div>
 
         {/* Input Area */}
-        <div className="bg-card border-t border-border p-3">
+        <div className="bg-card border-t border-border p-3 sm:p-4">
           <ChatInput
             onSend={handleSendMessage}
             loading={loading}
