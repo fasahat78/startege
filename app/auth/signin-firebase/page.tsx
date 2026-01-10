@@ -205,6 +205,12 @@ function SignInFirebaseContent() {
           redirect: "manual", // Don't follow redirects automatically - handle manually
         });
 
+        console.log("[CLIENT] Verify response status:", response.status);
+        console.log("[CLIENT] Verify response headers:", {
+          location: response.headers.get("Location"),
+          contentType: response.headers.get("Content-Type"),
+        });
+
         // Handle redirect manually to avoid CORS issues
         if (response.status === 303 || response.status === 302 || response.status === 301) {
           const redirectUrl = response.headers.get("Location") || targetRedirect;
