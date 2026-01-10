@@ -689,9 +689,9 @@ export async function POST(request: Request) {
     console.error("[VERIFY ROUTE] Error stack:", error.stack);
     
     // Get origin for CORS
-    const origin = request.headers.get('origin');
+    const errorCorsOrigin = request.headers.get('origin');
     const allowedOrigin = process.env.NODE_ENV === "production"
-      ? (origin && (origin.includes('startege.com') || origin.includes('localhost')) ? origin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
+      ? (errorCorsOrigin && (errorCorsOrigin.includes('startege.com') || errorCorsOrigin.includes('localhost')) ? errorCorsOrigin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
       : "*";
     
     // Always return JSON, never HTML
