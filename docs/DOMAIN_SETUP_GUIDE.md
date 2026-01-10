@@ -320,14 +320,31 @@ After making all changes:
    - Add: `startege.com`
    - Add: `www.startege.com`
 
-2. **GitHub Secrets** → Add/Update:
+2. **Google Cloud Console** → **APIs & Services** → **Credentials** → **Firebase API Key**
+   - Click **Edit** on your Firebase API key (starts with `AIza...`)
+   - Under **Application restrictions** → Select **HTTP referrers (web sites)**
+   - Add these referrers (one per line):
+     ```
+     http://localhost:3000/*
+     http://localhost:3001/*
+     http://localhost:3002/*
+     http://127.0.0.1:3000/*
+     http://127.0.0.1:3001/*
+     http://127.0.0.1:3002/*
+     https://startege.com/*
+     https://www.startege.com/*
+     https://startege.firebaseapp.com/*
+     ```
+   - Click **Save**
+
+3. **GitHub Secrets** → Add/Update:
    ```
    NEXT_PUBLIC_APP_URL=https://startege.com
    ```
 
-3. **Redeploy** via Cloud Build
+4. **Redeploy** via Cloud Build
 
-This should fix the `auth/unauthorized-domain` error immediately.
+This should fix the `auth/unauthorized-domain` and `auth/requests-from-referer-are-blocked` errors immediately.
 
 ---
 
