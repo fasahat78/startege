@@ -13,9 +13,17 @@ export default function Header() {
   const [user, setUser] = useState<{ email: string | null; name?: string | null } | null>(null);
   const [premiumMenuOpen, setPremiumMenuOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const premiumMenuRef = useRef<HTMLDivElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
+  const premiumButtonRef = useRef<HTMLButtonElement>(null);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
+
+  // Ensure we're mounted (client-side only)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     // Check server-side session first (for users authenticated via session cookie)
@@ -152,6 +160,7 @@ export default function Header() {
               {/* Premium Features Dropdown */}
               <div className="relative z-50" ref={premiumMenuRef}>
                 <button
+                  ref={premiumButtonRef}
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -178,8 +187,14 @@ export default function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                {premiumMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-48 sm:w-56 bg-card rounded-lg shadow-xl border-2 border-primary/20 z-[9999] min-w-max" style={{ position: 'absolute', top: '100%', left: 0 }}>
+                {mounted && premiumMenuOpen && premiumButtonRef.current && createPortal(
+                  <div 
+                    className="fixed bg-card rounded-lg shadow-xl border-2 border-primary/20 z-[9999] w-48 sm:w-56"
+                    style={{
+                      top: premiumButtonRef.current.getBoundingClientRect().bottom + 4,
+                      left: premiumButtonRef.current.getBoundingClientRect().left,
+                    }}
+                  >
                     <div className="py-1">
                       <Link
                         href="/startegizer"
@@ -224,7 +239,8 @@ export default function Header() {
                         Market Scan
                       </Link>
                     </div>
-                  </div>
+                  </div>,
+                  document.body
                 )}
               </div>
 
