@@ -269,6 +269,19 @@ export default async function ProfilePage() {
                 <p className="text-sm text-muted-foreground">Account and preferences</p>
               </div>
             </Link>
+
+            <Link
+              href="/dashboard/feedback"
+              className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg hover:bg-muted transition"
+            >
+              <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              <div>
+                <p className="font-medium text-card-foreground">Send Feedback</p>
+                <p className="text-sm text-muted-foreground">Share your thoughts and report issues</p>
+              </div>
+            </Link>
           </div>
         </div>
       </div>
