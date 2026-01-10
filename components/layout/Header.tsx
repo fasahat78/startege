@@ -68,12 +68,24 @@ export default function Header() {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Only check if menus are open
-      if (premiumMenuOpen && premiumMenuRef.current && !premiumMenuRef.current.contains(event.target as Node)) {
-        setPremiumMenuOpen(false);
+      const target = event.target as Node;
+      
+      // Check Premium menu
+      if (premiumMenuOpen) {
+        const isClickInButton = premiumButtonRef.current?.contains(target);
+        const isClickInDropdown = (target as Element)?.closest?.('[data-dropdown="premium"]');
+        if (!isClickInButton && !isClickInDropdown) {
+          setPremiumMenuOpen(false);
+        }
       }
-      if (moreMenuOpen && moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
-        setMoreMenuOpen(false);
+      
+      // Check More menu
+      if (moreMenuOpen) {
+        const isClickInButton = moreButtonRef.current?.contains(target);
+        const isClickInDropdown = (target as Element)?.closest?.('[data-dropdown="more"]');
+        if (!isClickInButton && !isClickInDropdown) {
+          setMoreMenuOpen(false);
+        }
       }
     };
 
@@ -189,6 +201,7 @@ export default function Header() {
                 </button>
                 {mounted && premiumMenuOpen && premiumButtonRef.current && createPortal(
                   <div 
+                    data-dropdown="premium"
                     className="fixed bg-card rounded-lg shadow-xl border-2 border-primary/20 z-[9999] w-48 sm:w-56"
                     style={{
                       top: premiumButtonRef.current.getBoundingClientRect().bottom + 4,
@@ -276,6 +289,7 @@ export default function Header() {
                 </button>
                 {mounted && moreMenuOpen && moreButtonRef.current && createPortal(
                   <div 
+                    data-dropdown="more"
                     className="fixed bg-card rounded-lg shadow-xl border-2 border-primary/20 z-[9999] w-48 sm:w-56"
                     style={{
                       top: moreButtonRef.current.getBoundingClientRect().bottom + 4,
