@@ -246,7 +246,9 @@ function SignInFirebaseContent() {
           console.error("  - Request was cancelled/aborted");
           console.error("  - CORS preflight failed (but OPTIONS works)");
           console.error("  - Server not responding");
-          throw new Error("Network error: Request failed before server response. Please check your connection and try again.");
+          console.warn("[CLIENT] Triggering form.submit() fallback...");
+          useFormSubmit = true;
+          throw new Error("Network error: Request failed before server response. Falling back to form submission.");
         }
 
         // Handle redirect manually to avoid CORS issues
