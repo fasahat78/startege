@@ -169,9 +169,10 @@ export default async function DashboardPage({
           </div>
         )}
 
-        {/* Stats Grid */}
+        {/* Stats Grid - Hide Total Points and Current Streak on mobile, show only Concepts and Badges */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-card rounded-lg shadow-card p-6 border border-border hover:shadow-float transition">
+          {/* Total Points - Hidden on mobile, visible on desktop */}
+          <div className="hidden md:block bg-card rounded-lg shadow-card p-6 border border-border hover:shadow-float transition">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">
@@ -192,7 +193,8 @@ export default async function DashboardPage({
             </div>
           </div>
 
-          <div className="bg-card rounded-lg shadow-card p-6 border border-border hover:shadow-float transition">
+          {/* Current Streak - Hidden on mobile, visible on desktop */}
+          <div className="hidden md:block bg-card rounded-lg shadow-card p-6 border border-border hover:shadow-float transition">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">
