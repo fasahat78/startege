@@ -105,7 +105,7 @@ export default function Header() {
                 </span>
               </div>
             </Link>
-            <nav className="ml-4 md:ml-8 flex items-center space-x-1 md:space-x-2 overflow-x-auto">
+            <nav className="ml-4 md:ml-8 flex items-center space-x-1 md:space-x-2">
               {/* Primary Navigation - Always Visible */}
               <Link
                 href="/dashboard"
@@ -164,7 +164,7 @@ export default function Header() {
                   </svg>
                 </button>
                 {premiumMenuOpen && (
-                  <div className="absolute left-0 mt-1 w-56 bg-card rounded-lg shadow-lg border border-border z-50">
+                  <div className="absolute left-0 top-full mt-1 w-56 bg-card rounded-lg shadow-lg border border-border z-[100]">
                     <div className="py-1">
                       <Link
                         href="/startegizer"
@@ -239,7 +239,7 @@ export default function Header() {
                   </svg>
                 </button>
                 {moreMenuOpen && (
-                  <div className="absolute left-0 mt-1 w-56 bg-card rounded-lg shadow-lg border border-border z-50">
+                  <div className="absolute left-0 top-full mt-1 w-56 bg-card rounded-lg shadow-lg border border-border z-[100]">
                     <div className="py-1">
                       <Link
                         href="/dashboard/badges"
