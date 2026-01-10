@@ -201,11 +201,14 @@ function SignInFirebaseContent() {
         console.log("[CLIENT] Current origin:", window.location.origin);
         console.log("[CLIENT] Verify endpoint:", "/api/auth/firebase/verify");
         
+        // Don't set Content-Type header - browser will set it automatically for FormData
+        // with the correct boundary
         const response = await fetch("/api/auth/firebase/verify", {
           method: "POST",
           body: formData,
           credentials: "include",
           redirect: "manual", // Don't follow redirects automatically - handle manually
+          // Note: Don't set Content-Type header - FormData sets it automatically with boundary
         }).catch((fetchError) => {
           console.error("[CLIENT] Fetch failed completely:", fetchError);
           console.error("[CLIENT] Fetch error details:", {
