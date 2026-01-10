@@ -230,8 +230,7 @@ function SignInFirebaseContent() {
         if (!response) {
           useFormSubmit = true;
         } else {
-
-        console.log("[CLIENT] Verify response status:", response.status);
+          console.log("[CLIENT] Verify response status:", response.status);
         console.log("[CLIENT] Verify response ok:", response.ok);
         console.log("[CLIENT] Verify response type:", response.type);
         console.log("[CLIENT] Verify response headers:", {
@@ -302,6 +301,7 @@ function SignInFirebaseContent() {
           }
           throw new Error(errorMessage);
         }
+        } // End of else block for response handling
       } catch (fetchError: any) {
         PersistentLogger.error("OAuth fetch error", fetchError);
         console.error("[CLIENT] OAuth fetch error:", fetchError);
@@ -310,7 +310,44 @@ function SignInFirebaseContent() {
           name: fetchError.name,
           stack: fetchError.stack,
         });
-        throw fetchError;
+        // If fetch fails, fallback to form.submit()
+        console.warn("[CLIENT] Fetch error, falling back to form.submit()");
+        useFormSubmit = true;
+      }
+      
+      // Fallback: Use form.submit() if fetch failed or returned HTTP 0
+      if (useFormSubmit) {
+        console.log("[CLIENT] Using form.submit() fallback for OAuth verify");
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/api/auth/firebase/verify";
+        form.style.display = "none";
+        
+        // Recreate form data as hidden inputs
+        const idTokenInput = document.createElement("input");
+        idTokenInput.type = "hidden";
+        idTokenInput.name = "idToken";
+        idTokenInput.value = idToken;
+        form.appendChild(idTokenInput);
+        
+        const redirectInput = document.createElement("input");
+        redirectInput.type = "hidden";
+        redirectInput.name = "redirect";
+        redirectInput.value = targetRedirect;
+        form.appendChild(redirectInput);
+        
+        if (userCredential.user?.displayName) {
+          const nameInput = document.createElement("input");
+          nameInput.type = "hidden";
+          nameInput.name = "name";
+          nameInput.value = userCredential.user.displayName;
+          form.appendChild(nameInput);
+        }
+        
+        document.body.appendChild(form);
+        setOauthLoading(null); // Let the form handle the navigation
+        form.submit();
+        return; // Exit early - form submission will navigate
       }
     } catch (error: any) {
       console.error("OAuth sign in error:", error);
