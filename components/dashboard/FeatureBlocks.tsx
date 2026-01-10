@@ -59,12 +59,12 @@ export default function FeatureBlocks({
   ];
 
   const premiumFeatures = [
-    <PrimaryFeatureCard
+    <FeatureBlock
       key="startegizer"
       title="Startegizer"
       description="Your AI Governance Expert Assistant. Get personalized guidance, detailed explanations, and scenario-based learning with our premium AI tutor powered by Gemini."
       icon={
-        <svg className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
         </svg>
       }
@@ -89,12 +89,12 @@ export default function FeatureBlocks({
           : undefined
       }
     />,
-    <PrimaryFeatureCard
+    <FeatureBlock
       key="aigp-exams"
       title="AIGP Prep Exams"
       description="Full-length practice exams aligned with the AIGP certification blueprint. 3 comprehensive exams with 100 questions each, covering all domains and difficulty levels."
       icon={
-        <svg className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       }
@@ -105,12 +105,12 @@ export default function FeatureBlocks({
       ctaHref={isPremium ? "/aigp-exams" : undefined}
       ctaAction={isPremium ? undefined : handleUpgrade}
     />,
-    <PrimaryFeatureCard
+    <FeatureBlock
       key="market-scan"
       title="Market Scan"
       description="Real-time regulatory intelligence and AI governance updates. Daily automated scanning of verified sources including EU Commission, ICO, FTC, NIST, and leading tech publications. Stay ahead of regulatory changes and compliance requirements."
       icon={
-        <svg className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       }
@@ -140,6 +140,23 @@ export default function FeatureBlocks({
     />,
   ];
 
+  // Combine all features for premium users: 6 cards total
+  // Row 1: Startegizer, AIGP Prep Exams, Market Scan
+  // Row 2: Advanced Analytics, Concept Cards, Mastery Exams
+  const allFeatures = isPremium 
+    ? [
+        premiumFeatures[0], // Startegizer
+        premiumFeatures[1], // AIGP Prep Exams
+        premiumFeatures[2], // Market Scan
+        premiumFeatures[3], // Advanced Analytics
+        freeFeatures[0],     // Concept Cards
+        freeFeatures[1],    // Mastery Exams
+      ]
+    : [
+        ...freeFeatures,    // Concept Cards, Mastery Exams
+        ...premiumFeatures, // All premium features
+      ];
+
   return (
     <div className="mb-8">
       <h2 className="text-2xl font-bold text-foreground mb-6">
@@ -156,35 +173,20 @@ export default function FeatureBlocks({
         </div>
       )}
 
-      {/* Premium Features */}
-      <div className={!isPremium ? "mb-8" : ""}>
-        {!isPremium && (
+      {/* Premium Features for Free Users */}
+      {!isPremium && (
+        <div className="mb-8">
           <h3 className="text-lg font-semibold text-foreground mb-4">Premium Features</h3>
-        )}
-        
-        {/* Primary Premium Features - Large Hero Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {premiumFeatures.slice(0, 2)}
-        </div>
-
-        {/* Market Scan - Full Width */}
-        <div className="mb-6">
-          {premiumFeatures[2]}
-        </div>
-
-        {/* Secondary Premium Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-          {premiumFeatures.slice(3)}
-        </div>
-      </div>
-
-      {/* Free Features for Premium Users - Show at bottom */}
-      {isPremium && (
-        <div className="mt-8">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Learning Resources</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-            {freeFeatures}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            {premiumFeatures}
           </div>
+        </div>
+      )}
+
+      {/* All Features for Premium Users - 2 rows of 3 cards each */}
+      {isPremium && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          {allFeatures}
         </div>
       )}
     </div>
