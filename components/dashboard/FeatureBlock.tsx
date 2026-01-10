@@ -138,8 +138,8 @@ export default function FeatureBlock({
         {getProfileBadge()}
       </div>
 
-      {/* Description - flex-grow to push button down */}
-      <p className="text-sm text-muted-foreground mb-4 line-clamp-3 flex-grow">
+      {/* Description - flex-grow to push button down, allow text to wrap naturally */}
+      <p className="text-sm text-muted-foreground mb-4 flex-grow break-words hyphens-auto">
         {description}
       </p>
 
