@@ -108,14 +108,14 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
               }`}
             >
               {message.role === "assistant" ? (
-                <div className="prose prose-sm prose-headings:font-semibold prose-headings:text-card-foreground prose-p:text-card-foreground prose-p:leading-relaxed prose-strong:text-card-foreground prose-strong:font-semibold prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-code:text-primary prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-3 prose-pre:overflow-x-auto max-w-none">
+                <div className="prose prose-sm sm:prose-base prose-headings:font-semibold prose-headings:text-card-foreground prose-p:text-card-foreground prose-p:leading-relaxed prose-p:text-sm sm:prose-p:text-base prose-strong:text-card-foreground prose-strong:font-semibold prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-code:text-primary prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs sm:prose-code:text-sm prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-3 prose-pre:overflow-x-auto max-w-none">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     rehypePlugins={[rehypeHighlight]}
                     components={{
-                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                      ul: ({ children }) => <ul className="list-disc list-inside space-y-1 my-2">{children}</ul>,
-                      ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 my-2">{children}</ol>,
+                      p: ({ children }) => <p className="mb-3 last:mb-0 text-sm sm:text-base leading-relaxed">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc list-inside space-y-1.5 my-3 text-sm sm:text-base">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal list-inside space-y-1.5 my-3 text-sm sm:text-base">{children}</ol>,
                       li: ({ children }) => <li className="ml-2">{children}</li>,
                       code: ({ node, inline, className, children, ...props }: any) => {
                         const match = /language-(\w+)/.exec(className || "");
@@ -124,21 +124,21 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
                             {children}
                           </code>
                         ) : (
-                          <code className="bg-muted/50 px-1.5 py-0.5 rounded text-xs font-mono text-primary" {...props}>
+                          <code className="bg-muted/50 px-1.5 py-0.5 rounded text-xs sm:text-sm font-mono text-primary" {...props}>
                             {children}
                           </code>
                         );
                       },
                       pre: ({ children }) => (
-                        <pre className="bg-muted/50 border border-border rounded-lg p-3 overflow-x-auto my-2 text-sm">
+                        <pre className="bg-muted/50 border border-border rounded-lg p-3 sm:p-4 overflow-x-auto my-3 text-xs sm:text-sm">
                           {children}
                         </pre>
                       ),
-                      h1: ({ children }) => <h1 className="text-lg font-semibold mt-3 mb-2 first:mt-0">{children}</h1>,
-                      h2: ({ children }) => <h2 className="text-base font-semibold mt-3 mb-2 first:mt-0">{children}</h2>,
-                      h3: ({ children }) => <h3 className="text-sm font-semibold mt-2 mb-1 first:mt-0">{children}</h3>,
+                      h1: ({ children }) => <h1 className="text-xl sm:text-2xl font-semibold mt-4 mb-3 first:mt-0">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-lg sm:text-xl font-semibold mt-4 mb-3 first:mt-0">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-base sm:text-lg font-semibold mt-3 mb-2 first:mt-0">{children}</h3>,
                       blockquote: ({ children }) => (
-                        <blockquote className="border-l-4 border-primary/30 pl-3 my-2 italic text-muted-foreground">
+                        <blockquote className="border-l-4 border-primary/30 pl-4 my-3 italic text-muted-foreground text-sm sm:text-base">
                           {children}
                         </blockquote>
                       ),
@@ -148,7 +148,7 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
                   </ReactMarkdown>
                 </div>
               ) : (
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
               )}
 
               {/* Copy button for assistant messages */}
