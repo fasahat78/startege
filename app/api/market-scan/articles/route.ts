@@ -81,51 +81,61 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch articles
-    // @ts-ignore - marketScanArticle model removed from schema
-    const articles = await prisma.marketScanArticle.findMany({
-      where,
-      orderBy: { publishedAt: 'desc' },
-      take: limit,
-      select: {
-        id: true,
-        title: true,
-        summary: true,
-        source: true,
-        sourceUrl: true,
-        sourceType: true,
-        category: true,
-        jurisdiction: true,
-        publishedAt: true,
-        relevanceScore: true,
-        relevanceTags: true,
-        keyTopics: true,
-        affectedFrameworks: true,
-        riskAreas: true,
-        complianceImpact: true,
-        scannedAt: true,
-        // Enhanced metadata
-        sentiment: true,
-        urgency: true,
-        impactScope: true,
-        affectedIndustries: true,
-        regulatoryBodies: true,
-        relatedRegulations: true,
-        actionItems: true,
-        timeline: true,
-        geographicRegions: true,
-        mentionedEntities: true,
-        enforcementActions: true,
-        readingTimeMinutes: true,
-        complexityLevel: true,
-        language: true,
-        author: true,
-        publisher: true,
-      },
-    });
+    // Note: MarketScanArticle model may not exist in schema - handle gracefully
+    let articles: any[] = [];
+    let totalCount = 0;
 
-    // Get total count
-    // @ts-ignore - marketScanArticle model removed from schema
-    const totalCount = await prisma.marketScanArticle.count({ where });
+    try {
+      // @ts-ignore - marketScanArticle model may not exist in schema
+      articles = await prisma.marketScanArticle.findMany({
+        where,
+        orderBy: { publishedAt: 'desc' },
+        take: limit,
+        select: {
+          id: true,
+          title: true,
+          summary: true,
+          source: true,
+          sourceUrl: true,
+          sourceType: true,
+          category: true,
+          jurisdiction: true,
+          publishedAt: true,
+          relevanceScore: true,
+          relevanceTags: true,
+          keyTopics: true,
+          affectedFrameworks: true,
+          riskAreas: true,
+          complianceImpact: true,
+          scannedAt: true,
+          sentiment: true,
+          urgency: true,
+          impactScope: true,
+          affectedIndustries: true,
+          regulatoryBodies: true,
+          relatedRegulations: true,
+          actionItems: true,
+          timeline: true,
+          geographicRegions: true,
+          mentionedEntities: true,
+          enforcementActions: true,
+          readingTimeMinutes: true,
+          complexityLevel: true,
+          language: true,
+          author: true,
+          publisher: true,
+        },
+      });
+
+      // Get total count
+      // @ts-ignore - marketScanArticle model may not exist in schema
+      totalCount = await prisma.marketScanArticle.count({ where });
+    } catch (error: any) {
+      console.error('[MARKET_SCAN_ARTICLES_API] Error fetching articles (model may not exist):', error.message);
+      // Return empty results instead of failing - feature not yet implemented
+      articles = [];
+      totalCount = 0;
+    }
 
     return NextResponse.json({
       articles,

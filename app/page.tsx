@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 import { redirect } from "next/navigation";
 import Logo from "@/components/layout/Logo";
-import { ArrowRight, CheckCircle2, BookOpen, Trophy, Zap, Shield, TrendingUp, Users, Award, Target } from "lucide-react";
+import { ArrowRight, CheckCircle2, BookOpen, Trophy, Zap, Shield, TrendingUp, Users, Award, Target, FileText, Sparkles, BarChart3, MessageSquare } from "lucide-react";
 
 // Mark as dynamic since it uses cookies
 export const dynamic = 'force-dynamic';
@@ -100,7 +100,7 @@ export default async function Home() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-status-success" />
                 <span>360+ Concept Cards</span>
@@ -108,6 +108,10 @@ export default async function Home() {
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-status-success" />
                 <span>40 Mastery Exams</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-status-success" />
+                <span>AIGP Flashcards</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-status-success" />
@@ -177,18 +181,29 @@ export default async function Home() {
               </p>
             </div>
 
-            {/* Feature 3 */}
+            {/* Feature 3 - AIGP Flashcards */}
+            <div className="group p-8 bg-card rounded-2xl border border-border hover:border-accent/50 transition-all hover:shadow-xl">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition">
+                <FileText className="h-6 w-6 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3">AIGP Flashcards</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Master key terms and concepts with interactive flashcards designed specifically for AIGP exam preparation. Track your progress and focus on areas that need improvement.
+              </p>
+            </div>
+
+            {/* Feature 4 */}
             <div className="group p-8 bg-card rounded-2xl border border-border hover:border-accent/50 transition-all hover:shadow-xl">
               <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition">
                 <Zap className="h-6 w-6 text-accent" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-3">AI-Powered Tutor</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Get personalized guidance from Startegizer, your AI Governance expert assistant powered by advanced AI.
+                Get personalized guidance from Startegizer, your AI Governance expert assistant powered by advanced AI. Premium users get monthly credits for unlimited learning.
               </p>
             </div>
 
-            {/* Feature 4 */}
+            {/* Feature 5 */}
             <div className="group p-8 bg-card rounded-2xl border border-border hover:border-accent/50 transition-all hover:shadow-xl">
               <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition">
                 <Shield className="h-6 w-6 text-accent" />
@@ -199,7 +214,18 @@ export default async function Home() {
               </p>
             </div>
 
-            {/* Feature 5 */}
+            {/* Feature 6 */}
+            <div className="group p-8 bg-card rounded-2xl border border-border hover:border-accent/50 transition-all hover:shadow-xl">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition">
+                <Target className="h-6 w-6 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3">AIGP Exam Prep</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Full-length practice exams aligned with the AIGP certification blueprint. Prepare with confidence and track your readiness.
+              </p>
+            </div>
+
+            {/* Feature 7 */}
             <div className="group p-8 bg-card rounded-2xl border border-border hover:border-accent/50 transition-all hover:shadow-xl">
               <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition">
                 <TrendingUp className="h-6 w-6 text-accent" />
@@ -210,14 +236,25 @@ export default async function Home() {
               </p>
             </div>
 
-            {/* Feature 6 */}
+            {/* Feature 8 */}
             <div className="group p-8 bg-card rounded-2xl border border-border hover:border-accent/50 transition-all hover:shadow-xl">
               <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition">
-                <Target className="h-6 w-6 text-accent" />
+                <Sparkles className="h-6 w-6 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-3">AIGP Exam Prep</h3>
+              <h3 className="text-xl font-bold text-foreground mb-3">Personalized Onboarding</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Full-length practice exams aligned with the AIGP certification blueprint. Prepare with confidence.
+                Start with a knowledge assessment to personalize your learning journey. Choose your persona, interests, and goals for a tailored experience.
+              </p>
+            </div>
+
+            {/* Feature 9 */}
+            <div className="group p-8 bg-card rounded-2xl border border-border hover:border-accent/50 transition-all hover:shadow-xl">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition">
+                <BarChart3 className="h-6 w-6 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3">Advanced Analytics</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Track your learning progress with detailed analytics. See your strengths, identify areas for improvement, and monitor your certification readiness.
               </p>
             </div>
           </div>
@@ -317,6 +354,7 @@ export default async function Home() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/concepts" className="hover:text-foreground transition">Concept Cards</Link></li>
                 <li><Link href="/challenges" className="hover:text-foreground transition">Mastery Exams</Link></li>
+                <li><Link href="/aigp-exams" className="hover:text-foreground transition">AIGP Prep Exams</Link></li>
                 <li><Link href="/pricing" className="hover:text-foreground transition">Pricing</Link></li>
               </ul>
             </div>
@@ -324,6 +362,8 @@ export default async function Home() {
               <h4 className="font-semibold text-foreground mb-4">Resources</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/dashboard" className="hover:text-foreground transition">Dashboard</Link></li>
+                <li><Link href="/startegizer" className="hover:text-foreground transition">AI Tutor</Link></li>
+                <li><Link href="/market-scan" className="hover:text-foreground transition">Market Scan</Link></li>
                 <li><Link href="/pricing" className="hover:text-foreground transition">Premium Features</Link></li>
               </ul>
             </div>

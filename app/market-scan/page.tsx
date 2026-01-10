@@ -29,67 +29,79 @@ export default async function MarketScanPage() {
   }
 
   // Fetch recent articles
-    // @ts-ignore - marketScanArticle model removed from schema
-    const articles = await prisma.marketScanArticle.findMany({
-    where: {
-      // Add isActive field check if it exists in schema
-      // For now, just get all articles
-    },
-    orderBy: { publishedAt: 'desc' },
-    take: 50,
-    select: {
-      id: true,
-      title: true,
-      summary: true,
-      source: true,
-      sourceUrl: true,
-      sourceType: true,
-      category: true,
-      jurisdiction: true,
-      publishedAt: true,
-      relevanceScore: true,
-      relevanceTags: true,
-      keyTopics: true,
-      affectedFrameworks: true,
-      riskAreas: true,
-      complianceImpact: true,
-      scannedAt: true,
-      // Enhanced metadata
-      sentiment: true,
-      urgency: true,
-      impactScope: true,
-      affectedIndustries: true,
-      regulatoryBodies: true,
-      relatedRegulations: true,
-      actionItems: true,
-      timeline: true,
-      geographicRegions: true,
-      mentionedEntities: true,
-      enforcementActions: true,
-      readingTimeMinutes: true,
-      complexityLevel: true,
-      language: true,
-      author: true,
-      publisher: true,
-    },
-  });
+  // Note: MarketScanArticle model may not exist in schema - handle gracefully
+  let articles: any[] = [];
+  let recentScans: any[] = [];
+
+  try {
+    // @ts-ignore - marketScanArticle model may not exist in schema
+    articles = await prisma.marketScanArticle.findMany({
+      where: {},
+      orderBy: { publishedAt: 'desc' },
+      take: 50,
+      select: {
+        id: true,
+        title: true,
+        summary: true,
+        source: true,
+        sourceUrl: true,
+        sourceType: true,
+        category: true,
+        jurisdiction: true,
+        publishedAt: true,
+        relevanceScore: true,
+        relevanceTags: true,
+        keyTopics: true,
+        affectedFrameworks: true,
+        riskAreas: true,
+        complianceImpact: true,
+        scannedAt: true,
+        sentiment: true,
+        urgency: true,
+        impactScope: true,
+        affectedIndustries: true,
+        regulatoryBodies: true,
+        relatedRegulations: true,
+        actionItems: true,
+        timeline: true,
+        geographicRegions: true,
+        mentionedEntities: true,
+        enforcementActions: true,
+        readingTimeMinutes: true,
+        complexityLevel: true,
+        language: true,
+        author: true,
+        publisher: true,
+      },
+    });
+  } catch (error: any) {
+    console.error('[MARKET_SCAN] Error fetching articles (model may not exist):', error.message);
+    // Continue with empty array - feature not yet implemented
+    articles = [];
+  }
 
   // Get scan job history
-  // @ts-ignore - scanJob model removed from schema
-  const recentScans = await prisma.scanJob.findMany({
-    orderBy: { startedAt: 'desc' },
-    take: 5,
-    select: {
-      id: true,
-      scanType: true,
-      status: true,
-      startedAt: true,
-      completedAt: true,
-      articlesFound: true,
-      articlesProcessed: true,
-      articlesAdded: true,
-    },
-  });
+  try {
+    // @ts-ignore - scanJob model may not exist in schema
+    recentScans = await prisma.scanJob.findMany({
+      orderBy: { startedAt: 'desc' },
+      take: 5,
+      select: {
+        id: true,
+        scanType: true,
+        status: true,
+        startedAt: true,
+        completedAt: true,
+        articlesFound: true,
+        articlesProcessed: true,
+        articlesAdded: true,
+      },
+    });
+  } catch (error: any) {
+    console.error('[MARKET_SCAN] Error fetching scan jobs (model may not exist):', error.message);
+    // Continue with empty array - feature not yet implemented
+    recentScans = [];
+  }
 
   return (
     <div>
