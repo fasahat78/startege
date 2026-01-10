@@ -90,10 +90,10 @@ export default async function CreditBalance({ userId, subscriptionTier }: Credit
   const isEmpty = creditBalance === 0;
 
   return (
-    <div className="bg-card rounded-lg shadow-card p-6 border-2 border-border">
+    <div className="bg-card rounded-lg shadow-card p-4 sm:p-6 border-2 border-border">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-card-foreground mb-1">
+          <h3 className="text-base sm:text-lg font-semibold text-card-foreground mb-1">
             AI Credits
           </h3>
           <p className="text-sm text-muted-foreground">
@@ -114,7 +114,7 @@ export default async function CreditBalance({ userId, subscriptionTier }: Credit
 
       <div className="mb-4">
         <div className="flex items-baseline gap-2 mb-2">
-          <span className={`text-4xl font-bold ${
+          <span className={`text-3xl sm:text-4xl font-bold ${
             isEmpty ? "text-status-error" : isLow ? "text-status-warning" : "text-card-foreground"
           }`}>
             {creditBalanceDisplay}

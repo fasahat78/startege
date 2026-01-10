@@ -56,7 +56,7 @@ export default async function PricingPage() {
         <SubscriptionRefresh />
         <DiscountVerification />
       </Suspense>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
         {/* Credit Balance - Show for Premium Users */}
         {isPremium && (
           <div className="mb-8 max-w-2xl mx-auto">
@@ -65,11 +65,11 @@ export default async function PricingPage() {
         )}
 
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4">
             Upgrade to Premium
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-lg sm:text-xl text-muted-foreground">
             Unlock the full AI Governance learning experience
           </p>
         </div>
@@ -79,9 +79,9 @@ export default async function PricingPage() {
           <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
             Subscription Plans
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto">
             {/* Free Tier */}
-            <div className="bg-card rounded-lg shadow-card p-8 border-2 border-border">
+            <div className="bg-card rounded-lg shadow-card p-6 sm:p-8 border-2 border-border">
               <h3 className="text-xl font-bold text-card-foreground mb-2">
                 Free
               </h3>
@@ -233,7 +233,7 @@ export default async function PricingPage() {
           <p className="text-muted-foreground text-center mb-8">
             Purchase additional AI credits for Startegizer and exam generation
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
             {/* Small Credits */}
             <div className="bg-card rounded-lg shadow-card p-6 border-2 border-border">
               <h3 className="text-lg font-bold text-card-foreground mb-2">

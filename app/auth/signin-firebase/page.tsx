@@ -373,13 +373,13 @@ function SignInFirebaseContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted px-4">
-      <div className="max-w-md w-full bg-card rounded-lg shadow-card p-8 border-2 border-border">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-card-foreground mb-2">
+    <div className="min-h-screen flex items-center justify-center bg-muted px-4 py-8 sm:py-12">
+      <div className="max-w-md w-full bg-card rounded-lg shadow-card p-6 sm:p-8 border-2 border-border">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-card-foreground mb-2">
             Sign In
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Sign in to your Startege account
           </p>
         </div>
@@ -405,7 +405,7 @@ function SignInFirebaseContent() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     autoComplete="email"
-                    className="w-full px-4 py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary bg-background text-foreground"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary bg-background text-foreground text-sm sm:text-base min-h-[44px]"
                     placeholder="you@example.com"
                   />
           </div>
@@ -424,7 +424,7 @@ function SignInFirebaseContent() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="current-password"
-                    className="w-full px-4 py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary bg-background text-foreground"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-2 border-2 border-border rounded-lg focus:outline-none focus:border-primary bg-background text-foreground text-sm sm:text-base min-h-[44px]"
                     placeholder="••••••••"
                   />
           </div>
@@ -441,7 +441,7 @@ function SignInFirebaseContent() {
           <button
             type="submit"
             disabled={loading || !!oauthLoading}
-            className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 sm:py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px]"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>

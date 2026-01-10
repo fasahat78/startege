@@ -106,7 +106,7 @@ export default function FeatureBlock({
 
   return (
     <div
-      className={`bg-card rounded-lg shadow-card p-6 border-2 transition-all duration-200 flex flex-col h-full overflow-hidden ${
+      className={`bg-card rounded-lg shadow-card p-4 sm:p-6 border-2 transition-all duration-200 flex flex-col h-full overflow-hidden ${
         isUnlocked
           ? "border-accent hover:shadow-lg hover:scale-105 cursor-pointer"
           : isClickable
@@ -128,7 +128,7 @@ export default function FeatureBlock({
       </div>
 
       {/* Title */}
-      <h3 className="text-lg font-semibold text-card-foreground mb-2">
+      <h3 className="text-base sm:text-lg font-semibold text-card-foreground mb-2">
         {title}
       </h3>
 
@@ -147,7 +147,7 @@ export default function FeatureBlock({
       {ctaHref ? (
         <Link
           href={ctaHref}
-          className={`block w-full text-center px-4 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 ${
+          className={`block w-full text-center px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 min-h-[44px] flex items-center justify-center ${
             isUnlocked
               ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md"
               : "bg-gradient-to-r from-primary/80 to-accent/80 text-white hover:opacity-90 shadow-md hover:shadow-lg"
@@ -158,7 +158,7 @@ export default function FeatureBlock({
       ) : (
         <button
           onClick={handleClick}
-          className={`w-full px-4 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 ${
+          className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 min-h-[44px] ${
             isUnlocked
               ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md"
               : "bg-gradient-to-r from-primary/80 to-accent/80 text-white hover:opacity-90 shadow-md hover:shadow-lg"

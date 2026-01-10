@@ -159,15 +159,15 @@ export default function FeatureBlocks({
 
   return (
     <div className="mb-8">
-      <h2 className="text-2xl font-bold text-foreground mb-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
         Features
       </h2>
       
       {/* Free Features First - Show prominently for free users */}
       {!isPremium && (
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Available Now</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        <div className="mb-6 sm:mb-8">
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Available Now</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-stretch">
             {freeFeatures}
           </div>
         </div>
@@ -175,9 +175,9 @@ export default function FeatureBlocks({
 
       {/* Premium Features for Free Users */}
       {!isPremium && (
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Premium Features</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="mb-6 sm:mb-8">
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Premium Features</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-stretch">
             {premiumFeatures}
           </div>
         </div>
@@ -185,7 +185,7 @@ export default function FeatureBlocks({
 
       {/* All Features for Premium Users - 2 rows of 3 cards each */}
       {isPremium && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-stretch">
           {allFeatures}
         </div>
       )}

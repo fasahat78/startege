@@ -115,7 +115,7 @@ export default async function DashboardPage({
       <Suspense fallback={null}>
         <SubscriptionRefresh />
       </Suspense>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         {/* Upgrade Success Message */}
         {showUpgradeSuccess && (
           <div className="mb-6 bg-status-success/10 border border-status-success/20 rounded-lg p-4">
@@ -135,8 +135,8 @@ export default async function DashboardPage({
           <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-brand-teal/10 rounded-xl p-6 md:p-8">
             <div className="flex items-start justify-between">
               <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
                     Welcome back, {user.name || user.email?.split("@")[0]}! 👋
                   </h1>
                   {userData?.isEarlyAdopter && userData?.earlyAdopterTier && (
@@ -176,7 +176,7 @@ export default async function DashboardPage({
         />
 
         {/* Recent Achievements & Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Recent Achievements */}
           {recentBadges.length > 0 && (
             <div className="bg-card rounded-lg shadow-card p-6 border border-border">

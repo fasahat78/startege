@@ -159,7 +159,7 @@ export default function UserMenu({ user }: UserMenuProps) {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-card rounded-lg shadow-lg border border-border z-50">
+        <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-card rounded-lg shadow-lg border border-border z-50">
           {/* User Info Header */}
           <div className="px-4 py-3 border-b border-border">
             <p className="text-sm font-semibold text-card-foreground truncate">
