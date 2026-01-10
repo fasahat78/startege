@@ -10,13 +10,20 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 // Handle OPTIONS for CORS
-export async function OPTIONS() {
+export async function OPTIONS(request: Request) {
+  // Get origin from request to allow CORS for custom domain
+  const origin = request.headers.get('origin');
+  const allowedOrigin = process.env.NODE_ENV === "production"
+    ? (origin && (origin.includes('startege.com') || origin.includes('localhost')) ? origin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
+    : "*";
+  
   return new NextResponse(null, {
     status: 200,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": allowedOrigin,
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Credentials": "true",
     },
   });
 }
@@ -29,6 +36,12 @@ export async function POST(request: Request) {
   const rateLimitResult = await rateLimiters.auth.limit(clientIp);
   if (!rateLimitResult.success) {
     const retryAfter = Math.ceil((rateLimitResult.reset - Date.now()) / 1000);
+    // Get origin for CORS
+    const origin = request.headers.get('origin');
+    const allowedOrigin = process.env.NODE_ENV === "production"
+      ? (origin && (origin.includes('startege.com') || origin.includes('localhost')) ? origin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
+      : "*";
+    
     return NextResponse.json(
       { 
         error: "Too many authentication requests", 
@@ -39,7 +52,8 @@ export async function POST(request: Request) {
         status: 429,
         headers: {
           "Retry-After": retryAfter.toString(),
-          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Origin": allowedOrigin,
+          "Access-Control-Allow-Credentials": "true",
         }
       }
     );
@@ -402,32 +416,84 @@ export async function POST(request: Request) {
     // Use server-side redirect (303) for POST → redirect
     // 303 is the correct status for POST redirects (browsers treat it as GET)
     // Build absolute URL for redirect - NextResponse.redirect requires absolute URL
-    // Priority: NEXT_PUBLIC_APP_URL > x-forwarded-host > host header > origin > referer
-    let baseUrl: string;
+    // CRITICAL: Always prioritize request origin/URL to preserve www vs non-www
+    // This prevents CORS errors when redirecting between www and non-www domains
+    let baseUrl: string | undefined = undefined;
     
-    // Try NEXT_PUBLIC_APP_URL first (set at build time)
-    // Allow localhost in development - it's needed for local testing
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    if (appUrl && !appUrl.includes('0.0.0.0')) {
-      baseUrl = appUrl.endsWith('/') ? appUrl.slice(0, -1) : appUrl;
-      console.log("[VERIFY ROUTE] Using NEXT_PUBLIC_APP_URL:", baseUrl);
-    } else {
-      // Fallback: Use request headers
-      // For form POSTs, origin header is most reliable
-      const origin = request.headers.get('origin');
+    // Priority 1: Request origin header (most reliable for CORS)
+    const origin = request.headers.get('origin');
+    if (origin) {
+      try {
+        const originUrl = new URL(origin);
+        baseUrl = originUrl.origin; // This preserves protocol and exact host (www vs non-www)
+        console.log("[VERIFY ROUTE] ✅ Using request origin (preserves www/non-www):", baseUrl);
+      } catch (e) {
+        console.log("[VERIFY ROUTE] Invalid origin URL:", origin);
+      }
+    }
+    
+    // Priority 2: Try to extract from request URL itself (if available)
+    // Note: In Next.js, request.url might be relative, so we need to construct full URL
+    if (!baseUrl && request.url) {
+      try {
+        // If request.url is absolute, use it directly
+        if (request.url.startsWith('http://') || request.url.startsWith('https://')) {
+          const requestUrl = new URL(request.url);
+          baseUrl = requestUrl.origin;
+          console.log("[VERIFY ROUTE] ✅ Using request URL origin (absolute):", baseUrl);
+        } else {
+          // If relative, construct from headers
+          const host = request.headers.get('host');
+          const protocol = request.headers.get('x-forwarded-proto') || 'https';
+          if (host) {
+            baseUrl = `${protocol}://${host}`;
+            console.log("[VERIFY ROUTE] ✅ Using request URL origin (constructed from headers):", baseUrl);
+          }
+        }
+      } catch (e) {
+        console.log("[VERIFY ROUTE] Could not parse request URL:", request.url, e);
+      }
+    }
+    
+    // Priority 3: Try referer header (contains the page URL)
+    if (!baseUrl) {
+      const referer = request.headers.get('referer');
+      if (referer) {
+        try {
+          const refererUrl = new URL(referer);
+          baseUrl = refererUrl.origin;
+          console.log("[VERIFY ROUTE] ✅ Using referer origin:", baseUrl);
+        } catch (e) {
+          console.log("[VERIFY ROUTE] Invalid referer URL:", referer);
+        }
+      }
+    }
+    
+    // Priority 4: Try NEXT_PUBLIC_APP_URL (only if no origin detected)
+    if (!baseUrl) {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+      if (appUrl && !appUrl.includes('0.0.0.0')) {
+        baseUrl = appUrl.endsWith('/') ? appUrl.slice(0, -1) : appUrl;
+        console.log("[VERIFY ROUTE] ⚠️ Using NEXT_PUBLIC_APP_URL (may not match request origin):", baseUrl);
+      } else {
+      // Fallback: Use request headers - prioritize origin for CORS compatibility
+      // For form POSTs, origin header is most reliable and matches the request origin
+      // Note: origin was already checked above, but check again if baseUrl still not set
+      const fallbackOrigin = request.headers.get('origin');
       const host = request.headers.get('host');
       const forwardedHost = request.headers.get('x-forwarded-host');
       const referer = request.headers.get('referer');
       
-      // Determine host - prioritize origin for form POSTs
+      // Determine host - prioritize origin for form POSTs (matches CORS origin)
+      // CRITICAL: Must match the exact origin (including www vs non-www) to avoid CORS errors
       let finalHost: string | null = null;
-      if (origin) {
+      if (fallbackOrigin) {
         try {
-          const originUrl = new URL(origin);
-          finalHost = originUrl.host;
-          console.log("[VERIFY ROUTE] Using origin header:", finalHost);
+          const originUrl = new URL(fallbackOrigin);
+          finalHost = originUrl.host; // This preserves www vs non-www
+          console.log("[VERIFY ROUTE] Using fallback origin header:", finalHost);
         } catch (e) {
-          console.log("[VERIFY ROUTE] Invalid origin URL:", origin);
+          console.log("[VERIFY ROUTE] Invalid fallback origin URL:", fallbackOrigin);
         }
       } else if (host && !host.includes('0.0.0.0') && host !== 'localhost:8080') {
         finalHost = host;
@@ -445,30 +511,84 @@ export async function POST(request: Request) {
         }
       }
       
-      // Determine protocol
-      const protocol = request.headers.get('x-forwarded-proto') || 
-                       (finalHost?.includes('localhost') ? 'http' : 'https');
+      // Determine protocol - ensure it includes ://
+      let protocol = request.headers.get('x-forwarded-proto') || 
+                     (finalHost?.includes('localhost') ? 'http' : 'https');
+      
+      // Ensure protocol has :// (remove any existing :// to avoid double slashes)
+      protocol = protocol.replace(/:\/\/$/, '').replace(/\/\/$/, '');
+      if (!protocol.includes('://')) {
+        protocol = protocol + '://';
+      }
       
       if (finalHost) {
-        baseUrl = `${protocol}://${finalHost}`;
+        baseUrl = `${protocol}${finalHost}`;
         console.log("[VERIFY ROUTE] Using headers - baseUrl:", baseUrl);
       } else {
-        // Last resort: use localhost:3000 for development, Cloud Run URL for production
+        // Last resort: use localhost:3000 for development
+        // In production, ALWAYS use custom domain to prevent CORS issues
         if (process.env.NODE_ENV === 'development') {
           baseUrl = 'http://localhost:3000';
           console.warn("[VERIFY ROUTE] Could not determine baseUrl, using localhost:3000 for development");
         } else {
-          baseUrl = 'https://startege-785373873454.us-central1.run.app';
-          console.warn("[VERIFY ROUTE] Could not determine baseUrl, using default Cloud Run URL");
+          // In production, ALWAYS prefer custom domain over Cloud Run URL
+          // This prevents CORS issues when custom domain is mapped
+          // Priority: NEXT_PUBLIC_APP_URL > hardcoded startege.com > origin from request
+          const customDomain = process.env.NEXT_PUBLIC_APP_URL || 'https://startege.com';
+          baseUrl = customDomain.endsWith('/') ? customDomain.slice(0, -1) : customDomain;
+          console.warn("[VERIFY ROUTE] Could not determine baseUrl from headers, using custom domain:", baseUrl);
+          console.warn("[VERIFY ROUTE] NOTE: Set NEXT_PUBLIC_APP_URL env var for best results");
         }
       }
     }
     
-    const redirectUrlFull = redirectUrl.startsWith("http") 
+    // Ensure baseUrl is set - this is critical for CORS
+    if (!baseUrl) {
+      console.error("[VERIFY ROUTE] ❌ CRITICAL: baseUrl is not set! This will cause CORS errors.");
+      console.error("[VERIFY ROUTE] Request origin:", request.headers.get('origin'));
+      console.error("[VERIFY ROUTE] Request host:", request.headers.get('host'));
+      console.error("[VERIFY ROUTE] Request URL:", request.url);
+      // Last resort: use origin from request if available
+      const lastResortOrigin = request.headers.get('origin');
+      if (lastResortOrigin) {
+        baseUrl = lastResortOrigin;
+        console.warn("[VERIFY ROUTE] ⚠️ Using origin as last resort:", baseUrl);
+      } else {
+        baseUrl = 'https://startege.com'; // Fallback - but this might cause CORS issues
+        console.error("[VERIFY ROUTE] ❌ Using hardcoded fallback - CORS errors may occur:", baseUrl);
+      }
+    }
+    
+    let redirectUrlFull = redirectUrl.startsWith("http") 
       ? redirectUrl 
       : `${baseUrl}${redirectUrl}`;
     
+    // CRITICAL: Verify redirect URL matches request origin to prevent CORS
+    // Even with redirect: "manual", browsers may still check CORS on redirect URLs
+    const requestOrigin = request.headers.get('origin');
+    if (requestOrigin) {
+      try {
+        const originUrl = new URL(requestOrigin);
+        const redirectUrlObj = new URL(redirectUrlFull);
+        if (originUrl.origin !== redirectUrlObj.origin) {
+          console.warn("[VERIFY ROUTE] ⚠️ WARNING: Redirect origin doesn't match request origin!");
+          console.warn("[VERIFY ROUTE] Request origin:", originUrl.origin);
+          console.warn("[VERIFY ROUTE] Redirect origin:", redirectUrlObj.origin);
+          // Fix it by using request origin
+          const pathAndQuery = redirectUrlObj.pathname + redirectUrlObj.search + redirectUrlObj.hash;
+          redirectUrlFull = `${originUrl.origin}${pathAndQuery}`;
+          console.warn("[VERIFY ROUTE] ✅ Corrected redirect URL to match request origin:", redirectUrlFull);
+        } else {
+          console.log("[VERIFY ROUTE] ✅ Redirect origin matches request origin:", originUrl.origin);
+        }
+      } catch (e) {
+        console.error("[VERIFY ROUTE] Error comparing origins:", e);
+      }
+    }
+    
     console.log("[VERIFY ROUTE] Redirect URL (full):", redirectUrlFull);
+    console.log("[VERIFY ROUTE] Request origin was:", requestOrigin);
+    console.log("[VERIFY ROUTE] baseUrl used:", baseUrl);
     console.log("[VERIFY ROUTE] Creating redirect response with 303 status...");
     
     const redirectResponse = NextResponse.redirect(redirectUrlFull, { status: 303 });
@@ -540,6 +660,15 @@ export async function POST(request: Request) {
       path: "/",
     });
     
+    // Add CORS headers to redirect response to prevent CORS errors
+    const origin = request.headers.get('origin');
+    const allowedOrigin = process.env.NODE_ENV === "production"
+      ? (origin && (origin.includes('startege.com') || origin.includes('localhost')) ? origin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
+      : "*";
+    
+    redirectResponse.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+    redirectResponse.headers.set("Access-Control-Allow-Credentials", "true");
+    
     console.log("[VERIFY ROUTE] ===== SUCCESS =====");
     console.log("[VERIFY ROUTE] User ID:", user.id);
     console.log("[VERIFY ROUTE] User Email:", user.email);
@@ -547,6 +676,7 @@ export async function POST(request: Request) {
     console.log("[VERIFY ROUTE] Session Cookie set:", !!sessionCookie);
     console.log("[VERIFY ROUTE] Session Cookie length:", sessionCookie.length);
     console.log("[VERIFY ROUTE] Using server-side redirect (303)");
+    console.log("[VERIFY ROUTE] CORS Origin:", allowedOrigin);
     
     return redirectResponse;
   } catch (error: any) {
@@ -555,6 +685,12 @@ export async function POST(request: Request) {
     console.error("[VERIFY ROUTE] Error name:", error.name);
     console.error("[VERIFY ROUTE] Error message:", error.message);
     console.error("[VERIFY ROUTE] Error stack:", error.stack);
+    
+    // Get origin for CORS
+    const origin = request.headers.get('origin');
+    const allowedOrigin = process.env.NODE_ENV === "production"
+      ? (origin && (origin.includes('startege.com') || origin.includes('localhost')) ? origin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
+      : "*";
     
     // Always return JSON, never HTML
     return NextResponse.json(
@@ -566,7 +702,8 @@ export async function POST(request: Request) {
         status: 500,
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Origin": allowedOrigin,
+          "Access-Control-Allow-Credentials": "true",
         },
       }
     );

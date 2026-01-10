@@ -13,18 +13,43 @@ export default function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        setUser({
-          email: firebaseUser.email,
-          name: firebaseUser.displayName || null,
+    // Check server-side session first (for users authenticated via session cookie)
+    const checkServerSession = async () => {
+      try {
+        const response = await fetch("/api/auth/firebase/session", {
+          method: "GET",
+          credentials: "include",
         });
-      } else {
-        setUser(null);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.user) {
+            setUser({
+              email: data.user.email,
+              name: data.user.name || null,
+            });
+            return; // Server session found, don't set up Firebase listener
+          }
+        }
+      } catch (error) {
+        console.error("[HEADER] Error checking server session:", error);
       }
-    });
+      
+      // Fallback to Firebase client-side auth state (for OAuth popups, etc.)
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        if (firebaseUser) {
+          setUser({
+            email: firebaseUser.email,
+            name: firebaseUser.displayName || null,
+          });
+        } else {
+          setUser(null);
+        }
+      });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    };
+
+    checkServerSession();
   }, []);
 
   const isAuthPage = pathname?.startsWith("/auth");

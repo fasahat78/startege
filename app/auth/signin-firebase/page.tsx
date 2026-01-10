@@ -77,13 +77,40 @@ function SignInFirebaseContent() {
           method: "POST",
           body: formData,
           credentials: "include",
+          redirect: "manual", // Don't follow redirects automatically - handle manually
         });
 
-        if (response.ok || response.status === 303) {
-          // Success - redirect manually
+        // Handle redirect manually to avoid CORS issues
+        if (response.status === 303 || response.status === 302 || response.status === 301) {
           const redirectUrl = response.headers.get("Location") || targetRedirect;
           console.log("[CLIENT] Verify successful, redirecting to:", redirectUrl);
-          window.location.href = redirectUrl;
+          // CRITICAL: Always use current origin to avoid CORS issues with www vs non-www
+          const currentOrigin = window.location.origin || window.location.protocol + "//" + window.location.host;
+          let finalRedirectUrl: string;
+          if (redirectUrl.startsWith("http://") || redirectUrl.startsWith("https://")) {
+            // If redirect URL is absolute, normalize it to use current origin
+            try {
+              const redirectUrlObj = new URL(redirectUrl);
+              // Extract pathname and search params, but use current origin
+              const pathAndQuery = redirectUrlObj.pathname + redirectUrlObj.search + redirectUrlObj.hash;
+              finalRedirectUrl = `${currentOrigin}${pathAndQuery}`;
+              console.log("[CLIENT] Normalized redirect URL from", redirectUrl, "to", finalRedirectUrl);
+            } catch (e) {
+              // If URL parsing fails, use redirect URL as-is (fallback)
+              console.warn("[CLIENT] Could not parse redirect URL, using as-is:", redirectUrl);
+              finalRedirectUrl = redirectUrl;
+            }
+          } else {
+            // Relative URL - prepend current origin
+            finalRedirectUrl = `${currentOrigin}${redirectUrl.startsWith("/") ? "" : "/"}${redirectUrl}`;
+          }
+          console.log("[CLIENT] Final redirect URL (using current origin):", finalRedirectUrl);
+          window.location.href = finalRedirectUrl;
+          return;
+        } else if (response.ok) {
+          // Success but no redirect header - use target redirect
+          console.log("[CLIENT] Verify successful, redirecting to:", targetRedirect);
+          window.location.href = targetRedirect;
           return;
         } else {
           // Error - show to user
@@ -175,13 +202,40 @@ function SignInFirebaseContent() {
           method: "POST",
           body: formData,
           credentials: "include",
+          redirect: "manual", // Don't follow redirects automatically - handle manually
         });
 
-        if (response.ok || response.status === 303) {
-          // Success - redirect manually
+        // Handle redirect manually to avoid CORS issues
+        if (response.status === 303 || response.status === 302 || response.status === 301) {
           const redirectUrl = response.headers.get("Location") || targetRedirect;
           console.log("[CLIENT] OAuth verify successful, redirecting to:", redirectUrl);
-          window.location.href = redirectUrl;
+          // CRITICAL: Always use current origin to avoid CORS issues with www vs non-www
+          const currentOrigin = window.location.origin || window.location.protocol + "//" + window.location.host;
+          let finalRedirectUrl: string;
+          if (redirectUrl.startsWith("http://") || redirectUrl.startsWith("https://")) {
+            // If redirect URL is absolute, normalize it to use current origin
+            try {
+              const redirectUrlObj = new URL(redirectUrl);
+              // Extract pathname and search params, but use current origin
+              const pathAndQuery = redirectUrlObj.pathname + redirectUrlObj.search + redirectUrlObj.hash;
+              finalRedirectUrl = `${currentOrigin}${pathAndQuery}`;
+              console.log("[CLIENT] Normalized redirect URL from", redirectUrl, "to", finalRedirectUrl);
+            } catch (e) {
+              // If URL parsing fails, use redirect URL as-is (fallback)
+              console.warn("[CLIENT] Could not parse redirect URL, using as-is:", redirectUrl);
+              finalRedirectUrl = redirectUrl;
+            }
+          } else {
+            // Relative URL - prepend current origin
+            finalRedirectUrl = `${currentOrigin}${redirectUrl.startsWith("/") ? "" : "/"}${redirectUrl}`;
+          }
+          console.log("[CLIENT] Final redirect URL (using current origin):", finalRedirectUrl);
+          window.location.href = finalRedirectUrl;
+          return;
+        } else if (response.ok) {
+          // Success but no redirect header - use target redirect
+          console.log("[CLIENT] OAuth verify successful, redirecting to:", targetRedirect);
+          window.location.href = targetRedirect;
           return;
         } else {
           // Error - show to user
