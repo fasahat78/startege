@@ -421,14 +421,14 @@ export async function POST(request: Request) {
     let baseUrl: string | undefined = undefined;
     
     // Priority 1: Request origin header (most reliable for CORS)
-    const origin = request.headers.get('origin');
-    if (origin) {
+    const requestOriginHeader = request.headers.get('origin');
+    if (requestOriginHeader) {
       try {
-        const originUrl = new URL(origin);
+        const originUrl = new URL(requestOriginHeader);
         baseUrl = originUrl.origin; // This preserves protocol and exact host (www vs non-www)
         console.log("[VERIFY ROUTE] ✅ Using request origin (preserves www/non-www):", baseUrl);
       } catch (e) {
-        console.log("[VERIFY ROUTE] Invalid origin URL:", origin);
+        console.log("[VERIFY ROUTE] Invalid origin URL:", requestOriginHeader);
       }
     }
     
@@ -476,68 +476,69 @@ export async function POST(request: Request) {
         baseUrl = appUrl.endsWith('/') ? appUrl.slice(0, -1) : appUrl;
         console.log("[VERIFY ROUTE] ⚠️ Using NEXT_PUBLIC_APP_URL (may not match request origin):", baseUrl);
       } else {
-      // Fallback: Use request headers - prioritize origin for CORS compatibility
-      // For form POSTs, origin header is most reliable and matches the request origin
-      // Note: origin was already checked above, but check again if baseUrl still not set
-      const fallbackOrigin = request.headers.get('origin');
-      const host = request.headers.get('host');
-      const forwardedHost = request.headers.get('x-forwarded-host');
-      const referer = request.headers.get('referer');
-      
-      // Determine host - prioritize origin for form POSTs (matches CORS origin)
-      // CRITICAL: Must match the exact origin (including www vs non-www) to avoid CORS errors
-      let finalHost: string | null = null;
-      if (fallbackOrigin) {
-        try {
-          const originUrl = new URL(fallbackOrigin);
-          finalHost = originUrl.host; // This preserves www vs non-www
-          console.log("[VERIFY ROUTE] Using fallback origin header:", finalHost);
-        } catch (e) {
-          console.log("[VERIFY ROUTE] Invalid fallback origin URL:", fallbackOrigin);
+        // Fallback: Use request headers - prioritize origin for CORS compatibility
+        // For form POSTs, origin header is most reliable and matches the request origin
+        // Note: origin was already checked above, but check again if baseUrl still not set
+          const fallbackOrigin = request.headers.get('origin');
+        const host = request.headers.get('host');
+        const forwardedHost = request.headers.get('x-forwarded-host');
+        const referer = request.headers.get('referer');
+        
+        // Determine host - prioritize origin for form POSTs (matches CORS origin)
+        // CRITICAL: Must match the exact origin (including www vs non-www) to avoid CORS errors
+        let finalHost: string | null = null;
+        if (fallbackOrigin) {
+          try {
+            const originUrl = new URL(fallbackOrigin);
+            finalHost = originUrl.host; // This preserves www vs non-www
+            console.log("[VERIFY ROUTE] Using fallback origin header:", finalHost);
+          } catch (e) {
+            console.log("[VERIFY ROUTE] Invalid fallback origin URL:", fallbackOrigin);
+          }
+        } else if (host && !host.includes('0.0.0.0') && host !== 'localhost:8080') {
+          finalHost = host;
+          console.log("[VERIFY ROUTE] Using host header:", finalHost);
+        } else if (forwardedHost && !forwardedHost.includes('0.0.0.0')) {
+          finalHost = forwardedHost;
+          console.log("[VERIFY ROUTE] Using x-forwarded-host:", finalHost);
+        } else if (referer) {
+          try {
+            const refererUrl = new URL(referer);
+            finalHost = refererUrl.host;
+            console.log("[VERIFY ROUTE] Using referer header:", finalHost);
+          } catch (e) {
+            console.log("[VERIFY ROUTE] Invalid referer URL:", referer);
+          }
         }
-      } else if (host && !host.includes('0.0.0.0') && host !== 'localhost:8080') {
-        finalHost = host;
-        console.log("[VERIFY ROUTE] Using host header:", finalHost);
-      } else if (forwardedHost && !forwardedHost.includes('0.0.0.0')) {
-        finalHost = forwardedHost;
-        console.log("[VERIFY ROUTE] Using x-forwarded-host:", finalHost);
-      } else if (referer) {
-        try {
-          const refererUrl = new URL(referer);
-          finalHost = refererUrl.host;
-          console.log("[VERIFY ROUTE] Using referer header:", finalHost);
-        } catch (e) {
-          console.log("[VERIFY ROUTE] Invalid referer URL:", referer);
+        
+        // Determine protocol - ensure it includes ://
+        let protocol = request.headers.get('x-forwarded-proto') || 
+                       (finalHost?.includes('localhost') ? 'http' : 'https');
+        
+        // Ensure protocol has :// (remove any existing :// to avoid double slashes)
+        protocol = protocol.replace(/:\/\/$/, '').replace(/\/\/$/, '');
+        if (!protocol.includes('://')) {
+          protocol = protocol + '://';
         }
-      }
-      
-      // Determine protocol - ensure it includes ://
-      let protocol = request.headers.get('x-forwarded-proto') || 
-                     (finalHost?.includes('localhost') ? 'http' : 'https');
-      
-      // Ensure protocol has :// (remove any existing :// to avoid double slashes)
-      protocol = protocol.replace(/:\/\/$/, '').replace(/\/\/$/, '');
-      if (!protocol.includes('://')) {
-        protocol = protocol + '://';
-      }
-      
-      if (finalHost) {
-        baseUrl = `${protocol}${finalHost}`;
-        console.log("[VERIFY ROUTE] Using headers - baseUrl:", baseUrl);
-      } else {
-        // Last resort: use localhost:3000 for development
-        // In production, ALWAYS use custom domain to prevent CORS issues
-        if (process.env.NODE_ENV === 'development') {
-          baseUrl = 'http://localhost:3000';
-          console.warn("[VERIFY ROUTE] Could not determine baseUrl, using localhost:3000 for development");
+        
+        if (finalHost) {
+          baseUrl = `${protocol}${finalHost}`;
+          console.log("[VERIFY ROUTE] Using headers - baseUrl:", baseUrl);
         } else {
-          // In production, ALWAYS prefer custom domain over Cloud Run URL
-          // This prevents CORS issues when custom domain is mapped
-          // Priority: NEXT_PUBLIC_APP_URL > hardcoded startege.com > origin from request
-          const customDomain = process.env.NEXT_PUBLIC_APP_URL || 'https://startege.com';
-          baseUrl = customDomain.endsWith('/') ? customDomain.slice(0, -1) : customDomain;
-          console.warn("[VERIFY ROUTE] Could not determine baseUrl from headers, using custom domain:", baseUrl);
-          console.warn("[VERIFY ROUTE] NOTE: Set NEXT_PUBLIC_APP_URL env var for best results");
+          // Last resort: use localhost:3000 for development
+          // In production, ALWAYS use custom domain to prevent CORS issues
+          if (process.env.NODE_ENV === 'development') {
+            baseUrl = 'http://localhost:3000';
+            console.warn("[VERIFY ROUTE] Could not determine baseUrl, using localhost:3000 for development");
+          } else {
+            // In production, ALWAYS prefer custom domain over Cloud Run URL
+            // This prevents CORS issues when custom domain is mapped
+            // Priority: NEXT_PUBLIC_APP_URL > hardcoded startege.com > origin from request
+            const customDomain = process.env.NEXT_PUBLIC_APP_URL || 'https://startege.com';
+            baseUrl = customDomain.endsWith('/') ? customDomain.slice(0, -1) : customDomain;
+            console.warn("[VERIFY ROUTE] Could not determine baseUrl from headers, using custom domain:", baseUrl);
+            console.warn("[VERIFY ROUTE] NOTE: Set NEXT_PUBLIC_APP_URL env var for best results");
+          }
         }
       }
     }
@@ -598,12 +599,13 @@ export async function POST(request: Request) {
     // sameSite: "lax" allows cookies to be sent on top-level navigations (like Stripe redirects)
     // Domain attribute: Only set for custom domains, NOT for Cloud Run (each service has unique subdomain)
     const isProduction = process.env.NODE_ENV === "production";
-    // Reuse appUrl from above (line 308) - don't redeclare
+    // Get appUrl for domain cookie setting
+    const appUrlForCookie = process.env.NEXT_PUBLIC_APP_URL;
     let domain: string | undefined = undefined;
     
-    if (isProduction && appUrl) {
+    if (isProduction && appUrlForCookie) {
       try {
-        const url = new URL(appUrl);
+        const url = new URL(appUrlForCookie);
         const hostname = url.hostname;
         
         // Only set domain for custom domains (not Cloud Run or other platform subdomains)
@@ -661,9 +663,9 @@ export async function POST(request: Request) {
     });
     
     // Add CORS headers to redirect response to prevent CORS errors
-    const origin = request.headers.get('origin');
+    const corsOrigin = request.headers.get('origin');
     const allowedOrigin = process.env.NODE_ENV === "production"
-      ? (origin && (origin.includes('startege.com') || origin.includes('localhost')) ? origin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
+      ? (corsOrigin && (corsOrigin.includes('startege.com') || corsOrigin.includes('localhost')) ? corsOrigin : process.env.NEXT_PUBLIC_APP_URL || "https://startege.com")
       : "*";
     
     redirectResponse.headers.set("Access-Control-Allow-Origin", allowedOrigin);
