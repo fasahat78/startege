@@ -54,6 +54,7 @@ export default function StartegizerClient({
   const [loading, setLoading] = useState(false);
   const [showPromptLibrary, setShowPromptLibrary] = useState(false);
   const [showUseCaseBuilder, setShowUseCaseBuilder] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false); // Mobile sidebar toggle
   const [creditBalance, setCreditBalance] = useState<number | null>(null);
   const [creditError, setCreditError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -284,9 +285,22 @@ export default function StartegizerClient({
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-muted">
+    <div className="flex h-[calc(100vh-4rem)] bg-muted relative">
+      {/* Mobile Sidebar Overlay */}
+      {showSidebar && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setShowSidebar(false)}
+        />
+      )}
+
       {/* Sidebar - Conversation History */}
-      <div className="w-64 bg-card border-r border-border flex flex-col">
+      <div className={`
+        fixed lg:static inset-y-0 left-0 z-50 lg:z-auto
+        w-64 bg-card border-r border-border flex flex-col
+        transform transition-transform duration-300 ease-in-out
+        ${showSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
         <div className="p-4 border-b border-border space-y-2">
           <button
             onClick={handleNewConversation}
