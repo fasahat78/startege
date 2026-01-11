@@ -65,6 +65,7 @@ export function getVectorSearchConfig() {
     indexId: VECTOR_SEARCH_CONFIG.indexId,
     endpointId: VECTOR_SEARCH_CONFIG.indexEndpoint,
     deploymentId: VECTOR_SEARCH_CONFIG.deploymentId || VECTOR_SEARCH_CONFIG.indexId, // Fallback to indexId if not set
+    publicDomainName: VECTOR_SEARCH_CONFIG.publicDomainName,
   };
 }
 
