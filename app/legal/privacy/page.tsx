@@ -471,12 +471,6 @@ export default function PrivacyPage() {
             </ul>
           </section>
 
-          {/* Legal Disclaimer */}
-          <section className="mb-8 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
-            <p className="text-sm text-muted-foreground">
-              <strong>Legal Disclaimer:</strong> This Privacy Policy is a template and should be reviewed by qualified legal counsel before use. It is not legal advice. Laws vary by jurisdiction and are subject to change. Innovationera Pty Ltd recommends consulting with an Australian privacy lawyer and, if applicable, lawyers in other jurisdictions where you operate.
-            </p>
-          </section>
         </div>
       </div>
     </main>

@@ -555,12 +555,6 @@ export default function TermsPage() {
             </div>
           </section>
 
-          {/* Legal Disclaimer */}
-          <section className="mb-8 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
-            <p className="text-sm text-muted-foreground">
-              <strong>Legal Disclaimer:</strong> These Terms of Service are a template and should be reviewed by qualified legal counsel before use. They are not legal advice. Laws vary by jurisdiction and are subject to change. Innovationera Pty Ltd recommends consulting with an Australian lawyer specializing in technology and consumer law.
-            </p>
-          </section>
         </div>
       </div>
     </main>
