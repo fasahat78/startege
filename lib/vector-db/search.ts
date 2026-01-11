@@ -181,6 +181,11 @@ export async function semanticSearch(
     return results.slice(0, topK);
   } catch (error: any) {
     console.error("[VECTOR_DB] Error performing semantic search:", error.message);
+    console.error("[VECTOR_DB] Error details:", {
+      message: error.message,
+      stack: error.stack?.substring(0, 500),
+      status: error.status || 'unknown',
+    });
     // Return empty results on error (graceful degradation)
     return [];
   }

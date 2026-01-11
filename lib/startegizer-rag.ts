@@ -203,8 +203,14 @@ export async function retrieveRAGContext(
       try {
         // Search both knowledge bases in parallel using semantic search
         const [marketScanSemantic, standardsSemantic] = await Promise.all([
-          searchMarketScanSemantic(query, marketScanTopK).catch(() => []),
-          searchStandardsSemantic(query, standardsTopK).catch(() => []),
+          searchMarketScanSemantic(query, marketScanTopK).catch((error) => {
+            console.error(`[RAG] Market Scan semantic search error:`, error.message);
+            return [];
+          }),
+          searchStandardsSemantic(query, standardsTopK).catch((error) => {
+            console.error(`[RAG] Standards semantic search error:`, error.message);
+            return [];
+          }),
         ]);
         
         if (marketScanSemantic.length > 0 || standardsSemantic.length > 0) {
