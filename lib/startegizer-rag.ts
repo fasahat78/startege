@@ -201,17 +201,22 @@ export async function retrieveRAGContext(
       console.log("[RAG] Using semantic search (Vector Search configured)...");
       
       try {
+        console.log(`[RAG] Starting semantic search for query: "${query}"`);
         // Search both knowledge bases in parallel using semantic search
         const [marketScanSemantic, standardsSemantic] = await Promise.all([
           searchMarketScanSemantic(query, marketScanTopK).catch((error) => {
             console.error(`[RAG] Market Scan semantic search error:`, error.message);
+            console.error(`[RAG] Market Scan error stack:`, error.stack?.substring(0, 500));
             return [];
           }),
           searchStandardsSemantic(query, standardsTopK).catch((error) => {
             console.error(`[RAG] Standards semantic search error:`, error.message);
+            console.error(`[RAG] Standards error stack:`, error.stack?.substring(0, 500));
             return [];
           }),
         ]);
+        
+        console.log(`[RAG] Semantic search results: ${marketScanSemantic.length} articles, ${standardsSemantic.length} standards`);
         
         if (marketScanSemantic.length > 0 || standardsSemantic.length > 0) {
           console.log(`[RAG] Found ${marketScanSemantic.length} articles and ${standardsSemantic.length} standards using semantic search`);

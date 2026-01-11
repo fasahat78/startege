@@ -25,12 +25,23 @@ export async function semanticSearch(
   }
 
   try {
+    console.log(`[VECTOR_DB] Starting semantic search for query: "${query.substring(0, 100)}"`);
     const config = getVectorSearchConfig();
     const topK = options.topK || VECTOR_SEARCH_CONFIG.defaultTopK;
     const minSimilarity = options.minSimilarity || 0.5; // Minimum similarity threshold
 
+    console.log(`[VECTOR_DB] Config:`, {
+      projectId: config.projectId,
+      location: config.location,
+      indexId: config.indexId,
+      endpointId: config.endpointId,
+      deploymentId: config.deploymentId,
+    });
+
     // Generate query embedding
+    console.log(`[VECTOR_DB] Generating query embedding...`);
     const queryEmbedding = await generateQueryEmbedding(query);
+    console.log(`[VECTOR_DB] Query embedding generated: ${queryEmbedding.length} dimensions`);
     
     // Call Vertex AI Vector Search REST API
     // For batch indexes deployed to endpoints, use findNeighbors
