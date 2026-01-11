@@ -35,11 +35,16 @@ export const VECTOR_SEARCH_CONFIG = {
  * Check if Vector Search is configured
  */
 export function isVectorSearchConfigured(): boolean {
-  return !!(
-    process.env.GCP_PROJECT_ID &&
-    process.env.VECTOR_SEARCH_INDEX_ID &&
-    process.env.VECTOR_SEARCH_ENDPOINT_ID
-  );
+  const hasProjectId = !!(process.env.GCP_PROJECT_ID || process.env.NEXT_PUBLIC_GCP_PROJECT_ID);
+  const hasIndexId = !!process.env.VECTOR_SEARCH_INDEX_ID;
+  const hasEndpointId = !!process.env.VECTOR_SEARCH_ENDPOINT_ID;
+  
+  // Log for debugging
+  if (!hasProjectId || !hasIndexId || !hasEndpointId) {
+    console.log(`[VECTOR_DB_CONFIG] Missing config: GCP_PROJECT_ID=${hasProjectId}, INDEX_ID=${hasIndexId}, ENDPOINT_ID=${hasEndpointId}`);
+  }
+  
+  return hasProjectId && hasIndexId && hasEndpointId;
 }
 
 /**
