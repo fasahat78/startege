@@ -121,6 +121,12 @@ export async function semanticSearch(
     }
 
     const data = await response.json();
+    console.log(`[VECTOR_DB] API Response received:`, {
+      hasNearestNeighbors: !!data.nearestNeighbors,
+      nearestNeighborsLength: data.nearestNeighbors?.length || 0,
+      neighborsCount: data.nearestNeighbors?.[0]?.neighbors?.length || 0,
+      fullResponse: JSON.stringify(data).substring(0, 1000), // First 1000 chars of response
+    });
     
     // Transform results to SearchResult format
     const results: SearchResult[] = [];
@@ -128,12 +134,23 @@ export async function semanticSearch(
     if (data.nearestNeighbors && data.nearestNeighbors.length > 0) {
       const neighbors = data.nearestNeighbors[0].neighbors || [];
       
+      console.log(`[VECTOR_DB] Processing ${neighbors.length} neighbors from API response`);
+      
       // Extract datapoint IDs
       const datapointIds = neighbors
         .map((n: any) => n.datapoint?.datapointId)
         .filter(Boolean) as string[];
       
+      console.log(`[VECTOR_DB] Extracted ${datapointIds.length} datapoint IDs`);
+      
       if (datapointIds.length === 0) {
+        console.log(`[VECTOR_DB] No datapoint IDs found - neighbors structure:`, {
+          sampleNeighbor: neighbors[0] ? {
+            hasDatapoint: !!neighbors[0].datapoint,
+            datapointKeys: neighbors[0].datapoint ? Object.keys(neighbors[0].datapoint) : [],
+            distance: neighbors[0].distance,
+          } : null,
+        });
         return [];
       }
 
