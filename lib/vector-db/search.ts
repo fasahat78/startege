@@ -68,9 +68,16 @@ export async function semanticSearch(
           neighborCount: topK * 2, // Get more results, filter by type after
         },
       ],
+      returnFullDatapoint: false, // We only need IDs, will fetch metadata from DB
     };
     
     console.log(`[VECTOR_DB] Querying with deployedIndexId: ${deployedIndexId}`);
+    console.log(`[VECTOR_DB] Request details:`, {
+      apiUrl,
+      deployedIndexId,
+      queryEmbeddingLength: queryEmbedding.length,
+      neighborCount: topK * 2,
+    });
 
     // Get access token for authentication
     const { GoogleAuth } = require('google-auth-library');
