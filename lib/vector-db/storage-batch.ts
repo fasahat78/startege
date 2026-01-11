@@ -15,7 +15,7 @@ import { generateEmbeddingsBatch } from "./embeddings";
 export async function batchIndexDocumentsViaGCS(
   docs: Array<Omit<VectorDocument, 'embedding'> & { text: string }>,
   gcsBucket: string,
-  gcsPath: string = 'vector-search-import'
+  gcsPath: string = '' // Empty string = root directory (required by Vector Search)
 ): Promise<string[]> {
   if (!isVectorSearchConfigured()) {
     console.warn("[VECTOR_DB] Vector Search not configured, skipping batch indexing");
@@ -86,7 +86,8 @@ export async function batchIndexDocumentsViaGCS(
       console.log(`[VECTOR_DB] Bucket created: ${gcsBucket}`);
     }
 
-    const fileName = `${gcsPath}/import-${Date.now()}.jsonl`;
+    // Upload to root directory (no subdirectories allowed except "delete/")
+    const fileName = gcsPath ? `${gcsPath}/import-${Date.now()}.jsonl` : `import-${Date.now()}.jsonl`;
     const file = bucket.file(fileName);
 
     // Convert to JSONL format (one JSON object per line)
@@ -106,7 +107,8 @@ export async function batchIndexDocumentsViaGCS(
     
     // Update index to point to the new GCS data
     // For batch indexes, set contentsDeltaUri to the GCS folder containing the data
-    const gcsFolderUri = `gs://${gcsBucket}/${gcsPath}`;
+    // Must be root directory (no subdirectories allowed except "delete/")
+    const gcsFolderUri = gcsPath ? `gs://${gcsBucket}/${gcsPath}` : `gs://${gcsBucket}/`;
     
     // Get current index to preserve other fields
     const getIndexUrl = `https://${config.location}-aiplatform.googleapis.com/v1/projects/${config.projectId}/locations/${config.location}/indexes/${config.indexId}`;
