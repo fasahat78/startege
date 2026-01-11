@@ -20,8 +20,7 @@ export default function PrivacyPage() {
             </p>
             <p className="text-muted-foreground leading-relaxed mb-4">
               <strong>Company:</strong> Innovationera Pty Ltd<br />
-              <strong>ACN:</strong> 643 136 752<br />
-              <strong>Registered Address:</strong> [Registered address to be provided]
+              <strong>ACN:</strong> 643 136 752
             </p>
             <p className="text-muted-foreground leading-relaxed">
               Innovationera Pty Ltd ("we", "our", "us", or "the Company") operates Startege ("the Platform", "our platform", or "our service"). We are committed to protecting your privacy and handling your personal information in accordance with applicable privacy laws, including the Australian Privacy Act 1988 (Cth), the General Data Protection Regulation (GDPR), and the California Consumer Privacy Act (CCPA).
@@ -460,9 +459,7 @@ export default function PrivacyPage() {
             <div className="space-y-2 text-muted-foreground">
               <p><strong>Innovationera Pty Ltd</strong></p>
               <p>ACN: 643 136 752</p>
-              <p>Privacy Officer: [Name to be provided]</p>
               <p>Email: startege.info@gmail.com</p>
-              <p>Address: [Registered address to be provided]</p>
             </div>
             <p className="text-muted-foreground leading-relaxed mt-4">
               <strong>Complaints:</strong> If you are not satisfied with how we handle your privacy complaint, you may contact:

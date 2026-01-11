@@ -22,7 +22,6 @@ export default function TermsPage() {
               <p className="text-muted-foreground mb-2">
                 <strong>Company:</strong> Innovationera Pty Ltd<br />
                 <strong>ACN:</strong> 643 136 752<br />
-                <strong>Registered Address:</strong> [Registered address to be provided]<br />
                 <strong>Contact Email:</strong> startege.info@gmail.com
               </p>
             </div>
@@ -176,7 +175,7 @@ export default function TermsPage() {
               <div>
                 <h3 className="text-lg font-medium text-foreground mb-2">4.7 Taxes</h3>
                 <p className="leading-relaxed">
-                  All prices are in [currency]. You are responsible for any taxes, duties, or fees applicable to your purchase. For Australian customers, GST (if applicable) is included in the price.
+                  All prices are in USD. You are responsible for any taxes, duties, or fees applicable to your purchase. For Australian customers, GST (if applicable) is included in the price.
                 </p>
               </div>
             </div>
@@ -471,7 +470,7 @@ export default function TermsPage() {
               <div>
                 <h3 className="text-lg font-medium text-foreground mb-2">11.2 Governing Law</h3>
                 <p className="leading-relaxed">
-                  These Terms are governed by the laws of [Australian State/Territory to be specified], Australia, without regard to conflict of law principles. Any disputes will be subject to the exclusive jurisdiction of the courts of [Australian State/Territory to be specified], Australia.
+                  These Terms are governed by the laws of Western Australia, Australia, without regard to conflict of law principles. Any disputes will be subject to the exclusive jurisdiction of the courts of Western Australia, Australia.
                 </p>
               </div>
 
@@ -553,7 +552,6 @@ export default function TermsPage() {
               <p><strong>Innovationera Pty Ltd</strong></p>
               <p>ACN: 643 136 752</p>
               <p>Email: startege.info@gmail.com</p>
-              <p>Address: [Registered address to be provided]</p>
             </div>
           </section>
 

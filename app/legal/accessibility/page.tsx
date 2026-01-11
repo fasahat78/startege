@@ -152,9 +152,6 @@ export default function AccessibilityStatementPage() {
               <li>Your device, browser, and assistive technology (if applicable)</li>
               <li>Any suggestions for improvement</li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed mt-4">
-              We aim to respond to accessibility feedback within [timeframe to be specified] business days.
-            </p>
           </section>
 
           <section className="mb-8">
@@ -190,11 +187,8 @@ export default function AccessibilityStatementPage() {
               <p className="text-muted-foreground mb-2">
                 ACN: 643 136 752
               </p>
-              <p className="text-muted-foreground mb-2">
-                Email: startege.info@gmail.com
-              </p>
               <p className="text-muted-foreground">
-                Address: [Registered address to be provided]
+                Email: startege.info@gmail.com
               </p>
             </div>
           </section>
