@@ -69,8 +69,9 @@ steps:
       - '--min-instances'
       - '0'
       # Vector Search environment variables
+      # Note: GCP_PROJECT_ID should be the project NUMBER (785373873454), not the project NAME (startege)
       - '--set-env-vars'
-      - 'VECTOR_SEARCH_INDEX_ID=${_VECTOR_SEARCH_INDEX_ID},VECTOR_SEARCH_ENDPOINT_ID=${_VECTOR_SEARCH_ENDPOINT_ID},VECTOR_SEARCH_DEPLOYMENT_ID=${_VECTOR_SEARCH_DEPLOYMENT_ID},VECTOR_SEARCH_PUBLIC_DOMAIN=${_VECTOR_SEARCH_PUBLIC_DOMAIN},GCP_PROJECT_ID=${PROJECT_ID},GCP_LOCATION=${_REGION}'
+      - 'VECTOR_SEARCH_INDEX_ID=${_VECTOR_SEARCH_INDEX_ID},VECTOR_SEARCH_ENDPOINT_ID=${_VECTOR_SEARCH_ENDPOINT_ID},VECTOR_SEARCH_DEPLOYMENT_ID=${_VECTOR_SEARCH_DEPLOYMENT_ID},VECTOR_SEARCH_PUBLIC_DOMAIN=${_VECTOR_SEARCH_PUBLIC_DOMAIN},GCP_PROJECT_ID=${_GCP_PROJECT_NUMBER},GCP_LOCATION=${_REGION}'
     id: 'deploy-cloud-run'
 
 # Substitution variables (can be overridden in trigger)
@@ -83,6 +84,8 @@ substitutions:
   _VECTOR_SEARCH_ENDPOINT_ID: '3780782882293809152'
   _VECTOR_SEARCH_DEPLOYMENT_ID: 'startege_vector_search_end_1767344026840'
   _VECTOR_SEARCH_PUBLIC_DOMAIN: '1305817985.us-central1-785373873454.vdb.vertexai.goog'
+  # GCP Project Number (required for Vector Search API, not the project name)
+  _GCP_PROJECT_NUMBER: '785373873454'
   # _DATABASE_URL should be set in Cloud Build trigger
   # Format: postgresql://postgres:Zoya%4057Bruce@127.0.0.1:5432/startege
 
