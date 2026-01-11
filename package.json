@@ -15,6 +15,7 @@
     "import-flashcards:prod": "tsx scripts/import-flashcards-prod.ts",
     "create-flashcard-table:prod": "tsx scripts/create-flashcard-table-prod.ts",
     "verify-flashcards:prod": "tsx scripts/verify-flashcards-prod.ts",
+    "import-concepts:prod": "tsx scripts/import-concepts-prod.ts",
     "verify-production-connection": "tsx scripts/verify-production-connection.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
