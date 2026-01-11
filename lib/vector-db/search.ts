@@ -136,6 +136,16 @@ export async function semanticSearch(
       
       console.log(`[VECTOR_DB] Processing ${neighbors.length} neighbors from API response`);
       
+      if (neighbors.length === 0) {
+        console.log(`[VECTOR_DB] ⚠️ API returned empty neighbors array - index might be empty or no matches found`);
+        console.log(`[VECTOR_DB] First query structure:`, {
+          hasNeighbors: !!data.nearestNeighbors[0].neighbors,
+          neighborsType: typeof data.nearestNeighbors[0].neighbors,
+          keys: data.nearestNeighbors[0] ? Object.keys(data.nearestNeighbors[0]) : [],
+        });
+        return [];
+      }
+      
       // Extract datapoint IDs
       const datapointIds = neighbors
         .map((n: any) => n.datapoint?.datapointId)
@@ -239,6 +249,13 @@ export async function semanticSearch(
           },
         });
       }
+    } else {
+      console.log(`[VECTOR_DB] ⚠️ No nearestNeighbors in API response - index might be empty or query returned no matches`);
+      console.log(`[VECTOR_DB] API response keys:`, Object.keys(data));
+      if (data.error) {
+        console.error(`[VECTOR_DB] API Error in response:`, data.error);
+      }
+      return [];
     }
 
     // Sort by similarity score (descending)
