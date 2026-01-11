@@ -159,13 +159,27 @@ export async function semanticSearch(
       // Create a map for quick lookup
       const articleMap = new Map(articles.map(a => [a.id, a]));
 
+      console.log(`[VECTOR_DB] Processing ${neighbors.length} neighbors, minSimilarity threshold: ${minSimilarity}`);
+      
       // Build results with metadata from database
+      let filteredCount = 0;
       for (const neighbor of neighbors) {
         const distance = neighbor.distance || 0;
         const similarityScore = 1 - distance; // Convert distance to similarity
         
+        // Log first few neighbors for debugging
+        if (results.length < 3) {
+          console.log(`[VECTOR_DB] Neighbor ${results.length + 1}:`, {
+            datapointId: neighbor.datapoint?.datapointId,
+            distance,
+            similarityScore,
+            passesThreshold: similarityScore >= minSimilarity,
+          });
+        }
+        
         // Filter by minimum similarity
         if (similarityScore < minSimilarity) {
+          filteredCount++;
           continue;
         }
 
@@ -212,6 +226,8 @@ export async function semanticSearch(
 
     // Sort by similarity score (descending)
     results.sort((a, b) => b.similarityScore - a.similarityScore);
+    
+    console.log(`[VECTOR_DB] Final results: ${results.length} after filtering (${filteredCount} filtered out by similarity threshold)`);
     
     // Apply topK limit after filtering
     return results.slice(0, topK);
