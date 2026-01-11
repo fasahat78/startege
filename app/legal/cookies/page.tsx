@@ -163,10 +163,10 @@ export default function CookiePolicyPage() {
                 <strong>Innovationera Pty Ltd</strong>
               </p>
               <p className="text-muted-foreground mb-2">
-                ACN: [To be provided]
+                ACN: 643 136 752
               </p>
               <p className="text-muted-foreground mb-2">
-                Email: [Privacy email to be provided]
+                Email: startege.info@gmail.com
               </p>
               <p className="text-muted-foreground">
                 Address: [Registered address to be provided]

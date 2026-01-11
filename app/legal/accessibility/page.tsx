@@ -137,7 +137,7 @@ export default function AccessibilityStatementPage() {
                 <strong>Innovationera Pty Ltd</strong>
               </p>
               <p className="text-muted-foreground mb-2">
-                Email: [Accessibility email to be provided]
+                Email: startege.info@gmail.com
               </p>
               <p className="text-muted-foreground mb-2">
                 Subject: Accessibility Feedback
@@ -188,10 +188,10 @@ export default function AccessibilityStatementPage() {
                 <strong>Innovationera Pty Ltd</strong>
               </p>
               <p className="text-muted-foreground mb-2">
-                ACN: [To be provided]
+                ACN: 643 136 752
               </p>
               <p className="text-muted-foreground mb-2">
-                Email: [Accessibility email to be provided]
+                Email: startege.info@gmail.com
               </p>
               <p className="text-muted-foreground">
                 Address: [Registered address to be provided]

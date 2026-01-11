@@ -20,7 +20,7 @@ export default function PrivacyPage() {
             </p>
             <p className="text-muted-foreground leading-relaxed mb-4">
               <strong>Company:</strong> Innovationera Pty Ltd<br />
-              <strong>ACN:</strong> [Australian Company Number to be provided]<br />
+              <strong>ACN:</strong> 643 136 752<br />
               <strong>Registered Address:</strong> [Registered address to be provided]
             </p>
             <p className="text-muted-foreground leading-relaxed">
@@ -353,7 +353,7 @@ export default function PrivacyPage() {
                 <h3 className="text-lg font-medium text-foreground mb-2">7.4 How to Exercise Your Rights</h3>
                 <p className="leading-relaxed mb-2">To exercise any of these rights, please contact us:</p>
                 <ul className="list-disc list-inside space-y-1">
-                  <li>Email: [Privacy email to be provided]</li>
+                  <li>Email: startege.info@gmail.com</li>
                   <li>Subject: "Privacy Rights Request"</li>
                   <li>Include: Your account email and the specific right you wish to exercise</li>
                 </ul>
@@ -459,9 +459,9 @@ export default function PrivacyPage() {
             </p>
             <div className="space-y-2 text-muted-foreground">
               <p><strong>Innovationera Pty Ltd</strong></p>
-              <p>ACN: [To be provided]</p>
+              <p>ACN: 643 136 752</p>
               <p>Privacy Officer: [Name to be provided]</p>
-              <p>Email: [Privacy email to be provided]</p>
+              <p>Email: startege.info@gmail.com</p>
               <p>Address: [Registered address to be provided]</p>
             </div>
             <p className="text-muted-foreground leading-relaxed mt-4">

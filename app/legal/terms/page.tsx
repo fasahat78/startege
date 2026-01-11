@@ -21,9 +21,9 @@ export default function TermsPage() {
             <div className="bg-muted/50 rounded-lg p-4 mb-4">
               <p className="text-muted-foreground mb-2">
                 <strong>Company:</strong> Innovationera Pty Ltd<br />
-                <strong>ACN:</strong> [Australian Company Number to be provided]<br />
+                <strong>ACN:</strong> 643 136 752<br />
                 <strong>Registered Address:</strong> [Registered address to be provided]<br />
-                <strong>Contact Email:</strong> [Contact email to be provided]
+                <strong>Contact Email:</strong> startege.info@gmail.com
               </p>
             </div>
             <p className="text-muted-foreground leading-relaxed">
@@ -320,6 +320,12 @@ export default function TermsPage() {
                 <p className="leading-relaxed mb-4">
                   The content on Startege is for educational purposes only and does not constitute legal, professional, or regulatory advice. You should not rely on Platform content as a substitute for professional advice from qualified legal, compliance, or regulatory professionals.
                 </p>
+                <p className="leading-relaxed mb-4">
+                  You agree that you will not rely on the Platform or any AI-generated content as a substitute for professional, legal, regulatory, or compliance advice, or for making operational or business decisions.
+                </p>
+                <p className="leading-relaxed mb-4">
+                  Nothing on the Platform creates a professional-client, advisory, consulting, fiduciary, or legal relationship between you and Innovationera Pty Ltd.
+                </p>
                 <p className="leading-relaxed mb-2"><strong>Not Professional Certification:</strong></p>
                 <p className="leading-relaxed mb-4">
                   While Startege provides educational content to help you prepare for the AIGP certification exam, we do not guarantee that using the Platform will result in passing the exam. We are not affiliated with the AIGP certification body. Exam content and formats may change without notice.
@@ -545,8 +551,8 @@ export default function TermsPage() {
             </p>
             <div className="space-y-2 text-muted-foreground">
               <p><strong>Innovationera Pty Ltd</strong></p>
-              <p>ACN: [To be provided]</p>
-              <p>Email: [Contact email to be provided]</p>
+              <p>ACN: 643 136 752</p>
+              <p>Email: startege.info@gmail.com</p>
               <p>Address: [Registered address to be provided]</p>
             </div>
           </section>
