@@ -13,6 +13,7 @@ export const VECTOR_SEARCH_CONFIG = {
   indexId: process.env.VECTOR_SEARCH_INDEX_ID || 'startege-knowledge-base',
   indexEndpoint: process.env.VECTOR_SEARCH_ENDPOINT_ID || '',
   deploymentId: process.env.VECTOR_SEARCH_DEPLOYMENT_ID || '', // Deployment ID (different from index ID)
+  publicDomainName: process.env.VECTOR_SEARCH_PUBLIC_DOMAIN || '', // Public domain name for REST API
   indexLocation: process.env.GCP_LOCATION || 'us-central1',
   
   // Search configuration

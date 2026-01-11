@@ -45,17 +45,25 @@ export async function semanticSearch(
     
     // Call Vertex AI Vector Search REST API
     // For batch indexes deployed to endpoints, use findNeighbors
-    // Try using the public domain endpoint first, fallback to standard API endpoint
+    // Try using the public domain endpoint first (recommended for REST API)
     // Public domain format: https://{PUBLIC_DOMAIN}/v1beta1/{INDEX_ENDPOINT}:findNeighbors
     // Standard format: https://{LOCATION}-aiplatform.googleapis.com/v1/{INDEX_ENDPOINT}:findNeighbors
     
-    // Get public domain name from endpoint if available, otherwise use standard endpoint
-    // Note: Public domain is typically: {NUMBER}.{LOCATION}-{PROJECT_NUMBER}.vdb.vertexai.goog
-    // For now, use the standard REST API endpoint format
     const indexEndpointPath = `projects/${config.projectId}/locations/${config.location}/indexEndpoints/${config.endpointId}`;
-    const apiUrl = `https://${config.location}-aiplatform.googleapis.com/v1/${indexEndpointPath}:findNeighbors`;
     
-    console.log(`[VECTOR_DB] API URL: ${apiUrl}`);
+    // Use public domain endpoint if available, otherwise fallback to standard endpoint
+    // Public domain: 1305817985.us-central1-785373873454.vdb.vertexai.goog
+    let apiUrl: string;
+    if (config.publicDomainName) {
+      // Use public domain endpoint with v1beta1 API version
+      apiUrl = `https://${config.publicDomainName}/v1beta1/${indexEndpointPath}:findNeighbors`;
+      console.log(`[VECTOR_DB] Using public domain endpoint: ${apiUrl}`);
+    } else {
+      // Fallback to standard Vertex AI endpoint
+      apiUrl = `https://${config.location}-aiplatform.googleapis.com/v1/${indexEndpointPath}:findNeighbors`;
+      console.log(`[VECTOR_DB] Using standard endpoint: ${apiUrl}`);
+    }
+    
     console.log(`[VECTOR_DB] Index endpoint path: ${indexEndpointPath}`);
     
     // Build query datapoint (simplified - no restricts for now to test)
