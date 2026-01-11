@@ -130,14 +130,19 @@ export async function batchIndexDocumentsViaGCS(
     const currentIndex = await getResponse.json();
     
     // Update metadata with new contentsDeltaUri
+    // For the first batch or if index is empty, use complete overwrite
+    // Otherwise use partial update
+    const isFirstBatch = !currentIndex.metadata?.contentsDeltaUri;
     const updateRequestBody = {
       ...currentIndex,
       metadata: {
         ...currentIndex.metadata,
         contentsDeltaUri: gcsFolderUri,
-        isCompleteOverwrite: false, // Partial update (add new data)
+        isCompleteOverwrite: isFirstBatch, // Complete overwrite for first batch, partial for subsequent
       },
     };
+    
+    console.log(`[VECTOR_DB] Index update mode: ${isFirstBatch ? 'Complete Overwrite' : 'Partial Update'}`);
 
     const updateResponse = await fetch(updateApiUrl, {
       method: 'PATCH',
