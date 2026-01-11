@@ -226,11 +226,19 @@ export async function searchMarketScanSemantic(
   query: string,
   topK: number = 3
 ): Promise<SearchResult[]> {
-  return semanticSearch(query, {
-    topK,
-    filter: { type: 'market_scan' },
-    minSimilarity: 0.6, // Higher threshold for articles
-  });
+  console.log(`[VECTOR_DB] searchMarketScanSemantic called with query: "${query.substring(0, 100)}", topK: ${topK}`);
+  try {
+    const results = await semanticSearch(query, {
+      topK,
+      filter: { type: 'market_scan' },
+      minSimilarity: 0.6, // Higher threshold for articles
+    });
+    console.log(`[VECTOR_DB] searchMarketScanSemantic returned ${results.length} results`);
+    return results;
+  } catch (error: any) {
+    console.error(`[VECTOR_DB] searchMarketScanSemantic error:`, error.message);
+    throw error;
+  }
 }
 
 /**
@@ -240,9 +248,17 @@ export async function searchStandardsSemantic(
   query: string,
   topK: number = 3
 ): Promise<SearchResult[]> {
-  return semanticSearch(query, {
-    topK,
-    filter: { type: 'standard' },
-    minSimilarity: 0.5, // Lower threshold for standards (more lenient)
-  });
+  console.log(`[VECTOR_DB] searchStandardsSemantic called with query: "${query.substring(0, 100)}", topK: ${topK}`);
+  try {
+    const results = await semanticSearch(query, {
+      topK,
+      filter: { type: 'standard' },
+      minSimilarity: 0.5, // Lower threshold for standards (more lenient)
+    });
+    console.log(`[VECTOR_DB] searchStandardsSemantic returned ${results.length} results`);
+    return results;
+  } catch (error: any) {
+    console.error(`[VECTOR_DB] searchStandardsSemantic error:`, error.message);
+    throw error;
+  }
 }
