@@ -87,16 +87,19 @@ export async function batchIndexDocumentsViaGCS(
     }
 
     // Upload to root directory (no subdirectories allowed except "delete/")
-    const fileName = gcsPath ? `${gcsPath}/import-${Date.now()}.jsonl` : `import-${Date.now()}.jsonl`;
+    // Vector Search requires .json, .csv, or .avro extension (not .jsonl)
+    // Use .json extension with JSONL format (one JSON object per line)
+    const fileName = gcsPath ? `${gcsPath}/import-${Date.now()}.json` : `import-${Date.now()}.json`;
     const file = bucket.file(fileName);
 
     // Convert to JSONL format (one JSON object per line)
+    // Even though extension is .json, content is JSONL format (one object per line)
     const jsonlContent = importData.map(item => JSON.stringify(item)).join('\n');
     
     await file.save(jsonlContent, {
-      contentType: 'application/jsonl',
+      contentType: 'application/json',
       metadata: {
-        contentType: 'application/jsonl',
+        contentType: 'application/json',
       },
     });
 
