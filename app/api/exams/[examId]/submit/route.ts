@@ -125,8 +125,22 @@ export async function POST(
     }
     
     // Get option mappings from attempt (if options were shuffled)
+    // IMPORTANT: optionMappings are stored in answers.optionMappings when exam starts
+    // Handle both formats: { optionMappings: [...] } (new) or [] (old/backward compatibility)
     const attemptData = existingAttempt.answers as any;
-    const optionMappings = attemptData?.optionMappings || [];
+    let optionMappings: any[] = [];
+    
+    if (Array.isArray(attemptData)) {
+      // Old format: answers is an array (no shuffling was applied)
+      optionMappings = [];
+      console.log(`[Exam Submit] No option mappings found (old format - answers is array)`);
+    } else if (attemptData && typeof attemptData === 'object' && attemptData.optionMappings) {
+      // New format: answers is an object with optionMappings
+      optionMappings = attemptData.optionMappings;
+      console.log(`[Exam Submit] Found ${optionMappings.length} option mappings`);
+    } else {
+      console.log(`[Exam Submit] No option mappings found (answers format: ${typeof attemptData})`);
+    }
     
     // Map shuffled answers back to original option IDs
     const mappedAnswers = answers.map((answer: any) => {
@@ -134,10 +148,13 @@ export async function POST(
       if (mapping && mapping.reverseMapping) {
         // Map the shuffled option ID back to original
         const originalOptionId = mapAnswerToOriginal(answer.selectedOptionId, mapping.reverseMapping);
+        console.log(`[Exam Submit] Q${answer.questionId}: "${answer.selectedOptionId}" (shuffled) → "${originalOptionId}" (original)`);
         return {
           ...answer,
           selectedOptionId: originalOptionId,
         };
+      } else {
+        console.log(`[Exam Submit] Q${answer.questionId}: No mapping found, using "${answer.selectedOptionId}" as-is (not shuffled)`);
       }
       // If no mapping found, assume options weren't shuffled (backward compatibility)
       return answer;
@@ -183,6 +200,8 @@ export async function POST(
     }
 
     // Update ExamAttempt record (immutable after EVALUATED)
+    // IMPORTANT: Preserve optionMappings when storing answers
+    // Store answers in a format that preserves optionMappings for future reference
     const examAttempt = await (prisma as any).examAttempt.update({
       where: { id: existingAttempt.id },
       data: {
@@ -191,7 +210,13 @@ export async function POST(
         evaluatedAt: new Date(),
         score: assessmentResult.percentage,
         pass: assessmentResult.pass,
-        answers: answers,
+        answers: optionMappings.length > 0 
+          ? {
+              // New format: preserve optionMappings and store user answers
+              optionMappings: optionMappings,
+              userAnswers: answers,
+            }
+          : answers, // Old format: just store answers array (backward compatibility)
         feedback: {
           correctCount: assessmentResult.correctCount,
           totalQuestions: assessmentResult.totalQuestions,

@@ -1061,15 +1061,35 @@ Generate exactly ` + questionCount + ` questions that test understanding of all 
       reverseMapping: q.reverseMapping, // Maps shuffled position back to original
     }));
     
+    console.log(`[Exam Start] Storing ${optionMappings.length} option mappings for attempt ${examAttempt.id}`);
+    
     // Update exam attempt with option mappings
-    await (prisma as any).examAttempt.update({
-      where: { id: examAttempt.id },
-      data: {
-        answers: {
-          optionMappings, // Store mappings for answer evaluation
+    try {
+      await (prisma as any).examAttempt.update({
+        where: { id: examAttempt.id },
+        data: {
+          answers: {
+            optionMappings, // Store mappings for answer evaluation
+          },
         },
-      },
-    });
+      });
+      console.log(`[Exam Start] Successfully stored option mappings`);
+      
+      // Verify the update worked
+      const verifyAttempt = await (prisma as any).examAttempt.findUnique({
+        where: { id: examAttempt.id },
+        select: { answers: true },
+      });
+      const storedMappings = (verifyAttempt?.answers as any)?.optionMappings;
+      if (storedMappings && storedMappings.length === optionMappings.length) {
+        console.log(`[Exam Start] Verified: ${storedMappings.length} mappings stored correctly`);
+      } else {
+        console.error(`[Exam Start] ERROR: Mappings not stored correctly! Expected ${optionMappings.length}, got ${storedMappings?.length || 0}`);
+      }
+    } catch (error: any) {
+      console.error(`[Exam Start] ERROR storing option mappings:`, error.message);
+      // Don't fail the request, but log the error
+    }
     
     // Return questions without correct answers (options are now shuffled)
     const questionsForClient = shuffledQuestions.map((q: any) => ({

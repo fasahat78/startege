@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/firebase-auth-helpers';
 import { prisma } from '@/lib/db';
+import { mapAIGPAnswerToOriginal } from '@/lib/aigp-option-shuffle';
 
 export async function POST(
   request: Request,
@@ -56,7 +57,16 @@ export async function POST(
     
     if (answer.selectedAnswer) {
       totalAnswered++;
-      const isCorrect = answer.selectedAnswer === question.correctAnswer;
+      
+      // Map shuffled answer back to original key
+      let originalAnswer = answer.selectedAnswer;
+      if (answer.shuffledOrder && typeof answer.shuffledOrder === 'object') {
+        const reverseMapping = answer.shuffledOrder as Record<string, string>;
+        originalAnswer = mapAIGPAnswerToOriginal(answer.selectedAnswer, reverseMapping);
+      }
+      
+      // Compare with original correct answer
+      const isCorrect = originalAnswer === question.correctAnswer;
       
       if (isCorrect) {
         correctCount++;

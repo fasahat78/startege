@@ -174,6 +174,7 @@ async function searchStandardsKeyword(
 /**
  * Retrieve RAG context for a user query
  * Combines results from Market Scan and Standards
+ * Uses semantic search if available, falls back to keyword search
  */
 export async function retrieveRAGContext(
   query: string,
@@ -191,7 +192,77 @@ export async function retrieveRAGContext(
 
   console.log(`[RAG] Retrieving context for query: "${query}"`);
 
-  // Use keyword search as primary method (cost-effective, proven quality)
+  // Try semantic search first if Vector Search is configured
+  try {
+    const { isVectorSearchConfigured } = await import('@/lib/vector-db/config');
+    const { searchMarketScanSemantic, searchStandardsSemantic } = await import('@/lib/vector-db/search');
+    
+    if (isVectorSearchConfigured()) {
+      console.log("[RAG] Using semantic search (Vector Search configured)...");
+      
+      try {
+        // Search both knowledge bases in parallel using semantic search
+        const [marketScanSemantic, standardsSemantic] = await Promise.all([
+          searchMarketScanSemantic(query, marketScanTopK).catch(() => []),
+          searchStandardsSemantic(query, standardsTopK).catch(() => []),
+        ]);
+        
+        if (marketScanSemantic.length > 0 || standardsSemantic.length > 0) {
+          console.log(`[RAG] Found ${marketScanSemantic.length} articles and ${standardsSemantic.length} standards using semantic search`);
+          
+          // Convert SearchResult to RAGDocument format
+          const marketScanDocs: RAGDocument[] = marketScanSemantic.map(result => ({
+            id: result.id,
+            title: result.title,
+            content: result.content,
+            source: result.source,
+            url: result.url || null,
+            type: 'market_scan' as const,
+            relevanceScore: result.similarityScore, // Use similarity score from semantic search
+            metadata: result.metadata,
+          }));
+          
+          const standardsDocs: RAGDocument[] = standardsSemantic.map(result => ({
+            id: result.id,
+            title: result.title,
+            content: result.content,
+            source: result.source,
+            url: result.url || null,
+            type: 'standard' as const,
+            relevanceScore: result.similarityScore,
+            metadata: result.metadata,
+          }));
+          
+          const allResults = [...marketScanDocs, ...standardsDocs]
+            .filter(doc => doc.relevanceScore >= minRelevanceScore)
+            .sort((a, b) => b.relevanceScore - a.relevanceScore)
+            .slice(0, marketScanTopK + standardsTopK);
+          
+          if (allResults.length > 0) {
+            console.log(`[RAG] Semantic search results: ${marketScanDocs.length} articles, ${standardsDocs.length} standards (${allResults.length} after filtering)`);
+            
+            return {
+              documents: allResults,
+              query,
+              totalResults: allResults.length,
+            };
+          } else {
+            console.log("[RAG] Semantic search results filtered out, falling back to keyword search");
+          }
+        } else {
+          console.log("[RAG] Semantic search returned no results, falling back to keyword search");
+        }
+      } catch (semanticError: any) {
+        console.warn(`[RAG] Semantic search failed: ${semanticError.message}, falling back to keyword search`);
+        // Fall through to keyword search
+      }
+    }
+  } catch (importError: any) {
+    console.log("[RAG] Vector Search not available, using keyword search");
+    // Fall through to keyword search
+  }
+
+  // Fallback to keyword search (cost-effective, proven quality)
   console.log("[RAG] Using keyword search (cost-effective, proven quality)...");
   
   // Search both knowledge bases in parallel

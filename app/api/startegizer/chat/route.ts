@@ -145,21 +145,14 @@ export async function POST(request: Request) {
     }
 
     // Generate citations from RAG context
-    const citations = generateCitations(ragContext);
-    console.log(`[STARTEGIZER_CHAT] Generated ${citations.length} citations`);
-    if (citations.length > 0) {
-      console.log(`[STARTEGIZER_CHAT] Sample citation: ${citations[0].title} from ${citations[0].source}`);
+    const allCitations = generateCitations(ragContext);
+    console.log(`[STARTEGIZER_CHAT] Generated ${allCitations.length} citations`);
+    if (allCitations.length > 0) {
+      console.log(`[STARTEGIZER_CHAT] Sample citation: ${allCitations[0].title} from ${allCitations[0].source}`);
     }
     
     // Generate response using Gemini AI (or fallback to mock if not configured)
     let responseText: string;
-    let sources = citations.map(citation => ({
-      title: citation.title,
-      source: citation.source,
-      url: citation.url || undefined,
-      type: citation.type === 'market_scan' ? 'Article' : citation.type === 'standard' ? 'Standard' : 'Framework',
-    }));
-    console.log(`[STARTEGIZER_CHAT] Formatted ${sources.length} sources for response`);
     let creditsDeducted = false;
 
     const geminiConfigured = isGeminiConfigured();
@@ -184,9 +177,6 @@ export async function POST(request: Request) {
           creditsDeducted = true;
           console.log(`[CREDITS_DEDUCTED] ✅ User ${user.id}: ${CREDITS_PER_CALL} credits deducted. Remaining: ${deductionResult.remainingBalance}`);
         }
-        
-        // Extract sources from response if mentioned (basic implementation)
-        // TODO: Phase 7 - Improve source extraction with RAG
       } catch (error: any) {
         console.error("[GEMINI_ERROR]", error);
         // Fallback to mock response if Gemini fails
@@ -202,6 +192,26 @@ export async function POST(request: Request) {
       // No credits deducted for mock responses
       creditsDeducted = false;
     }
+    
+    // Extract citations that were actually referenced in the response
+    const referencedCitations = extractReferencedCitations(responseText, allCitations);
+    console.log(`[STARTEGIZER_CHAT] Extracted ${referencedCitations.length} referenced citations from response`);
+    
+    // Only include citations that were actually referenced (or all if none were explicitly referenced)
+    const sources = referencedCitations.length > 0 
+      ? referencedCitations.map(citation => ({
+          title: citation.title,
+          source: citation.source,
+          url: citation.url || undefined,
+          type: citation.type === 'market_scan' ? 'Article' : citation.type === 'standard' ? 'Standard' : 'Framework',
+        }))
+      : allCitations.map(citation => ({
+          title: citation.title,
+          source: citation.source,
+          url: citation.url || undefined,
+          type: citation.type === 'market_scan' ? 'Article' : citation.type === 'standard' ? 'Standard' : 'Framework',
+        }));
+    console.log(`[STARTEGIZER_CHAT] Formatted ${sources.length} sources for response`);
     
     console.log("[STARTEGIZER_CHAT] Final status:", {
       creditsDeducted,
@@ -291,6 +301,44 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+/**
+ * Extract citations that were actually referenced in the LLM response
+ * Looks for citation patterns like [1], [2], [[1]], etc.
+ */
+function extractReferencedCitations(
+  responseText: string,
+  allCitations: Array<{ number: number; title: string; source: string; url?: string | null; type: string }>
+): Array<{ number: number; title: string; source: string; url?: string | null; type: string }> {
+  // Find all citation references in the response (e.g., [1], [2], [[1]], etc.)
+  const citationPattern = /\[\[?(\d+)\]\]?/g;
+  const matches = responseText.matchAll(citationPattern);
+  const referencedNumbers = new Set<number>();
+  
+  for (const match of matches) {
+    const citationNumber = parseInt(match[1], 10);
+    // Only include if the citation number exists in our list
+    if (citationNumber >= 1 && citationNumber <= allCitations.length) {
+      referencedNumbers.add(citationNumber);
+    }
+  }
+  
+  // Return only citations that were referenced
+  const referencedCitations = allCitations.filter(citation => 
+    referencedNumbers.has(citation.number)
+  );
+  
+  // If no citations were found but we have RAG context, include all (LLM might have used them without explicit citation)
+  // But if citations were explicitly referenced, only return those
+  if (referencedNumbers.size > 0) {
+    console.log(`[CITATION_EXTRACTION] Found ${referencedNumbers.size} referenced citations: [${Array.from(referencedNumbers).join(', ')}]`);
+    return referencedCitations;
+  }
+  
+  // If no explicit citations found, return all (they might have been used implicitly)
+  console.log(`[CITATION_EXTRACTION] No explicit citations found, returning all ${allCitations.length} citations`);
+  return allCitations;
 }
 
 /**

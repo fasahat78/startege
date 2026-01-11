@@ -144,6 +144,20 @@ export async function semanticSearch(
 
         const type = article.sourceType === 'STANDARD' ? 'standard' : 'market_scan';
         
+        // Apply filter if specified (filter by type after retrieval)
+        if (options.filter?.type && type !== options.filter.type) {
+          continue;
+        }
+        
+        // Apply other filters if specified
+        if (options.filter?.jurisdiction && article.jurisdiction !== options.filter.jurisdiction) {
+          continue;
+        }
+        
+        if (options.filter?.source && article.source !== options.filter.source) {
+          continue;
+        }
+        
         results.push({
           id: article.id,
           title: article.title,
@@ -162,8 +176,9 @@ export async function semanticSearch(
 
     // Sort by similarity score (descending)
     results.sort((a, b) => b.similarityScore - a.similarityScore);
-
-    return results;
+    
+    // Apply topK limit after filtering
+    return results.slice(0, topK);
   } catch (error: any) {
     console.error("[VECTOR_DB] Error performing semantic search:", error.message);
     // Return empty results on error (graceful degradation)

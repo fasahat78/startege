@@ -59,12 +59,27 @@ export async function GET(
     // Get exam questions to reconstruct answerResults
     const exam = attempt.exam;
     const questions = exam.questions as any;
-    const answers = attempt.answers as any;
+    const answersData = attempt.answers as any;
     const feedback = attempt.feedback as any;
 
-    if (!questions || !questions.questions || !answers || !Array.isArray(answers)) {
+    if (!questions || !questions.questions) {
       return NextResponse.json(
-        { error: "Invalid attempt data" },
+        { error: "Invalid attempt data: questions not found" },
+        { status: 400 }
+      );
+    }
+
+    // Handle both answer formats:
+    // - Old format: answers is an array
+    // - New format: answers is an object with { optionMappings, userAnswers }
+    let answers: any[] = [];
+    if (Array.isArray(answersData)) {
+      answers = answersData;
+    } else if (answersData && typeof answersData === 'object' && answersData.userAnswers) {
+      answers = answersData.userAnswers;
+    } else if (!answersData) {
+      return NextResponse.json(
+        { error: "Invalid attempt data: answers not found" },
         { status: 400 }
       );
     }

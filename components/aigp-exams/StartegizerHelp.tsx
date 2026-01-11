@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -40,6 +40,14 @@ export default function StartegizerHelp({
   const [userQuestion, setUserQuestion] = useState("");
   const [creditBalance, setCreditBalance] = useState<number | null>(null);
   const [creditError, setCreditError] = useState<string | null>(null);
+
+  // Reset explanation state when questionId changes
+  useEffect(() => {
+    setIsExpanded(false);
+    setAiExplanation(null);
+    setUserQuestion("");
+    setCreditError(null);
+  }, [questionId]);
 
   const handleGetExplanation = async (customQuestion?: string) => {
     try {

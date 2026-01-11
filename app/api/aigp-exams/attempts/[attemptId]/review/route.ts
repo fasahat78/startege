@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/firebase-auth-helpers';
 import { prisma } from '@/lib/db';
+import { mapAIGPAnswerToOriginal } from '@/lib/aigp-option-shuffle';
 
 export async function GET(
   request: Request,
@@ -39,16 +40,28 @@ export async function GET(
     return NextResponse.json({ error: 'Attempt not yet submitted' }, { status: 400 });
   }
   
-  // Build review data
+  // Build review data - show original options and map selected answers back
   const reviewQuestions = attempt.exam.questions.map(question => {
     const answer = attempt.answers.find(a => a.questionId === question.id);
+    
+    // Map selected answer from shuffled back to original
+    let selectedAnswerOriginal = answer?.selectedAnswer || null;
+    if (selectedAnswerOriginal && answer?.shuffledOrder && typeof answer.shuffledOrder === 'object') {
+      const reverseMapping = answer.shuffledOrder as Record<string, string>;
+      selectedAnswerOriginal = mapAIGPAnswerToOriginal(selectedAnswerOriginal, reverseMapping);
+    }
+    
+    // Use original options (from optionOrder if stored, otherwise from question)
+    const originalOptions = (answer?.optionOrder && Array.isArray(answer.optionOrder))
+      ? answer.optionOrder as Array<{ key: string; text: string }>
+      : question.options as Array<{ key: string; text: string }>;
     
     return {
       questionId: question.questionId,
       questionOrder: question.questionOrder,
       question: question.question,
-      options: question.options,
-      correctAnswer: question.correctAnswer,
+      options: originalOptions, // Show original options
+      correctAnswer: question.correctAnswer, // Original correct answer
       explanation: question.explanation,
       domain: question.domain,
       topic: question.topic,
@@ -56,7 +69,7 @@ export async function GET(
       isCaseStudy: question.isCaseStudy,
       jurisdiction: question.jurisdiction,
       sourceRefs: question.sourceRefs,
-      selectedAnswer: answer?.selectedAnswer || null,
+      selectedAnswer: selectedAnswerOriginal, // Selected answer in original format
       isCorrect: answer?.isCorrect || false,
       timeSpentSec: answer?.timeSpentSec || 0,
     };

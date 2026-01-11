@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/firebase-auth-helpers';
 import { prisma } from '@/lib/db';
+import { shuffleAIGPQuestionOptions } from '@/lib/aigp-option-shuffle';
 
 export async function GET(
   request: NextRequest,
@@ -46,8 +47,8 @@ export async function GET(
     return NextResponse.json({ error: 'Question not found' }, { status: 404 });
   }
   
-  // Get existing answer (if any)
-  const answer = await prisma.aIGPExamAnswer.findUnique({
+  // Get or create answer record
+  let answer = await prisma.aIGPExamAnswer.findUnique({
     where: {
       attemptId_questionId: {
         attemptId: attempt.id,
@@ -56,12 +57,74 @@ export async function GET(
     },
   });
   
-  // Return question (without correct_answer until submitted)
+  // Get shuffled options and mapping
+  let shuffledOptions: Array<{ key: string; text: string }>;
+  let selectedAnswer = answer?.selectedAnswer || null;
+  
+  if (answer?.shuffledOrder && typeof answer.shuffledOrder === 'object') {
+    // Use existing shuffled order (question was already accessed)
+    const reverseMapping = answer.shuffledOrder as Record<string, string>;
+    const originalOptions = question.options as Array<{ key: string; text: string }>;
+    
+    // Reconstruct shuffled options from mapping
+    shuffledOptions = ['A', 'B', 'C', 'D'].map((shuffledKey) => {
+      const originalKey = reverseMapping[shuffledKey];
+      const originalOption = originalOptions.find(opt => opt.key === originalKey);
+      return {
+        key: shuffledKey,
+        text: originalOption?.text || '',
+      };
+    });
+    
+    // Map selected answer from original to shuffled format for display
+    if (selectedAnswer && reverseMapping) {
+      // Find which shuffled key maps to the original selected answer
+      const shuffledKey = Object.keys(reverseMapping).find(
+        key => reverseMapping[key] === selectedAnswer
+      );
+      if (shuffledKey) {
+        selectedAnswer = shuffledKey;
+      }
+    }
+  } else {
+    // First time accessing this question - shuffle and store mapping
+    const shuffledQuestion = shuffleAIGPQuestionOptions({
+      questionId: question.questionId,
+      options: question.options as Array<{ key: string; text: string }>,
+      correctAnswer: question.correctAnswer,
+    });
+    
+    shuffledOptions = shuffledQuestion.shuffledOptions;
+    
+    // Create or update answer record with mapping
+    if (answer) {
+      // Update existing answer with mapping
+      answer = await prisma.aIGPExamAnswer.update({
+        where: { id: answer.id },
+        data: {
+          shuffledOrder: shuffledQuestion.reverseMapping,
+          optionOrder: question.options,
+        },
+      });
+    } else {
+      // Create new answer record with mapping
+      answer = await prisma.aIGPExamAnswer.create({
+        data: {
+          attemptId: attempt.id,
+          questionId: question.id,
+          shuffledOrder: shuffledQuestion.reverseMapping, // Store mapping for answer evaluation
+          optionOrder: question.options, // Store original order for review
+        },
+      });
+    }
+  }
+  
+  // Return question with shuffled options (without correct_answer until submitted)
   return NextResponse.json({
     questionId: question.questionId,
     questionOrder: question.questionOrder,
     question: question.question,
-    options: question.options,
+    options: shuffledOptions, // Return shuffled options
     domain: question.domain,
     topic: question.topic,
     difficulty: question.difficulty,
@@ -69,7 +132,7 @@ export async function GET(
     estimatedTimeSec: question.estimatedTimeSec,
     jurisdiction: question.jurisdiction,
     sourceRefs: question.sourceRefs,
-    selectedAnswer: answer?.selectedAnswer || null,
+    selectedAnswer: selectedAnswer, // Selected answer in shuffled format
     isFlagged: answer?.isFlagged || false,
     timeSpentSec: answer?.timeSpentSec || 0,
   });
