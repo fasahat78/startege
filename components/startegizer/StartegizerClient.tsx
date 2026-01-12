@@ -295,10 +295,26 @@ export default function StartegizerClient({
 
   const formatUseCaseToPrompt = (useCase: any): string => {
     // Import building blocks to get labels
-    const BUILDING_BLOCKS = require("@/lib/use-case-blocks");
+    // Use dynamic import to avoid SSR issues
+    let BUILDING_BLOCKS: any[] = [];
+    try {
+      BUILDING_BLOCKS = require("@/lib/use-case-blocks").default || require("@/lib/use-case-blocks");
+      // Ensure it's an array
+      if (!Array.isArray(BUILDING_BLOCKS)) {
+        console.error("[USE_CASE_BUILDER] BUILDING_BLOCKS is not an array:", typeof BUILDING_BLOCKS);
+        BUILDING_BLOCKS = [];
+      }
+    } catch (error) {
+      console.error("[USE_CASE_BUILDER] Error loading BUILDING_BLOCKS:", error);
+      BUILDING_BLOCKS = [];
+    }
     
     // Helper to get label from value
     const getLabel = (blockId: string, value: string): string => {
+      if (!Array.isArray(BUILDING_BLOCKS) || BUILDING_BLOCKS.length === 0) {
+        // Fallback: return value as-is if BUILDING_BLOCKS not available
+        return value;
+      }
       const block = BUILDING_BLOCKS.find((b: any) => b.id === blockId);
       if (!block || !block.options) return value;
       const option = block.options.find((o: any) => o.value === value);
