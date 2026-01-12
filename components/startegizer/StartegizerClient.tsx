@@ -232,6 +232,38 @@ export default function StartegizerClient({
     }
   };
 
+  const handleDeleteConversation = async (conversationId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent selecting the conversation when clicking delete
+    
+    if (!confirm("Are you sure you want to delete this conversation?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/startegizer/conversations/${conversationId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete conversation");
+      }
+
+      // Remove from local state
+      setConversations((prev) => prev.filter((c) => c.id !== conversationId));
+      
+      // If deleted conversation was current, clear it
+      if (currentConversationId === conversationId) {
+        setCurrentConversationId(null);
+        setMessages([]);
+      }
+
+      toast("Conversation deleted", "success");
+    } catch (error: any) {
+      console.error("Error deleting conversation:", error);
+      toast("Failed to delete conversation", "error");
+    }
+  };
+
   const handleSelectPrompt = (promptId: string, promptText: string) => {
     setShowPromptLibrary(false);
     handleSendMessage(promptText, promptId);
