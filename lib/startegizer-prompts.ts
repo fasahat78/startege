@@ -934,13 +934,13 @@ ${historyText}
 **Current Question:**
 ${userQuestion}
 
-Please provide a comprehensive answer to the user's question${ragContext && ragContext.documents.length > 0 ? ', citing specific sources from the provided context' : ''}.`;
+Please provide a comprehensive answer to the user's question${ragContext && ragContext.documents.length > 0 ? ', citing specific sources from the provided context when relevant' : '. Use your comprehensive knowledge of AI governance to provide helpful, accurate guidance even without specific context documents.'}.`;
   }
 
   return `${systemPrompt}${ragSection}
 **User Question:**
 ${userQuestion}
 
-Please provide a comprehensive answer to the user's question${ragContext && ragContext.documents.length > 0 ? ', citing specific sources from the provided context' : ''}.`;
+Please provide a comprehensive answer to the user's question${ragContext && ragContext.documents.length > 0 ? ', citing specific sources from the provided context when relevant' : '. Use your comprehensive knowledge of AI governance to provide helpful, accurate guidance even without specific context documents.'}.`;
 }
 
