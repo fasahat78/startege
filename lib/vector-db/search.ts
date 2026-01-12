@@ -294,7 +294,7 @@ export async function searchMarketScanSemantic(
     const results = await semanticSearch(query, {
       topK,
       filter: { type: 'market_scan' },
-      minSimilarity: 0.4, // Lowered threshold - 0.6 was too strict, filtering out all results
+      minSimilarity: 0.3, // Match standards threshold - both search same index, should have similar similarity distributions
     });
     console.log(`[VECTOR_DB] searchMarketScanSemantic returned ${results.length} results`);
     return results;
