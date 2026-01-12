@@ -130,6 +130,7 @@ export async function semanticSearch(
     
     // Transform results to SearchResult format
     const results: SearchResult[] = [];
+    let filteredCount = 0; // Declare outside if block for logging
     
     if (data.nearestNeighbors && data.nearestNeighbors.length > 0) {
       const neighbors = data.nearestNeighbors[0].neighbors || [];
@@ -189,7 +190,7 @@ export async function semanticSearch(
       console.log(`[VECTOR_DB] Processing ${neighbors.length} neighbors, minSimilarity threshold: ${minSimilarity}`);
       
       // Build results with metadata from database
-      let filteredCount = 0;
+      filteredCount = 0; // Reset counter for this query
       let processedCount = 0;
       for (const neighbor of neighbors) {
         const distance = neighbor.distance || 0;
