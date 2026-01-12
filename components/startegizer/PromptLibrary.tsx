@@ -127,17 +127,9 @@ export default function PromptLibrary({
   });
 
   const handleSelectPrompt = (prompt: PromptTemplate) => {
-    // Replace placeholders with user context if available
-    let promptText = prompt.template;
-    
-    if (userProfile.persona) {
-      promptText = promptText.replace(
-        /\[Describe your AI use case\]/g,
-        `[As a ${userProfile.persona}]`
-      );
-    }
-
-    onSelectPrompt(prompt.id, promptText);
+    // Use the template as-is (no placeholders to replace)
+    // Prompt library prompts are standalone and don't need user context replacement
+    onSelectPrompt(prompt.id, prompt.template);
   };
 
   return (

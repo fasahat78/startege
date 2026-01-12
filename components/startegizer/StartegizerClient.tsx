@@ -271,16 +271,26 @@ export default function StartegizerClient({
 
   const handleUseCaseBuilt = (useCase: any) => {
     console.log("[USE_CASE_BUILDER] Use case built:", useCase);
-    setShowUseCaseBuilder(false);
     
     // Format the use case into a structured prompt
     const useCasePrompt = formatUseCaseToPrompt(useCase);
     console.log("[USE_CASE_BUILDER] Formatted prompt:", useCasePrompt);
+    console.log("[USE_CASE_BUILDER] Prompt length:", useCasePrompt.length);
+    console.log("[USE_CASE_BUILDER] Current loading state:", loading);
     
-    // Small delay to ensure modal is closed before sending message
+    // Close modal first
+    setShowUseCaseBuilder(false);
+    
+    // Small delay to ensure modal is closed and state is updated before sending message
     setTimeout(() => {
+      console.log("[USE_CASE_BUILDER] Attempting to send message, loading:", loading);
+      if (!useCasePrompt.trim()) {
+        console.error("[USE_CASE_BUILDER] ❌ Prompt is empty!");
+        toast("Error: Use case prompt is empty. Please try again.", "error");
+        return;
+      }
       handleSendMessage(useCasePrompt);
-    }, 100);
+    }, 200);
   };
 
   const formatUseCaseToPrompt = (useCase: any): string => {
