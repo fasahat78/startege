@@ -298,11 +298,15 @@ export default function StartegizerClient({
     // Use dynamic import to avoid SSR issues
     let BUILDING_BLOCKS: any[] = [];
     try {
-      BUILDING_BLOCKS = require("@/lib/use-case-blocks").default || require("@/lib/use-case-blocks");
+      const imported = require("@/lib/use-case-blocks");
+      // Handle both default export and direct export
+      BUILDING_BLOCKS = imported.default || imported;
       // Ensure it's an array
       if (!Array.isArray(BUILDING_BLOCKS)) {
-        console.error("[USE_CASE_BUILDER] BUILDING_BLOCKS is not an array:", typeof BUILDING_BLOCKS);
+        console.error("[USE_CASE_BUILDER] BUILDING_BLOCKS is not an array:", typeof BUILDING_BLOCKS, BUILDING_BLOCKS);
         BUILDING_BLOCKS = [];
+      } else {
+        console.log("[USE_CASE_BUILDER] Loaded BUILDING_BLOCKS:", BUILDING_BLOCKS.length, "blocks");
       }
     } catch (error) {
       console.error("[USE_CASE_BUILDER] Error loading BUILDING_BLOCKS:", error);
@@ -313,11 +317,15 @@ export default function StartegizerClient({
     const getLabel = (blockId: string, value: string): string => {
       if (!Array.isArray(BUILDING_BLOCKS) || BUILDING_BLOCKS.length === 0) {
         // Fallback: return value as-is if BUILDING_BLOCKS not available
+        console.warn("[USE_CASE_BUILDER] BUILDING_BLOCKS not available, using value as-is:", value);
         return value;
       }
-      const block = BUILDING_BLOCKS.find((b: any) => b.id === blockId);
-      if (!block || !block.options) return value;
-      const option = block.options.find((o: any) => o.value === value);
+      const block = BUILDING_BLOCKS.find((b: any) => b && b.id === blockId);
+      if (!block || !block.options || !Array.isArray(block.options)) {
+        console.warn("[USE_CASE_BUILDER] Block not found or has no options:", blockId);
+        return value;
+      }
+      const option = block.options.find((o: any) => o && o.value === value);
       return option ? option.label : value;
     };
     
