@@ -190,6 +190,7 @@ export async function semanticSearch(
       
       // Build results with metadata from database
       let filteredCount = 0;
+      let processedCount = 0;
       for (const neighbor of neighbors) {
         const distance = neighbor.distance || 0;
         const similarityScore = 1 - distance; // Convert distance to similarity
