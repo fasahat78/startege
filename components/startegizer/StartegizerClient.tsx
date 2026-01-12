@@ -270,11 +270,17 @@ export default function StartegizerClient({
   };
 
   const handleUseCaseBuilt = (useCase: any) => {
+    console.log("[USE_CASE_BUILDER] Use case built:", useCase);
     setShowUseCaseBuilder(false);
     
     // Format the use case into a structured prompt
     const useCasePrompt = formatUseCaseToPrompt(useCase);
-    handleSendMessage(useCasePrompt);
+    console.log("[USE_CASE_BUILDER] Formatted prompt:", useCasePrompt);
+    
+    // Small delay to ensure modal is closed before sending message
+    setTimeout(() => {
+      handleSendMessage(useCasePrompt);
+    }, 100);
   };
 
   const formatUseCaseToPrompt = (useCase: any): string => {
