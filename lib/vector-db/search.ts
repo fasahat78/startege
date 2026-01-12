@@ -196,13 +196,16 @@ export async function semanticSearch(
         const distance = neighbor.distance || 0;
         const similarityScore = 1 - distance; // Convert distance to similarity
         
-        // Log first few neighbors for debugging
-        if (results.length < 3) {
-          console.log(`[VECTOR_DB] Neighbor ${results.length + 1}:`, {
+        processedCount++;
+        // Log first few neighbors for debugging with full details
+        if (processedCount <= 3) {
+          console.log(`[VECTOR_DB] Neighbor ${processedCount}:`, {
             datapointId: neighbor.datapoint?.datapointId,
-            distance,
-            similarityScore,
+            distance: distance.toFixed(4),
+            similarityScore: similarityScore.toFixed(4),
+            minSimilarity: minSimilarity.toFixed(4),
             passesThreshold: similarityScore >= minSimilarity,
+            gap: (similarityScore - minSimilarity).toFixed(4),
           });
         }
         
