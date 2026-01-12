@@ -291,7 +291,7 @@ export async function searchMarketScanSemantic(
     const results = await semanticSearch(query, {
       topK,
       filter: { type: 'market_scan' },
-      minSimilarity: 0.6, // Higher threshold for articles
+      minSimilarity: 0.4, // Lowered threshold - 0.6 was too strict, filtering out all results
     });
     console.log(`[VECTOR_DB] searchMarketScanSemantic returned ${results.length} results`);
     return results;
@@ -313,7 +313,7 @@ export async function searchStandardsSemantic(
     const results = await semanticSearch(query, {
       topK,
       filter: { type: 'standard' },
-      minSimilarity: 0.5, // Lower threshold for standards (more lenient)
+      minSimilarity: 0.3, // Lowered threshold - 0.5 was too strict, filtering out all results
     });
     console.log(`[VECTOR_DB] searchStandardsSemantic returned ${results.length} results`);
     return results;
