@@ -25,14 +25,15 @@ export async function POST(request: Request) {
     // If priceId not provided, use planType to get from env
     let finalPriceId = priceId;
     if (!finalPriceId && planType) {
-      finalPriceId =
-        planType === "monthly"
-          ? STRIPE_PRICE_IDS.monthly
-          : planType === "annual"
-          ? STRIPE_PRICE_IDS.annual
-          : planType === "lifetime"
-          ? STRIPE_PRICE_IDS.lifetime
-          : STRIPE_PRICE_IDS.monthly; // Default to monthly
+      if (planType === "monthly") {
+        finalPriceId = STRIPE_PRICE_IDS.monthly;
+      } else if (planType === "annual") {
+        finalPriceId = STRIPE_PRICE_IDS.annual;
+      } else if (planType === "lifetime") {
+        finalPriceId = STRIPE_PRICE_IDS.lifetime;
+      } else {
+        finalPriceId = STRIPE_PRICE_IDS.monthly; // Default to monthly
+      }
     }
 
     console.log("[CHECKOUT SESSION] Price ID resolution:", {
@@ -41,12 +42,30 @@ export async function POST(request: Request) {
       planType,
       monthlyPriceId: STRIPE_PRICE_IDS.monthly,
       annualPriceId: STRIPE_PRICE_IDS.annual,
+      monthlyPriceIdSet: !!STRIPE_PRICE_IDS.monthly,
+      annualPriceIdSet: !!STRIPE_PRICE_IDS.annual,
     });
 
-    if (!finalPriceId) {
-      console.error("[CHECKOUT SESSION] ❌ No priceId resolved. Request body:", body);
+    // Check if finalPriceId is empty string or undefined/null
+    if (!finalPriceId || finalPriceId.trim() === "") {
+      console.error("[CHECKOUT SESSION] ❌ No priceId resolved. Details:", {
+        providedPriceId: priceId,
+        planType,
+        monthlyPriceId: STRIPE_PRICE_IDS.monthly,
+        annualPriceId: STRIPE_PRICE_IDS.annual,
+        requestBody: body,
+      });
+      
+      // Provide more specific error message
+      if (planType && !STRIPE_PRICE_IDS.monthly && !STRIPE_PRICE_IDS.annual) {
+        return NextResponse.json(
+          { error: "Stripe price IDs are not configured. Please contact support." },
+          { status: 500 }
+        );
+      }
+      
       return NextResponse.json(
-        { error: "Price ID or plan type is required" },
+        { error: `Price ID or plan type is required. Plan type provided: ${planType || 'none'}` },
         { status: 400 }
       );
     }

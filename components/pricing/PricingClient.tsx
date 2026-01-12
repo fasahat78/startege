@@ -160,11 +160,18 @@ export default function PricingClient({ isPremium, planType, currentPlanType }: 
         });
       }
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "Failed to create checkout session");
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || `Failed to create checkout session (${response.status})`;
+        console.error("[PRICING CLIENT] Checkout session creation failed:", {
+          status: response.status,
+          error: errorMessage,
+          requestBody,
+        });
+        throw new Error(errorMessage);
       }
+
+      const data = await response.json();
 
       // Redirect to Stripe Checkout
       if (data.url) {
