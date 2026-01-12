@@ -123,20 +123,33 @@ export default function PricingClient({ isPremium, planType, currentPlanType }: 
           }
         }
         
+        // Ensure planType is always set correctly
+        const normalizedPlanType = planType === "annual" ? "annual" : "monthly";
+        
         const requestBody = {
-          planType: planType === "annual" ? "annual" : "monthly",
+          planType: normalizedPlanType,
           returnUrl: window.location.origin + "/pricing",
           ...(finalDiscountCode && { discountCode: finalDiscountCode }),
         };
         
         console.log("[PRICING CLIENT] Creating checkout session with:", {
           planType: requestBody.planType,
+          normalizedPlanType,
+          originalPlanType: planType,
           hasDiscountCode: !!requestBody.discountCode,
           discountCode: requestBody.discountCode,
           discountCodeRaw: discountCode,
           discountApplied: !!discountApplied,
           finalDiscountCode,
         });
+        
+        // Validate request body before sending
+        if (!requestBody.planType) {
+          console.error("[PRICING CLIENT] ❌ planType is missing in request body!");
+          alert("Error: Plan type is required. Please refresh the page and try again.");
+          setLoading(false);
+          return;
+        }
         
         response = await fetch("/api/stripe/create-checkout-session", {
           method: "POST",

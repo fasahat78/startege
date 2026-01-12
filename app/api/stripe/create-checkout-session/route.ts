@@ -15,6 +15,13 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { priceId, planType, returnUrl, discountCode } = body;
 
+    console.log("[CHECKOUT SESSION] Request body:", {
+      hasPriceId: !!priceId,
+      planType,
+      hasReturnUrl: !!returnUrl,
+      hasDiscountCode: !!discountCode,
+    });
+
     // If priceId not provided, use planType to get from env
     let finalPriceId = priceId;
     if (!finalPriceId && planType) {
@@ -28,7 +35,16 @@ export async function POST(request: Request) {
           : STRIPE_PRICE_IDS.monthly; // Default to monthly
     }
 
+    console.log("[CHECKOUT SESSION] Price ID resolution:", {
+      providedPriceId: priceId,
+      resolvedPriceId: finalPriceId,
+      planType,
+      monthlyPriceId: STRIPE_PRICE_IDS.monthly,
+      annualPriceId: STRIPE_PRICE_IDS.annual,
+    });
+
     if (!finalPriceId) {
+      console.error("[CHECKOUT SESSION] ❌ No priceId resolved. Request body:", body);
       return NextResponse.json(
         { error: "Price ID or plan type is required" },
         { status: 400 }
