@@ -278,37 +278,64 @@ export default function StartegizerClient({
   };
 
   const formatUseCaseToPrompt = (useCase: any): string => {
+    // Import building blocks to get labels
+    const BUILDING_BLOCKS = require("@/lib/use-case-blocks");
+    
+    // Helper to get label from value
+    const getLabel = (blockId: string, value: string): string => {
+      const block = BUILDING_BLOCKS.find((b: any) => b.id === blockId);
+      if (!block || !block.options) return value;
+      const option = block.options.find((o: any) => o.value === value);
+      return option ? option.label : value;
+    };
+    
     let prompt = "I need help with the following AI governance use case:\n\n";
     
+    // Always include description (required field)
     prompt += "**Use Case Description:**\n";
     prompt += `${useCase.description}\n\n`;
     
-    if (useCase.systemType) {
-      prompt += `**AI System Type:** ${useCase.systemType}\n`;
+    // Only include fields that are actually set by the user
+    // Check if systemType exists and is not empty
+    if (useCase.systemType && useCase.systemType.trim()) {
+      const label = getLabel("system-type", useCase.systemType);
+      prompt += `**AI System Type:** ${label}\n`;
     }
     
-    if (useCase.dataTypes && useCase.dataTypes.length > 0) {
-      prompt += `**Data Types:** ${useCase.dataTypes.join(", ")}\n`;
+    // Check if dataTypes array exists and has items
+    if (useCase.dataTypes && Array.isArray(useCase.dataTypes) && useCase.dataTypes.length > 0) {
+      const labels = useCase.dataTypes.map((dt: string) => getLabel("data-type", dt));
+      prompt += `**Data Types:** ${labels.join(", ")}\n`;
     }
     
-    if (useCase.deploymentContext) {
-      prompt += `**Deployment Context:** ${useCase.deploymentContext}\n`;
+    // Check if deploymentContext exists and is not empty
+    if (useCase.deploymentContext && useCase.deploymentContext.trim()) {
+      const label = getLabel("deployment", useCase.deploymentContext);
+      prompt += `**Deployment Context:** ${label}\n`;
     }
     
-    if (useCase.riskLevel) {
-      prompt += `**Risk Level:** ${useCase.riskLevel}\n`;
+    // Check if riskLevel exists and is not empty
+    if (useCase.riskLevel && useCase.riskLevel.trim()) {
+      const label = getLabel("risk", useCase.riskLevel);
+      prompt += `**Risk Level:** ${label}\n`;
     }
     
-    if (useCase.frameworks && useCase.frameworks.length > 0) {
-      prompt += `**Regulatory Frameworks:** ${useCase.frameworks.join(", ")}\n`;
+    // Check if frameworks array exists and has items
+    if (useCase.frameworks && Array.isArray(useCase.frameworks) && useCase.frameworks.length > 0) {
+      const labels = useCase.frameworks.map((f: string) => getLabel("framework", f));
+      prompt += `**Regulatory Frameworks:** ${labels.join(", ")}\n`;
     }
     
-    if (useCase.stakeholders && useCase.stakeholders.length > 0) {
-      prompt += `**Stakeholders:** ${useCase.stakeholders.join(", ")}\n`;
+    // Check if stakeholders array exists and has items
+    if (useCase.stakeholders && Array.isArray(useCase.stakeholders) && useCase.stakeholders.length > 0) {
+      const labels = useCase.stakeholders.map((s: string) => getLabel("stakeholder", s));
+      prompt += `**Stakeholders:** ${labels.join(", ")}\n`;
     }
     
-    if (useCase.decisionImpact) {
-      prompt += `**Decision Impact:** ${useCase.decisionImpact}\n`;
+    // Check if decisionImpact exists and is not empty
+    if (useCase.decisionImpact && useCase.decisionImpact.trim()) {
+      const label = getLabel("impact", useCase.decisionImpact);
+      prompt += `**Decision Impact:** ${label}\n`;
     }
     
     prompt += "\nPlease provide comprehensive AI governance guidance for this use case.";

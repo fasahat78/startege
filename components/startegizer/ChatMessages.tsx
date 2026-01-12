@@ -148,7 +148,23 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
                   </ReactMarkdown>
                 </div>
               ) : (
-                <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                <div className="prose prose-sm sm:prose-base prose-headings:font-semibold prose-headings:text-primary-foreground prose-p:text-primary-foreground prose-p:leading-relaxed prose-p:text-sm sm:prose-p:text-base prose-strong:text-primary-foreground prose-strong:font-semibold prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 max-w-none">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      p: ({ children }) => <p className="mb-2 last:mb-0 text-sm sm:text-base leading-relaxed">{children}</p>,
+                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                      ul: ({ children }) => <ul className="list-disc list-inside space-y-1 my-2 text-sm sm:text-base">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 my-2 text-sm sm:text-base">{children}</ol>,
+                      li: ({ children }) => <li className="ml-2">{children}</li>,
+                      h1: ({ children }) => <h1 className="text-lg sm:text-xl font-semibold mt-3 mb-2 first:mt-0">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-base sm:text-lg font-semibold mt-3 mb-2 first:mt-0">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-sm sm:text-base font-semibold mt-2 mb-1 first:mt-0">{children}</h3>,
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
               )}
 
               {/* Copy button for assistant messages */}
