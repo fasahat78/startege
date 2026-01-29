@@ -370,9 +370,11 @@ export default async function Home() {
             <div>
               <h4 className="font-semibold text-foreground mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/legal/privacy" className="hover:text-foreground transition">Privacy Policy</Link></li>
+                <li><Link href="/legal/terms" className="hover:text-foreground transition">Terms of Service</Link></li>
+                <li><Link href="/legal/cookies" className="hover:text-foreground transition">Cookie Policy</Link></li>
+                <li><Link href="/legal/accessibility" className="hover:text-foreground transition">Accessibility</Link></li>
                 <li><Link href="/legal/disclosure" className="hover:text-foreground transition">Disclosure</Link></li>
-                <li><Link href="/legal/privacy" className="hover:text-foreground transition">Privacy</Link></li>
-                <li><Link href="/legal/terms" className="hover:text-foreground transition">Terms</Link></li>
               </ul>
             </div>
           </div>
