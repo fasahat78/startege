@@ -68,7 +68,8 @@ steps:
       - '10'
       - '--min-instances'
       - '0'
-      # GCP configuration for Gemini AI
+      # GCP configuration for Gemini AI (optional)
+      # OpenAI configuration (optional - set OPENAI_API_KEY in Cloud Run secrets if using OpenAI)
       - '--set-env-vars'
       - 'GCP_PROJECT_ID=${_GCP_PROJECT_NUMBER},GCP_LOCATION=${_REGION}'
     id: 'deploy-cloud-run'

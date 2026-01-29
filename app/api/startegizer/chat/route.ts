@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/firebase-auth-helpers";
 import { prisma } from "@/lib/db";
-import { generateResponse, isGeminiConfigured, ChatMessage } from "@/lib/gemini";
+import { generateResponse as generateGeminiResponse, isGeminiConfigured, ChatMessage } from "@/lib/gemini";
+import { generateResponse as generateOpenAIResponse, isOpenAIConfigured } from "@/lib/openai";
 import { buildFullPrompt } from "@/lib/startegizer-prompts";
 import { deductCredits, checkCreditBalance } from "@/lib/ai-credits";
 import { retrieveRAGContext, generateCitations } from "@/lib/startegizer-rag";
@@ -151,23 +152,31 @@ export async function POST(request: Request) {
       console.log(`[STARTEGIZER_CHAT] Sample citation: ${allCitations[0].title} from ${allCitations[0].source}`);
     }
     
-    // Generate response using Gemini AI (or fallback to mock if not configured)
+    // Generate response using AI (Gemini, OpenAI, or fallback to mock)
     let responseText: string;
     let creditsDeducted = false;
+    let aiProvider = "none";
 
     const geminiConfigured = isGeminiConfigured();
-    console.log("[STARTEGIZER_CHAT] Gemini configured:", geminiConfigured);
-    console.log("[STARTEGIZER_CHAT] GCP_PROJECT_ID:", process.env.GCP_PROJECT_ID || process.env.NEXT_PUBLIC_GCP_PROJECT_ID || "NOT SET");
+    const openAIConfigured = isOpenAIConfigured();
     
+    console.log("[STARTEGIZER_CHAT] AI Providers configured:", {
+      gemini: geminiConfigured,
+      openai: openAIConfigured,
+      geminiProjectId: process.env.GCP_PROJECT_ID || process.env.NEXT_PUBLIC_GCP_PROJECT_ID || "NOT SET",
+    });
+    
+    // Try Gemini first, then OpenAI, then fallback to mock
     if (geminiConfigured) {
       try {
         console.log("[STARTEGIZER_CHAT] Calling Gemini API...");
-        const geminiResponse = await generateResponse(fullPrompt, conversationHistory);
+        aiProvider = "gemini";
+        const geminiResponse = await generateGeminiResponse(fullPrompt, conversationHistory);
         responseText = geminiResponse.text;
         console.log("[STARTEGIZER_CHAT] Gemini response received, length:", responseText.length);
         console.log("[STARTEGIZER_CHAT] Response preview:", responseText.substring(0, 200));
         
-        // Deduct fixed credits per API call (always deduct if Gemini call succeeded)
+        // Deduct fixed credits per API call (always deduct if API call succeeded)
         console.log("[STARTEGIZER_CHAT] Deducting credits:", CREDITS_PER_CALL, "credits");
         const deductionResult = await deductCredits(user.id, CREDITS_PER_CALL);
         console.log("[STARTEGIZER_CHAT] Deduction result:", JSON.stringify(deductionResult, null, 2));
@@ -180,8 +189,7 @@ export async function POST(request: Request) {
             error: deductionResult.error,
             remainingBalance: deductionResult.remainingBalance,
           });
-          // Still mark as deducted if Gemini call succeeded (deduction failure is a separate issue)
-          // This ensures users are charged for API usage even if credit system has issues
+          // Still mark as deducted if API call succeeded (deduction failure is a separate issue)
           creditsDeducted = true;
           console.warn("[CREDIT_DEDUCTION_FAILED] Marking credits as deducted despite deduction failure - API call was successful");
         } else {
@@ -195,20 +203,84 @@ export async function POST(request: Request) {
           stack: error.stack?.substring(0, 500),
           name: error.name,
         });
-        // Fallback to mock response if Gemini fails
-        console.warn("[GEMINI_FALLBACK] Falling back to mock response");
+        // Try OpenAI as fallback if Gemini fails
+        if (openAIConfigured) {
+          console.log("[STARTEGIZER_CHAT] Gemini failed, trying OpenAI as fallback...");
+          try {
+            aiProvider = "openai";
+            const openAIResponse = await generateOpenAIResponse(fullPrompt, conversationHistory);
+            responseText = openAIResponse.text;
+            console.log("[STARTEGIZER_CHAT] OpenAI response received, length:", responseText.length);
+            console.log("[STARTEGIZER_CHAT] Response preview:", responseText.substring(0, 200));
+            
+            // Deduct credits for OpenAI call
+            console.log("[STARTEGIZER_CHAT] Deducting credits:", CREDITS_PER_CALL, "credits");
+            const deductionResult = await deductCredits(user.id, CREDITS_PER_CALL);
+            
+            if (!deductionResult.success) {
+              console.error("[CREDIT_DEDUCTION_FAILED]", deductionResult.error);
+              creditsDeducted = true; // Still mark as deducted
+            } else {
+              creditsDeducted = true;
+              console.log(`[CREDITS_DEDUCTED] ✅ User ${user.id}: ${CREDITS_PER_CALL} credits deducted. Remaining: ${deductionResult.remainingBalance}`);
+            }
+          } catch (openAIError: any) {
+            console.error("[OPENAI_ERROR]", openAIError);
+            console.warn("[OPENAI_FALLBACK] OpenAI also failed, falling back to mock response");
+            responseText = generateMockResponse(message, promptTemplateId);
+            creditsDeducted = false;
+          }
+        } else {
+          // Fallback to mock response if no AI provider available
+          console.warn("[GEMINI_FALLBACK] Falling back to mock response (OpenAI not configured)");
+          responseText = generateMockResponse(message, promptTemplateId);
+          creditsDeducted = false;
+        }
+      }
+    } else if (openAIConfigured) {
+      // Use OpenAI if Gemini is not configured
+      try {
+        console.log("[STARTEGIZER_CHAT] Calling OpenAI API...");
+        aiProvider = "openai";
+        const openAIResponse = await generateOpenAIResponse(fullPrompt, conversationHistory);
+        responseText = openAIResponse.text;
+        console.log("[STARTEGIZER_CHAT] OpenAI response received, length:", responseText.length);
+        console.log("[STARTEGIZER_CHAT] Response preview:", responseText.substring(0, 200));
+        
+        // Deduct credits for OpenAI call
+        console.log("[STARTEGIZER_CHAT] Deducting credits:", CREDITS_PER_CALL, "credits");
+        const deductionResult = await deductCredits(user.id, CREDITS_PER_CALL);
+        
+        if (!deductionResult.success) {
+          console.error("[CREDIT_DEDUCTION_FAILED]", deductionResult.error);
+          creditsDeducted = true; // Still mark as deducted
+        } else {
+          creditsDeducted = true;
+          console.log(`[CREDITS_DEDUCTED] ✅ User ${user.id}: ${CREDITS_PER_CALL} credits deducted. Remaining: ${deductionResult.remainingBalance}`);
+        }
+      } catch (error: any) {
+        console.error("[OPENAI_ERROR]", error);
+        console.error("[OPENAI_ERROR] Error details:", {
+          message: error.message,
+          stack: error.stack?.substring(0, 500),
+          name: error.name,
+        });
+        // Fallback to mock response if OpenAI fails
+        console.warn("[OPENAI_FALLBACK] Falling back to mock response");
         responseText = generateMockResponse(message, promptTemplateId);
-        // No credits deducted for mock responses
         creditsDeducted = false;
       }
     } else {
-      // Fallback to mock response if Gemini is not configured
-      console.warn("[GEMINI_NOT_CONFIGURED] Using mock response. Set GCP_PROJECT_ID to enable Gemini.");
-      console.warn("[GEMINI_NOT_CONFIGURED] Check environment variables: GCP_PROJECT_ID or NEXT_PUBLIC_GCP_PROJECT_ID");
+      // Fallback to mock response if no AI provider is configured
+      console.warn("[AI_NOT_CONFIGURED] No AI provider configured. Using mock response.");
+      console.warn("[AI_NOT_CONFIGURED] To enable AI, set one of:");
+      console.warn("[AI_NOT_CONFIGURED]   - GCP_PROJECT_ID (for Gemini)");
+      console.warn("[AI_NOT_CONFIGURED]   - OPENAI_API_KEY (for OpenAI)");
       responseText = generateMockResponse(message, promptTemplateId);
-      // No credits deducted for mock responses
       creditsDeducted = false;
     }
+    
+    console.log(`[STARTEGIZER_CHAT] Using AI provider: ${aiProvider}`);
     
     // Extract citations that were actually referenced in the response
     const referencedCitations = extractReferencedCitations(responseText, allCitations);
@@ -299,7 +371,9 @@ export async function POST(request: Request) {
       creditsDeducted,
       creditsPerCall: CREDITS_PER_CALL,
       updatedBalance,
-      isGeminiConfigured: isGeminiConfigured(),
+      aiProvider: aiProvider,
+      geminiConfigured: isGeminiConfigured(),
+      openAIConfigured: isOpenAIConfigured(),
     });
 
     return NextResponse.json({
@@ -461,13 +535,19 @@ Would you like me to help you assess your specific AI system's GDPR compliance?`
 Would you like guidance on implementing transparency for your specific AI system?`;
   }
 
-  // Default response - only used as fallback when Gemini is not available
-  return `I apologize, but I'm currently unable to process your request. Startegizer is powered by Gemini AI, which appears to be unavailable at the moment.
+  // Default response - only used as fallback when no AI provider is available
+  return `I apologize, but I'm currently unable to process your request. Startegizer requires an AI provider to be configured.
 
-**To enable full functionality:**
-- Please ensure GCP_PROJECT_ID is configured in your environment
+**To enable full functionality, configure one of the following:**
+
+**Option 1: Google Gemini (Vertex AI)**
+- Set GCP_PROJECT_ID in your environment variables
 - Verify that Vertex AI API is enabled in your GCP project
 - Check that your service account has the necessary permissions
+
+**Option 2: OpenAI**
+- Set OPENAI_API_KEY in your environment variables
+- Ensure you have an active OpenAI API account
 
 **In the meantime**, you can:
 - Review our knowledge base articles
