@@ -204,8 +204,16 @@ export async function POST(request: Request) {
           name: error.name,
         });
         // Try OpenAI as fallback if Gemini fails
-        if (openAIConfigured) {
-          console.log("[STARTEGIZER_CHAT] Gemini failed, trying OpenAI as fallback...");
+        // Re-check OpenAI configuration in case it wasn't available during initial check
+        const openAIConfiguredNow = isOpenAIConfigured();
+        console.log("[STARTEGIZER_CHAT] Checking OpenAI fallback:", {
+          openAIConfiguredInitially: openAIConfigured,
+          openAIConfiguredNow: openAIConfiguredNow,
+          openAIKeyPresent: !!process.env.OPENAI_API_KEY,
+        });
+        
+        if (openAIConfiguredNow) {
+          console.log("[STARTEGIZER_CHAT] Gemini failed (429 quota), trying OpenAI as fallback...");
           try {
             aiProvider = "openai";
             const openAIResponse = await generateOpenAIResponse(fullPrompt, conversationHistory);
@@ -226,6 +234,11 @@ export async function POST(request: Request) {
             }
           } catch (openAIError: any) {
             console.error("[OPENAI_ERROR]", openAIError);
+            console.error("[OPENAI_ERROR] Error details:", {
+              message: openAIError.message,
+              stack: openAIError.stack?.substring(0, 500),
+              name: openAIError.name,
+            });
             console.warn("[OPENAI_FALLBACK] OpenAI also failed, falling back to mock response");
             responseText = generateMockResponse(message, promptTemplateId);
             creditsDeducted = false;
@@ -233,6 +246,10 @@ export async function POST(request: Request) {
         } else {
           // Fallback to mock response if no AI provider available
           console.warn("[GEMINI_FALLBACK] Falling back to mock response (OpenAI not configured)");
+          console.warn("[GEMINI_FALLBACK] OpenAI check:", {
+            hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+            openAIKeyLength: process.env.OPENAI_API_KEY?.length || 0,
+          });
           responseText = generateMockResponse(message, promptTemplateId);
           creditsDeducted = false;
         }

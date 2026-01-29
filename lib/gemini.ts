@@ -213,6 +213,9 @@ export async function generateResponse(
       throw new Error(`Gemini AI Unavailable: The service may be temporarily unavailable. Error: ${error.message}`);
     } else if (error.message?.includes('INVALID_ARGUMENT') || error.code === 3) {
       throw new Error(`Gemini AI Invalid Argument: Check project ID and location. Error: ${error.message}`);
+    } else if (error.message?.includes('429') || error.message?.includes('RESOURCE_EXHAUSTED') || error.code === 8) {
+      // 429 errors should trigger OpenAI fallback, so we don't need to modify the error message
+      console.warn(`[GEMINI] Quota exhausted (429), will fallback to OpenAI if available`);
     }
     
     throw new Error(`Gemini AI error: ${error.message || "Unknown error"} (Code: ${error.code || 'N/A'})`);
