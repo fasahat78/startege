@@ -934,12 +934,28 @@ ${historyText}
 **Current Question:**
 ${userQuestion}
 
+**IMPORTANT INSTRUCTIONS:**
+- Answer the user's question directly and specifically. Do NOT provide generic responses about your capabilities.
+- If asked to define or explain something, provide a clear, direct definition or explanation.
+- Use the provided RAG context when it's relevant to the question.
+- If RAG context is not directly relevant, use your comprehensive knowledge to answer the question.
+- Be concise and focused on answering what was asked.
+- Only mention your capabilities if the user explicitly asks about them.
+
 Please provide a comprehensive answer to the user's question${ragContext && ragContext.documents.length > 0 ? ', citing specific sources from the provided context when relevant' : '. Use your comprehensive knowledge of AI governance to provide helpful, accurate guidance even without specific context documents.'}.`;
   }
 
   return `${systemPrompt}${ragSection}
 **User Question:**
 ${userQuestion}
+
+**IMPORTANT INSTRUCTIONS:**
+- Answer the user's question directly and specifically. Do NOT provide generic responses about your capabilities.
+- If asked to define or explain something, provide a clear, direct definition or explanation.
+- Use the provided RAG context when it's relevant to the question.
+- If RAG context is not directly relevant, use your comprehensive knowledge to answer the question.
+- Be concise and focused on answering what was asked.
+- Only mention your capabilities if the user explicitly asks about them.
 
 Please provide a comprehensive answer to the user's question${ragContext && ragContext.documents.length > 0 ? ', citing specific sources from the provided context when relevant' : '. Use your comprehensive knowledge of AI governance to provide helpful, accurate guidance even without specific context documents.'}.`;
 }

@@ -157,6 +157,7 @@ export async function POST(request: Request) {
 
     const geminiConfigured = isGeminiConfigured();
     console.log("[STARTEGIZER_CHAT] Gemini configured:", geminiConfigured);
+    console.log("[STARTEGIZER_CHAT] GCP_PROJECT_ID:", process.env.GCP_PROJECT_ID || process.env.NEXT_PUBLIC_GCP_PROJECT_ID || "NOT SET");
     
     if (geminiConfigured) {
       try {
@@ -164,21 +165,36 @@ export async function POST(request: Request) {
         const geminiResponse = await generateResponse(fullPrompt, conversationHistory);
         responseText = geminiResponse.text;
         console.log("[STARTEGIZER_CHAT] Gemini response received, length:", responseText.length);
+        console.log("[STARTEGIZER_CHAT] Response preview:", responseText.substring(0, 200));
         
-        // Deduct fixed credits per API call
+        // Deduct fixed credits per API call (always deduct if Gemini call succeeded)
         console.log("[STARTEGIZER_CHAT] Deducting credits:", CREDITS_PER_CALL, "credits");
         const deductionResult = await deductCredits(user.id, CREDITS_PER_CALL);
         console.log("[STARTEGIZER_CHAT] Deduction result:", JSON.stringify(deductionResult, null, 2));
         
         if (!deductionResult.success) {
           console.error("[CREDIT_DEDUCTION_FAILED]", deductionResult.error);
-          // Still return the response, but log the error
+          console.error("[CREDIT_DEDUCTION_FAILED] Error details:", {
+            userId: user.id,
+            creditsToDeduct: CREDITS_PER_CALL,
+            error: deductionResult.error,
+            remainingBalance: deductionResult.remainingBalance,
+          });
+          // Still mark as deducted if Gemini call succeeded (deduction failure is a separate issue)
+          // This ensures users are charged for API usage even if credit system has issues
+          creditsDeducted = true;
+          console.warn("[CREDIT_DEDUCTION_FAILED] Marking credits as deducted despite deduction failure - API call was successful");
         } else {
           creditsDeducted = true;
           console.log(`[CREDITS_DEDUCTED] ✅ User ${user.id}: ${CREDITS_PER_CALL} credits deducted. Remaining: ${deductionResult.remainingBalance}`);
         }
       } catch (error: any) {
         console.error("[GEMINI_ERROR]", error);
+        console.error("[GEMINI_ERROR] Error details:", {
+          message: error.message,
+          stack: error.stack?.substring(0, 500),
+          name: error.name,
+        });
         // Fallback to mock response if Gemini fails
         console.warn("[GEMINI_FALLBACK] Falling back to mock response");
         responseText = generateMockResponse(message, promptTemplateId);
@@ -188,6 +204,7 @@ export async function POST(request: Request) {
     } else {
       // Fallback to mock response if Gemini is not configured
       console.warn("[GEMINI_NOT_CONFIGURED] Using mock response. Set GCP_PROJECT_ID to enable Gemini.");
+      console.warn("[GEMINI_NOT_CONFIGURED] Check environment variables: GCP_PROJECT_ID or NEXT_PUBLIC_GCP_PROJECT_ID");
       responseText = generateMockResponse(message, promptTemplateId);
       // No credits deducted for mock responses
       creditsDeducted = false;
@@ -343,7 +360,7 @@ function extractReferencedCitations(
 
 /**
  * Generate mock response based on user message
- * This will be replaced with Gemini AI in Phase 6
+ * Fallback used when Gemini AI is not configured or fails
  */
 function generateMockResponse(message: string, promptTemplateId?: string): string {
   const lowerMessage = message.toLowerCase();
@@ -444,22 +461,19 @@ Would you like me to help you assess your specific AI system's GDPR compliance?`
 Would you like guidance on implementing transparency for your specific AI system?`;
   }
 
-  // Default response
-  return `Thank you for your question about AI governance. I'm Startegizer, your AI Governance Expert Assistant.
+  // Default response - only used as fallback when Gemini is not available
+  return `I apologize, but I'm currently unable to process your request. Startegizer is powered by Gemini AI, which appears to be unavailable at the moment.
 
-I can help you with:
-- **Risk Assessment**: Classifying AI systems and identifying risks
-- **Compliance**: GDPR, EU AI Act, and other regulatory requirements
-- **Best Practices**: Implementing ethical AI governance frameworks
-- **Case Studies**: Real-world examples and enforcement actions
-- **Technical Guidance**: Specific implementation strategies
+**To enable full functionality:**
+- Please ensure GCP_PROJECT_ID is configured in your environment
+- Verify that Vertex AI API is enabled in your GCP project
+- Check that your service account has the necessary permissions
 
-**Note**: This is a demo response. In Phase 6, I'll be powered by Gemini AI with access to:
-- Real-time regulatory updates
-- Comprehensive knowledge base
-- Personalized guidance based on your profile
-- RAG (Retrieval-Augmented Generation) for accurate, cited responses
+**In the meantime**, you can:
+- Review our knowledge base articles
+- Check the Market Scan for latest updates
+- Browse AI governance standards and frameworks
 
-Could you provide more details about what specific aspect of AI governance you'd like help with?`;
+If this issue persists, please contact support.`;
 }
 
