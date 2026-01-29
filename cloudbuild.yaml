@@ -73,7 +73,7 @@ steps:
       - 'GCP_PROJECT_ID=${_GCP_PROJECT_NUMBER},GCP_LOCATION=${_REGION}'
       # Secrets from Secret Manager
       - '--set-secrets'
-      - 'OPENAI_API_KEY=OPENAI_API_KEY:latest,FIREBASE_SERVICE_ACCOUNT_KEY=FIREBASE_SERVICE_ACCOUNT_KEY:latest'
+      - 'DATABASE_URL=DATABASE_URL:latest,OPENAI_API_KEY=OPENAI_API_KEY:latest,FIREBASE_SERVICE_ACCOUNT_KEY=FIREBASE_SERVICE_ACCOUNT_KEY:latest'
     id: 'deploy-cloud-run'
 
 # Substitution variables (can be overridden in trigger)
