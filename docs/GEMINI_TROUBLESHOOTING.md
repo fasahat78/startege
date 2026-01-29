@@ -1,136 +1,142 @@
 # Gemini AI Troubleshooting Guide
 
-## Error: "Publisher Model was not found"
+If Gemini isn't working even though Vertex AI API is enabled, check these common issues:
 
-### Cause
-The Gemini model is not available in your project/region. This can happen if:
-1. Generative AI API is not enabled
-2. Region doesn't support Gemini models
-3. Project needs allowlisting (for newer models)
+## 1. Check Service Account Permissions
 
-### Solutions
+Cloud Run needs a service account with proper permissions:
 
-#### Solution 1: Enable Generative AI API (Most Common)
+```bash
+# Check which service account Cloud Run is using
+gcloud run services describe startege --region=us-central1 --format="value(spec.template.spec.serviceAccountName)"
 
-1. **Enable the API:**
-   ```
-   https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com?project=startege
-   ```
-   - Click **ENABLE**
-   - Wait 1-2 minutes
-
-2. **Test again:**
-   ```bash
-   npx tsx scripts/test-gemini.ts
-   ```
-
-#### Solution 2: Try Different Region
-
-Some regions don't support all Gemini models. Try changing the region:
-
-1. **Update .env.local:**
-   ```env
-   GCP_LOCATION=us-east1
-   ```
-   Or try: `europe-west1`, `asia-southeast1`
-
-2. **Test again**
-
-#### Solution 3: Use Different Model Name
-
-Try these model names in order:
-
-1. `gemini-1.0-pro` (most widely available)
-2. `gemini-pro` 
-3. `gemini-1.5-pro-001` (if allowlisted)
-
-Update `.env.local`:
-```env
-GEMINI_MODEL=gemini-1.0-pro
+# Grant Vertex AI User role
+gcloud projects add-iam-policy-binding startege \
+  --member="serviceAccount:YOUR_SERVICE_ACCOUNT@startege.iam.gserviceaccount.com" \
+  --role="roles/aiplatform.user"
 ```
 
-#### Solution 4: Check Model Availability
+## 2. Verify Project ID Format
 
-1. Go to Vertex AI Studio:
-   ```
-   https://console.cloud.google.com/vertex-ai/generative/language/create/text?project=startege
-   ```
+Vertex AI SDK can accept either:
+- **Project Name**: `startege` (recommended)
+- **Project Number**: `785373873454` (may work but less reliable)
 
-2. Check which models are available in your region
-3. Use that model name in your config
+**Check your current setting:**
+```bash
+# In Cloud Run, check GCP_PROJECT_ID value
+# Should be either "startege" or "785373873454"
+```
 
----
+**Try setting project name instead:**
+- Update Cloud Run environment variable:
+  - `GCP_PROJECT_ID=startege` (instead of the number)
 
-## Error: "Permission denied"
+## 3. Check Model Availability
 
-### Cause
-Service account doesn't have the right permissions.
+The default model is `gemini-2.0-flash-exp`. Try a different model:
 
-### Solution
+**Set in Cloud Run environment variable:**
+```
+GEMINI_MODEL=gemini-1.5-flash
+```
 
-1. **Verify IAM role:**
-   - Go to: https://console.cloud.google.com/iam-admin/iam?project=startege
-   - Find: `startegizer-gemini@startege.iam.gserviceaccount.com`
-   - Ensure role: **Vertex AI User**
+**Available models:**
+- `gemini-1.5-flash` (most stable)
+- `gemini-1.5-pro` (more capable)
+- `gemini-2.0-flash-exp` (experimental)
 
-2. **If missing, add it:**
-   - Click "GRANT ACCESS"
-   - Add principal: `startegizer-gemini@startege.iam.gserviceaccount.com`
-   - Select role: **Vertex AI User**
-   - Save
+## 4. Check Region Availability
 
----
+Gemini models may not be available in all regions. Default is `us-central1`.
 
-## Error: "API not enabled"
+**Verify region:**
+```bash
+# Check if models are available in your region
+gcloud ai models list --region=us-central1 --project=startege
+```
 
-### Solution
+**Set region explicitly:**
+```
+GCP_LOCATION=us-central1
+```
 
-Enable both APIs:
+## 5. Check API Quotas
 
-1. **Vertex AI API:**
-   ```
-   https://console.cloud.google.com/apis/library/aiplatform.googleapis.com?project=startege
-   ```
+Vertex AI has quotas. Check if you've hit limits:
 
-2. **Generative AI API:**
-   ```
-   https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com?project=startege
-   ```
+1. Go to [GCP Console → Vertex AI → Quotas](https://console.cloud.google.com/apis/api/aiplatform.googleapis.com/quotas?project=startege)
+2. Check "Generate content requests" quota
+3. Request increase if needed
 
----
+## 6. Check Logs for Specific Errors
 
-## Quick Diagnostic Commands
+After making a request, check Cloud Run logs:
+
+```bash
+# View recent logs
+gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=startege" \
+  --limit 50 \
+  --format json \
+  --project=startege
+```
+
+**Look for:**
+- `[GEMINI_ERROR]` - Shows the actual error
+- `[GEMINI] Initializing Vertex AI` - Confirms initialization
+- `Permission Denied` - Service account issue
+- `Not Found` - Project ID or API issue
+- `Unavailable` - Service outage
+
+## 7. Test Authentication
+
+Test if your service account can access Vertex AI:
+
+```bash
+# Test Vertex AI access
+gcloud ai models list --region=us-central1 --project=startege
+```
+
+If this fails, there's an authentication/permission issue.
+
+## 8. Common Error Codes
+
+| Code | Error | Solution |
+|------|-------|----------|
+| 7 | PERMISSION_DENIED | Grant `roles/aiplatform.user` to service account |
+| 5 | NOT_FOUND | Check project ID, enable Vertex AI API |
+| 14 | UNAVAILABLE | Service temporarily down, try again later |
+| 3 | INVALID_ARGUMENT | Check project ID format, region, model name |
+| 8 | RESOURCE_EXHAUSTED | Quota exceeded, request increase |
+
+## 9. Fallback to OpenAI
+
+If Gemini continues to fail, OpenAI is automatically used as fallback (if `OPENAI_API_KEY` is configured).
+
+**To force OpenAI only:**
+- Remove `GCP_PROJECT_ID` from Cloud Run
+- Keep `OPENAI_API_KEY` configured
+
+## 10. Quick Diagnostic Script
+
+Run this to check your setup:
 
 ```bash
 # Check environment variables
-cat .env.local | grep GCP
+echo "GCP_PROJECT_ID: $GCP_PROJECT_ID"
+echo "GCP_LOCATION: $GCP_LOCATION"
 
-# Test configuration
-npx tsx scripts/test-gemini.ts
+# Check service account
+gcloud run services describe startege --region=us-central1 \
+  --format="value(spec.template.spec.serviceAccountName)"
 
-# Check service account key
-node -e "const key = require('./.secrets/gcp-service-account.json'); console.log('Project:', key.project_id);"
+# Test Vertex AI access
+gcloud ai models list --region=us-central1 --project=startege --limit=5
 ```
 
----
+## Still Not Working?
 
-## Still Having Issues?
-
-1. **Check GCP Console Logs:**
-   - Go to: https://console.cloud.google.com/logs/query?project=startege
-   - Filter by service account email
-
-2. **Verify Service Account Key:**
-   - Ensure file exists: `.secrets/gcp-service-account.json`
-   - Check permissions: `ls -la .secrets/`
-
-3. **Test with gcloud CLI:**
-   ```bash
-   gcloud auth activate-service-account --key-file=.secrets/gcp-service-account.json
-   gcloud config set project startege
-   ```
-
----
-
-**Most Common Fix:** Enable Generative AI API! 🎯
-
+1. **Check Cloud Run logs** for `[GEMINI_ERROR]` messages
+2. **Verify service account** has Vertex AI User role
+3. **Try OpenAI fallback** - it should work automatically if configured
+4. **Contact support** with the error message from logs

@@ -20,10 +20,23 @@ function getVertexAI(): VertexAI {
       throw new Error("GCP_PROJECT_ID environment variable is not set");
     }
     
-    vertexAIInstance = new VertexAI({
-      project: projectId,
-      location: location,
-    });
+    console.log(`[GEMINI] Initializing Vertex AI with project: ${projectId}, location: ${location}`);
+    
+    try {
+      vertexAIInstance = new VertexAI({
+        project: projectId,
+        location: location,
+      });
+      console.log(`[GEMINI] Vertex AI client initialized successfully`);
+    } catch (error: any) {
+      console.error(`[GEMINI] Failed to initialize Vertex AI:`, {
+        error: error.message,
+        projectId,
+        location,
+        stack: error.stack?.substring(0, 300),
+      });
+      throw error;
+    }
   }
   return vertexAIInstance;
 }
@@ -82,6 +95,8 @@ export async function generateResponse(
   conversationHistory: ChatMessage[] = []
 ): Promise<GeminiResponse> {
   try {
+    console.log(`[GEMINI] Generating response, prompt length: ${prompt.length}, history: ${conversationHistory.length} messages`);
+    
     // Build conversation history
     const contents = conversationHistory.map((msg) => ({
       role: msg.role === "user" ? "user" : "model",
@@ -94,10 +109,15 @@ export async function generateResponse(
       parts: [{ text: prompt }],
     });
 
+    const model = geminiModel.model;
+    console.log(`[GEMINI] Calling model: ${model.model || 'unknown'}`);
+    
     // Generate response
     const result = await geminiModel.generateContent({
       contents,
     });
+    
+    console.log(`[GEMINI] API call successful`);
 
     const response = result.response;
     
@@ -175,8 +195,27 @@ export async function generateResponse(
       wasTruncated,
     };
   } catch (error: any) {
-    console.error("[GEMINI_ERROR]", error);
-    throw new Error(`Gemini AI error: ${error.message || "Unknown error"}`);
+    console.error("[GEMINI_ERROR] Full error details:", {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      statusCode: error.statusCode,
+      name: error.name,
+      stack: error.stack?.substring(0, 500),
+    });
+    
+    // Provide more helpful error messages
+    if (error.message?.includes('PERMISSION_DENIED') || error.code === 7) {
+      throw new Error(`Gemini AI Permission Denied: Ensure your service account has 'Vertex AI User' role. Error: ${error.message}`);
+    } else if (error.message?.includes('NOT_FOUND') || error.code === 5) {
+      throw new Error(`Gemini AI Not Found: Check that Vertex AI API is enabled and project ID is correct. Error: ${error.message}`);
+    } else if (error.message?.includes('UNAVAILABLE') || error.code === 14) {
+      throw new Error(`Gemini AI Unavailable: The service may be temporarily unavailable. Error: ${error.message}`);
+    } else if (error.message?.includes('INVALID_ARGUMENT') || error.code === 3) {
+      throw new Error(`Gemini AI Invalid Argument: Check project ID and location. Error: ${error.message}`);
+    }
+    
+    throw new Error(`Gemini AI error: ${error.message || "Unknown error"} (Code: ${error.code || 'N/A'})`);
   }
 }
 
